@@ -27,11 +27,6 @@ object CheckboxSkin:
           Guila.rectangle(checkboxArea, activeColor)
       if (value)
         Guila.rectangle(
-          Rect(
-            x = checkboxArea.x + padding,
-            y = checkboxArea.y + padding,
-            w = checkboxArea.w - 2 * padding,
-            h = checkboxArea.h - 2 * padding
-          ),
+          checkboxArea.shrink(padding),
           checkColor
         )

@@ -21,7 +21,7 @@ object ButtonSkin:
     def renderButton(area: Rect, text: String, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
       val buttonArea = this.buttonArea(area)
       Guila.rectangle(
-        buttonArea.copy(x = buttonArea.x + shadowDelta, y = buttonArea.y + shadowDelta),
+        buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
       ) // Shadow
       (hot, active) match
@@ -35,6 +35,6 @@ object ButtonSkin:
           Guila.rectangle(buttonArea, activeColor)
           Guila.text(buttonArea, text, textColor, true)
         case (true, true) =>
-          val clickedArea = buttonArea.copy(x = buttonArea.x + clickDelta, y = buttonArea.y + clickDelta)
+          val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
           Guila.rectangle(clickedArea, activeColor)
           Guila.text(clickedArea, text, textColor, true)
