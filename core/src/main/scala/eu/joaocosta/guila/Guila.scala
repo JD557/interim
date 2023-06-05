@@ -30,7 +30,10 @@ object Guila:
     (nextState.ops.toList, nextState)
 
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
-    uiState.ops.addOne(RenderOp.DrawRect(area: Rect, color))
+    uiState.ops.addOne(RenderOp.DrawRect(area, color))
+
+  def text(area: Rect, text: String, color: Color)(implicit uiState: UiState): Unit =
+    uiState.ops.addOne(RenderOp.DrawText(area, text, color))
 
   def button(id: ItemId, area: Rect, skin: ButtonSkin = ButtonSkin.Default())(implicit
       inputState: InputState,
