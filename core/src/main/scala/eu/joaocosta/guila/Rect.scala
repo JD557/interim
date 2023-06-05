@@ -18,6 +18,9 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def grow(size: Int): Rect =
     Rect(x - size, y - size, w + size * 2, h + size * 2)
 
+  def transpose: Rect =
+    copy(w = h, h = w)
+
   def ||(that: Rect): Rect =
     val minX = math.min(this.x1, that.x1)
     val maxX = math.max(this.x2, that.x2)

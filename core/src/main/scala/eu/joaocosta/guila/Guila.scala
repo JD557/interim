@@ -31,16 +31,24 @@ object Guila:
     // return
     (nextState.ops.toList, nextState, res)
 
-  def grid[T](area: Rect, rows: Int, columns: Int, padding: Int)(body: Iterator[Rect] => T): T =
-    val rowSize    = (area.h - (rows - 1) * padding) / rows
-    val columnSize = (area.w - (columns - 1) * padding) / columns
-    val it = for
-      row <- (0 until rows).iterator
+  def grid[T](area: Rect, numRows: Int, numColumns: Int, padding: Int)(body: Vector[Vector[Rect]] => T): T =
+    body(rows(area, numRows, padding)(_.map(subArea => columns(subArea, numColumns, padding)(identity))))
+
+  def rows[T](area: Rect, numRows: Int, padding: Int)(body: Vector[Rect] => T): T =
+    val rowSize = (area.h - (numRows - 1) * padding) / numRows
+    val vec = for
+      row <- (0 until numRows)
       dy = row * (rowSize + padding)
-      column <- (0 until columns).iterator
+    yield Rect(area.x, area.y + dy, area.w, rowSize)
+    body(vec.toVector)
+
+  def columns[T](area: Rect, numColumns: Int, padding: Int)(body: Vector[Rect] => T): T =
+    val columnSize = (area.w - (numColumns - 1) * padding) / numColumns
+    val vec = for
+      column <- (0 until numColumns)
       dx = column * (columnSize + padding)
-    yield Rect(area.x + dx, area.y + dy, columnSize, rowSize)
-    body(it)
+    yield Rect(area.x + dx, area.y, columnSize, area.h)
+    body(vec.toVector)
 
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
