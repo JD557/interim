@@ -3,7 +3,7 @@ package eu.joaocosta.guila.skins
 import eu.joaocosta.guila._
 
 trait SliderSkin:
-  def renderSlider(x: Int, y: Int, w: Int, h: Int, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
+  def renderSlider(area: Rect, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
       uiState: UiState
   ): Unit
 
@@ -15,20 +15,21 @@ object SliderSkin:
       hotColor: Color = Color(128, 128, 128),
       activeColor: Color = Color(255, 255, 255)
   ) extends SliderSkin:
-    def renderSlider(x: Int, y: Int, w: Int, h: Int, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
+    def renderSlider(area: Rect, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
         uiState: UiState
     ): Unit =
-      val smallSide  = math.min(w, h)
-      val largeSide  = math.max(w, h)
+      val smallSide  = math.min(area.w, area.h)
+      val largeSide  = math.max(area.w, area.h)
       val sliderSize = smallSide - 2 * padding
       val maxPos     = largeSide - 2 * padding - sliderSize
       val pos        = (maxPos * value) / max
-      val (dx, dy)   = if (w > h) (pos, 0) else (0, pos)
-      Guila.rectangle(x, y, w, h, scrollbarColor) // Scrollbar
+      val (dx, dy)   = if (area.w > area.h) (pos, 0) else (0, pos)
+      val sliderRect = Rect(area.x + padding + dx, area.y + padding + dy, sliderSize, sliderSize)
+      Guila.rectangle(area, scrollbarColor) // Scrollbar
       (hot, active) match
         case (false, false) =>
-          Guila.rectangle(x + padding + dx, y + padding + dy, sliderSize, sliderSize, inactiveColor)
+          Guila.rectangle(sliderRect, inactiveColor)
         case (true, false) =>
-          Guila.rectangle(x + padding + dx, y + padding + dy, sliderSize, sliderSize, hotColor)
+          Guila.rectangle(sliderRect, hotColor)
         case _ =>
-          Guila.rectangle(x + padding + dx, y + padding + dy, sliderSize, sliderSize, activeColor)
+          Guila.rectangle(sliderRect, activeColor)
