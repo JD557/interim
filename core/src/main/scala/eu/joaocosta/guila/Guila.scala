@@ -36,7 +36,8 @@ object Guila:
       inputState: InputState,
       uiState: UiState
   ): Boolean =
-    val (hot, active) = setHotActive(id, area)
+    val buttonArea    = skin.buttonArea(area)
+    val (hot, active) = setHotActive(id, buttonArea)
     skin.renderButton(area, hot, active)
     hot && active && inputState.mouseDown == false
 
@@ -46,7 +47,7 @@ object Guila:
   )(implicit inputState: InputState, uiState: UiState): Int =
     val sliderArea    = skin.sliderArea(area)
     val sliderSize    = skin.sliderSize
-    val (hot, active) = setHotActive(id, area)
+    val (hot, active) = setHotActive(id, sliderArea)
     skin.renderSlider(area, value, max, hot, active)
     if (active)
       if (area.w > area.h)

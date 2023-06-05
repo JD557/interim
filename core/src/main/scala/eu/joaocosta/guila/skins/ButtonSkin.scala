@@ -3,6 +3,7 @@ package eu.joaocosta.guila.skins
 import eu.joaocosta.guila._
 
 trait ButtonSkin:
+  def buttonArea(area: Rect): Rect
   def renderButton(area: Rect, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit
 
 object ButtonSkin:
@@ -14,14 +15,20 @@ object ButtonSkin:
       hotColor: Color = Color(128, 128, 128),
       activeColor: Color = Color(255, 255, 255)
   ) extends ButtonSkin:
+    def buttonArea(area: Rect): Rect =
+      area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
     def renderButton(area: Rect, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
-      Guila.rectangle(area.copy(x = area.x + shadowDelta, y = area.y + shadowDelta), shadowColor) // Shadow
+      val buttonArea = this.buttonArea(area)
+      Guila.rectangle(
+        buttonArea.copy(x = buttonArea.x + shadowDelta, y = buttonArea.y + shadowDelta),
+        shadowColor
+      ) // Shadow
       (hot, active) match
         case (false, false) =>
-          Guila.rectangle(area, inactiveColor)
+          Guila.rectangle(buttonArea, inactiveColor)
         case (true, false) =>
-          Guila.rectangle(area, hotColor)
+          Guila.rectangle(buttonArea, hotColor)
         case (false, true) =>
-          Guila.rectangle(area, activeColor)
+          Guila.rectangle(buttonArea, activeColor)
         case (true, true) =>
-          Guila.rectangle(area.copy(x = area.x + clickDelta, y = area.y + clickDelta), activeColor)
+          Guila.rectangle(buttonArea.copy(x = buttonArea.x + clickDelta, y = buttonArea.y + clickDelta), activeColor)
