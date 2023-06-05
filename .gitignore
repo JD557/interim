@@ -1,0 +1,33 @@
+*.class
+*.log
+*.hnir
+*.DS_Store
+*.dll
+
+# sbt specific
+.sbtopts
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+.bloop
+.bsp
+
+# Metals specific
+metals.sbt
+.metals/
+
+# Scala-CLI
+.scala-build/
+
+# Windows specific
+null/
