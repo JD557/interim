@@ -41,6 +41,16 @@ object Guila:
     skin.renderButton(area, hot, active)
     hot && active && inputState.mouseDown == false
 
+  def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(value: Boolean)(implicit
+      inputState: InputState,
+      uiState: UiState
+  ): Boolean =
+    val checkboxArea  = skin.checkboxArea(area)
+    val (hot, active) = setHotActive(id, checkboxArea)
+    skin.renderCheckbox(area, value, hot, active)
+    if (hot && active && inputState.mouseDown == false) !value
+    else value
+
   def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
       value: Int,
       max: Int

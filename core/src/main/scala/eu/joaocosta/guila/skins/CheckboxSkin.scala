@@ -1,0 +1,37 @@
+package eu.joaocosta.guila.skins
+
+import eu.joaocosta.guila._
+
+trait CheckboxSkin:
+  def checkboxArea(area: Rect): Rect
+  def renderCheckbox(area: Rect, value: Boolean, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit
+
+object CheckboxSkin:
+  final case class Default(
+      padding: Int = 4,
+      inactiveColor: Color = Color(50, 50, 50),
+      hotColor: Color = Color(128, 128, 128),
+      activeColor: Color = Color(255, 255, 255),
+      checkColor: Color = Color(0, 0, 0)
+  ) extends CheckboxSkin:
+    def checkboxArea(area: Rect): Rect =
+      area
+    def renderCheckbox(area: Rect, value: Boolean, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
+      val checkboxArea = this.checkboxArea(area)
+      (hot, active) match
+        case (false, false) =>
+          Guila.rectangle(checkboxArea, inactiveColor)
+        case (true, false) =>
+          Guila.rectangle(checkboxArea, hotColor)
+        case (_, true) =>
+          Guila.rectangle(checkboxArea, activeColor)
+      if (value)
+        Guila.rectangle(
+          Rect(
+            x = checkboxArea.x + padding,
+            y = checkboxArea.y + padding,
+            w = checkboxArea.w - 2 * padding,
+            h = checkboxArea.h - 2 * padding
+          ),
+          checkColor
+        )
