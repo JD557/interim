@@ -29,6 +29,17 @@ object Guila:
     // return
     (nextState.ops.toList, nextState)
 
+  def grid(area: Rect, rows: Int, columns: Int, padding: Int)(body: Iterator[Rect] => Unit): Unit =
+    val rowSize    = (area.h - (rows - 1) * padding) / rows
+    val columnSize = (area.w - (columns - 1) * padding) / columns
+    val it = for
+      row <- (0 until rows).iterator
+      dy = row * (rowSize + padding)
+      column <- (0 until columns).iterator
+      dx = column * (columnSize + padding)
+    yield Rect(area.x + dx, area.y + dy, columnSize, rowSize)
+    body(it)
+
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 
