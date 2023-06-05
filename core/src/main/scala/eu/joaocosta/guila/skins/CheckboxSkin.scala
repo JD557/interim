@@ -9,10 +9,10 @@ trait CheckboxSkin:
 object CheckboxSkin:
   final case class Default(
       padding: Int = 4,
-      inactiveColor: Color = Color(50, 50, 50),
-      hotColor: Color = Color(128, 128, 128),
-      activeColor: Color = Color(255, 255, 255),
-      checkColor: Color = Color(0, 0, 0)
+      inactiveColor: Color = Color(213, 212, 207),
+      hotColor: Color = Color(37, 199, 238),
+      activeColor: Color = Color(123, 228, 255),
+      checkColor: Color = Color(32, 27, 33)
   ) extends CheckboxSkin:
     def checkboxArea(area: Rect): Rect =
       area

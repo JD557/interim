@@ -8,13 +8,13 @@ trait ButtonSkin:
 
 object ButtonSkin:
   final case class Default(
-      shadowDelta: Int = 8,
+      shadowDelta: Int = 4,
       clickDelta: Int = 2,
-      shadowColor: Color = Color(0, 0, 0),
-      textColor: Color = Color(255, 0, 0),
-      inactiveColor: Color = Color(50, 50, 50),
-      hotColor: Color = Color(128, 128, 128),
-      activeColor: Color = Color(255, 255, 255)
+      shadowColor: Color = Color(32, 27, 33),
+      textColor: Color = Color(32, 27, 33),
+      inactiveColor: Color = Color(37, 199, 238),
+      hotColor: Color = Color(123, 228, 255),
+      activeColor: Color = Color(123, 228, 255)
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)

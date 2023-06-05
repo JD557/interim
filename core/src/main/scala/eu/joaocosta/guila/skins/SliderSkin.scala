@@ -13,10 +13,10 @@ object SliderSkin:
   final case class Default(
       padding: Int = 8,
       val sliderSize: Int = 8,
-      scrollbarColor: Color = Color(50, 50, 50),
-      inactiveColor: Color = Color(128, 128, 128),
-      hotColor: Color = Color(128, 128, 128),
-      activeColor: Color = Color(255, 255, 255)
+      scrollbarColor: Color = Color(213, 212, 207),
+      inactiveColor: Color = Color(37, 199, 238),
+      hotColor: Color = Color(123, 228, 255),
+      activeColor: Color = Color(123, 228, 255)
   ) extends SliderSkin:
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
