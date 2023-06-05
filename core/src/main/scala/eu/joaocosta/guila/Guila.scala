@@ -32,16 +32,16 @@ object Guila:
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 
-  def text(area: Rect, text: String, color: Color)(implicit uiState: UiState): Unit =
-    uiState.ops.addOne(RenderOp.DrawText(area, text, color))
+  def text(area: Rect, text: String, color: Color, center: Boolean = false)(implicit uiState: UiState): Unit =
+    if (text.nonEmpty) uiState.ops.addOne(RenderOp.DrawText(area, text, color, center))
 
-  def button(id: ItemId, area: Rect, skin: ButtonSkin = ButtonSkin.Default())(implicit
+  def button(id: ItemId, area: Rect, text: String = "", skin: ButtonSkin = ButtonSkin.Default())(implicit
       inputState: InputState,
       uiState: UiState
   ): Boolean =
     val buttonArea    = skin.buttonArea(area)
     val (hot, active) = setHotActive(id, buttonArea)
-    skin.renderButton(area, hot, active)
+    skin.renderButton(area, text, hot, active)
     hot && active && inputState.mouseDown == false
 
   def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(value: Boolean)(implicit
