@@ -44,18 +44,17 @@ object Guila:
       value: Int,
       max: Int
   )(implicit inputState: InputState, uiState: UiState): Int =
-    val padding       = 8 // FIXME
-    val smallSide     = math.min(area.w, area.h)
-    val largeSide     = math.max(area.w, area.h)
-    val sliderSize    = smallSide - 2 * padding
-    val maxPos        = largeSide - 2 * padding - sliderSize
-    val pos           = (maxPos * value) / max
+    val sliderArea    = skin.sliderArea(area)
+    val sliderSize    = skin.sliderSize
     val (hot, active) = setHotActive(id, area)
     skin.renderSlider(area, value, max, hot, active)
     if (active)
-      val mouseAbsPos =
-        (if (area.w > area.h) inputState.mouseX - area.x else inputState.mouseY - area.y) - padding - sliderSize / 2
-      val mousePos = math.max(0, math.min(mouseAbsPos, maxPos))
-      val newValue = (mousePos * max) / maxPos
-      newValue
+      if (area.w > area.h)
+        val mousePos = inputState.mouseX - sliderArea.x - sliderSize / 2
+        val maxPos   = sliderArea.w - sliderSize
+        math.max(0, math.min((mousePos * max) / maxPos, max))
+      else
+        val mousePos = inputState.mouseY - sliderArea.y - sliderSize / 2
+        val maxPos   = sliderArea.h - sliderSize
+        math.max(0, math.min((mousePos * max) / maxPos, max))
     else value

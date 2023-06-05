@@ -3,6 +3,8 @@ package eu.joaocosta.guila.skins
 import eu.joaocosta.guila._
 
 trait SliderSkin:
+  def sliderSize: Int
+  def sliderArea(area: Rect): Rect
   def renderSlider(area: Rect, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
       uiState: UiState
   ): Unit
@@ -10,21 +12,27 @@ trait SliderSkin:
 object SliderSkin:
   final case class Default(
       padding: Int = 8,
+      val sliderSize: Int = 8,
       scrollbarColor: Color = Color(50, 50, 50),
       inactiveColor: Color = Color(128, 128, 128),
       hotColor: Color = Color(128, 128, 128),
       activeColor: Color = Color(255, 255, 255)
   ) extends SliderSkin:
+    def sliderArea(area: Rect): Rect =
+      Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
     def renderSlider(area: Rect, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
         uiState: UiState
     ): Unit =
-      val smallSide  = math.min(area.w, area.h)
-      val largeSide  = math.max(area.w, area.h)
-      val sliderSize = smallSide - 2 * padding
-      val maxPos     = largeSide - 2 * padding - sliderSize
-      val pos        = (maxPos * value) / max
-      val (dx, dy)   = if (area.w > area.h) (pos, 0) else (0, pos)
-      val sliderRect = Rect(area.x + padding + dx, area.y + padding + dy, sliderSize, sliderSize)
+      val sliderArea = this.sliderArea(area)
+      val sliderRect =
+        if (area.w > area.h)
+          val sliderFill = area.h - 2 * padding
+          val pos        = value * (sliderArea.w - sliderSize) / max
+          Rect(area.x + padding + pos, area.y + padding, sliderSize, sliderFill)
+        else
+          val sliderFill = area.w - 2 * padding
+          val pos        = value * (sliderArea.h - sliderSize) / max
+          Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
       Guila.rectangle(area, scrollbarColor) // Scrollbar
       (hot, active) match
         case (false, false) =>
