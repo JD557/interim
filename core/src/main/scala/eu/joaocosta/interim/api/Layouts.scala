@@ -2,7 +2,7 @@ package eu.joaocosta.interim.api
 
 import eu.joaocosta.interim.Rect
 
-trait Layouts:
+object Layouts:
   def grid[T](area: Rect, numRows: Int, numColumns: Int, padding: Int)(body: Vector[Vector[Rect]] => T): T =
     body(rows(area, numRows, padding)(_.map(subArea => columns(subArea, numColumns, padding)(identity))))
 

@@ -2,6 +2,7 @@ package eu.joaocosta.interim.skins
 
 import eu.joaocosta.interim.TextLayout.*
 import eu.joaocosta.interim.*
+import eu.joaocosta.interim.api.Primitives.*
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
@@ -25,21 +26,21 @@ object ButtonSkin:
         uiState: UiState
     ): Unit =
       val buttonArea = this.buttonArea(area)
-      InterIm.rectangle(
+      rectangle(
         buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
       ) // Shadow
       itemStatus match
         case UiState.ItemStatus(false, false) =>
-          InterIm.rectangle(buttonArea, inactiveColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          rectangle(buttonArea, inactiveColor)
+          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, false) =>
-          InterIm.rectangle(buttonArea, hotColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          rectangle(buttonArea, hotColor)
+          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(false, true) =>
-          InterIm.rectangle(buttonArea, activeColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          rectangle(buttonArea, activeColor)
+          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, true) =>
           val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
-          InterIm.rectangle(clickedArea, activeColor)
-          InterIm.text(clickedArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          rectangle(clickedArea, activeColor)
+          text(clickedArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)

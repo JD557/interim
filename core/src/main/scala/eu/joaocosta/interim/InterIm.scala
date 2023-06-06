@@ -2,7 +2,7 @@ package eu.joaocosta.interim
 
 import eu.joaocosta.interim.TextLayout.*
 
-object InterIm extends api.Primitives with api.Layouts with api.Components with api.Constants:
+object InterIm:
   def window[T](inputState: InputState, uiState: UiState)(
       run: (inputState: InputState, uiState: UiState) ?=> T
   ): (List[RenderOp], T) =
@@ -17,3 +17,8 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     if (!inputState.mouseDown) uiState.activeItem = None
     // return
     (uiState.ops.toList, res)
+
+  export api.Primitives.*
+  export api.Layouts.*
+  export api.Components.*
+  export api.Constants.*

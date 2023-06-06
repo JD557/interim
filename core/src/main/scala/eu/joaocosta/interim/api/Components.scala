@@ -3,7 +3,7 @@ package eu.joaocosta.interim.api
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
-trait Components:
+object Components:
 
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
 

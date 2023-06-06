@@ -3,7 +3,7 @@ package eu.joaocosta.interim.api
 import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
 import eu.joaocosta.interim.{Color, Rect, RenderOp, UiState}
 
-trait Primitives:
+object Primitives:
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 

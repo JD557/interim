@@ -1,6 +1,7 @@
 package eu.joaocosta.interim.skins
 
 import eu.joaocosta.interim.*
+import eu.joaocosta.interim.api.Primitives.*
 
 trait SliderSkin:
   def sliderSize: Int
@@ -33,11 +34,11 @@ object SliderSkin:
           val sliderFill = area.w - 2 * padding
           val pos        = (value - min) * (sliderArea.h - sliderSize) / (max - min)
           Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
-      InterIm.rectangle(area, scrollbarColor) // Scrollbar
+      rectangle(area, scrollbarColor) // Scrollbar
       itemStatus match
         case UiState.ItemStatus(false, false) =>
-          InterIm.rectangle(sliderRect, inactiveColor)
+          rectangle(sliderRect, inactiveColor)
         case UiState.ItemStatus(true, false) =>
-          InterIm.rectangle(sliderRect, hotColor)
+          rectangle(sliderRect, hotColor)
         case _ =>
-          InterIm.rectangle(sliderRect, activeColor)
+          rectangle(sliderRect, activeColor)

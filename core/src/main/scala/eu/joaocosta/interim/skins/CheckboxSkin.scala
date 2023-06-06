@@ -1,6 +1,7 @@
 package eu.joaocosta.interim.skins
 
 import eu.joaocosta.interim.*
+import eu.joaocosta.interim.api.Primitives.*
 
 trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
@@ -21,13 +22,13 @@ object CheckboxSkin:
       val checkboxArea = this.checkboxArea(area)
       itemStatus match
         case UiState.ItemStatus(false, false) =>
-          InterIm.rectangle(checkboxArea, inactiveColor)
+          rectangle(checkboxArea, inactiveColor)
         case UiState.ItemStatus(true, false) =>
-          InterIm.rectangle(checkboxArea, hotColor)
+          rectangle(checkboxArea, hotColor)
         case UiState.ItemStatus(_, true) =>
-          InterIm.rectangle(checkboxArea, activeColor)
+          rectangle(checkboxArea, activeColor)
       if (value)
-        InterIm.rectangle(
+        rectangle(
           checkboxArea.shrink(padding),
           checkColor
         )
