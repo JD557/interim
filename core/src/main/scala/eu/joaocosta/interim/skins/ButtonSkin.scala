@@ -4,7 +4,7 @@ import eu.joaocosta.interim._
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
-  def renderButton(area: Rect, text: String, fontSize: Int, hot: Boolean, active: Boolean)(implicit
+  def renderButton(area: Rect, text: String, fontSize: Int, itemStatus: UiState.ItemStatus)(implicit
       uiState: UiState
   ): Unit
 
@@ -20,7 +20,7 @@ object ButtonSkin:
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
-    def renderButton(area: Rect, label: String, fontSize: Int, hot: Boolean, active: Boolean)(implicit
+    def renderButton(area: Rect, label: String, fontSize: Int, itemStatus: UiState.ItemStatus)(implicit
         uiState: UiState
     ): Unit =
       val buttonArea = this.buttonArea(area)
@@ -28,17 +28,17 @@ object ButtonSkin:
         buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
       ) // Shadow
-      (hot, active) match
-        case (false, false) =>
+      itemStatus match
+        case UiState.ItemStatus(false, false) =>
           InterIm.rectangle(buttonArea, inactiveColor)
           InterIm.text(buttonArea, label, fontSize, textColor, true)
-        case (true, false) =>
+        case UiState.ItemStatus(true, false) =>
           InterIm.rectangle(buttonArea, hotColor)
           InterIm.text(buttonArea, label, fontSize, textColor, true)
-        case (false, true) =>
+        case UiState.ItemStatus(false, true) =>
           InterIm.rectangle(buttonArea, activeColor)
           InterIm.text(buttonArea, label, fontSize, textColor, true)
-        case (true, true) =>
+        case UiState.ItemStatus(true, true) =>
           val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
           InterIm.rectangle(clickedArea, activeColor)
           InterIm.text(clickedArea, label, fontSize, textColor, true)

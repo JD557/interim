@@ -4,7 +4,7 @@ import eu.joaocosta.interim._
 
 trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
-  def renderCheckbox(area: Rect, value: Boolean, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit
+  def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
 object CheckboxSkin:
   final case class Default(
@@ -17,14 +17,14 @@ object CheckboxSkin:
     def checkboxArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
       area.copy(w = smallSide, h = smallSide)
-    def renderCheckbox(area: Rect, value: Boolean, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
+    def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit =
       val checkboxArea = this.checkboxArea(area)
-      (hot, active) match
-        case (false, false) =>
+      itemStatus match
+        case UiState.ItemStatus(false, false) =>
           InterIm.rectangle(checkboxArea, inactiveColor)
-        case (true, false) =>
+        case UiState.ItemStatus(true, false) =>
           InterIm.rectangle(checkboxArea, hotColor)
-        case (_, true) =>
+        case UiState.ItemStatus(_, true) =>
           InterIm.rectangle(checkboxArea, activeColor)
       if (value)
         InterIm.rectangle(

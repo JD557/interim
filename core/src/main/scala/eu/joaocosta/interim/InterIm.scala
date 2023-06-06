@@ -3,16 +3,6 @@ package eu.joaocosta.interim
 import eu.joaocosta.interim.skins._
 
 object InterIm:
-  private def setHotActive(id: ItemId, area: Rect)(implicit
-      inputState: InputState,
-      uiState: UiState
-  ): (Boolean, Boolean) =
-    if (area.isMouseOver)
-      uiState.hotItem = Some(id)
-      if (uiState.activeItem == None && inputState.mouseDown)
-        uiState.activeItem = Some(id)
-    (uiState.hotItem == Some(id), uiState.activeItem == Some(id))
-
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
 
   def window[T](inputState: InputState, uiState: UiState)(
@@ -65,18 +55,18 @@ object InterIm:
       fontSize: Int = 8,
       skin: ButtonSkin = ButtonSkin.Default()
   ): Component[Boolean] =
-    val buttonArea    = skin.buttonArea(area)
-    val (hot, active) = setHotActive(id, buttonArea)
-    skin.renderButton(area, label, fontSize, hot, active)
-    hot && active && summon[InputState].mouseDown == false
+    val buttonArea = skin.buttonArea(area)
+    val itemStatus = summon[UiState].setHotActive(id, buttonArea)
+    skin.renderButton(area, label, fontSize, itemStatus)
+    itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
   def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
       value: Boolean
   ): Component[Boolean] =
-    val checkboxArea  = skin.checkboxArea(area)
-    val (hot, active) = setHotActive(id, checkboxArea)
-    skin.renderCheckbox(area, value, hot, active)
-    if (hot && active && summon[InputState].mouseDown == false) !value
+    val checkboxArea = skin.checkboxArea(area)
+    val itemStatus   = summon[UiState].setHotActive(id, checkboxArea)
+    skin.renderCheckbox(area, value, itemStatus)
+    if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
     else value
 
   def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
@@ -84,13 +74,13 @@ object InterIm:
       value: Int,
       max: Int
   ): Component[Int] =
-    val sliderArea    = skin.sliderArea(area)
-    val sliderSize    = skin.sliderSize
-    val range         = max - min
-    val (hot, active) = setHotActive(id, sliderArea)
-    val clampedValue  = math.max(min, math.min(value, max))
-    skin.renderSlider(area, min, clampedValue, max, hot, active)
-    if (active)
+    val sliderArea   = skin.sliderArea(area)
+    val sliderSize   = skin.sliderSize
+    val range        = max - min
+    val itemStatus   = summon[UiState].setHotActive(id, sliderArea)
+    val clampedValue = math.max(min, math.min(value, max))
+    skin.renderSlider(area, min, clampedValue, max, itemStatus)
+    if (itemStatus.active)
       if (area.w > area.h)
         val mousePos = summon[InputState].mouseX - sliderArea.x - sliderSize / 2
         val maxPos   = sliderArea.w - sliderSize

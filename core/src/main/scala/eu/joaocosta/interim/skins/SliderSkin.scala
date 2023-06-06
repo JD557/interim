@@ -5,7 +5,7 @@ import eu.joaocosta.interim._
 trait SliderSkin:
   def sliderSize: Int
   def sliderArea(area: Rect): Rect
-  def renderSlider(area: Rect, min: Int, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
+  def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(implicit
       uiState: UiState
   ): Unit
 
@@ -20,7 +20,7 @@ object SliderSkin:
   ) extends SliderSkin:
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
-    def renderSlider(area: Rect, min: Int, value: Int, max: Int, hot: Boolean, active: Boolean)(implicit
+    def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(implicit
         uiState: UiState
     ): Unit =
       val sliderArea = this.sliderArea(area)
@@ -34,10 +34,10 @@ object SliderSkin:
           val pos        = (value - min) * (sliderArea.h - sliderSize) / (max - min)
           Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
       InterIm.rectangle(area, scrollbarColor) // Scrollbar
-      (hot, active) match
-        case (false, false) =>
+      itemStatus match
+        case UiState.ItemStatus(false, false) =>
           InterIm.rectangle(sliderRect, inactiveColor)
-        case (true, false) =>
+        case UiState.ItemStatus(true, false) =>
           InterIm.rectangle(sliderRect, hotColor)
         case _ =>
           InterIm.rectangle(sliderRect, activeColor)
