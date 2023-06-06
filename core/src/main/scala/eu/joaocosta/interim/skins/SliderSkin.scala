@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.skins
 
-import eu.joaocosta.interim._
+import eu.joaocosta.interim.*
 
 trait SliderSkin:
   def sliderSize: Int

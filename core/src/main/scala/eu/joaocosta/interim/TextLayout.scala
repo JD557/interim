@@ -42,7 +42,7 @@ object TextLayout:
         lineAcc: List[RenderOp.DrawChar],
         textAcc: List[RenderOp.DrawChar]
     ): List[RenderOp.DrawChar] =
-      remaining match {
+      remaining match
         case Nil =>
           alignV(
             alignH(lineAcc, textOp.area.w, textOp.horizontalAlignment) ++ textAcc,
@@ -64,5 +64,4 @@ object TextLayout:
               h = textOp.fontSize
             )
             layout(cs, dx + width, dy, RenderOp.DrawChar(charArea, char, textOp.color) :: lineAcc, textAcc)
-      }
     layout(textOp.text.toList, 0, 0, Nil, Nil)

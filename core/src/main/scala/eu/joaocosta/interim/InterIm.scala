@@ -1,7 +1,7 @@
 package eu.joaocosta.interim
 
-import eu.joaocosta.interim.TextLayout._
-import eu.joaocosta.interim.skins._
+import eu.joaocosta.interim.TextLayout.*
+import eu.joaocosta.interim.skins.*
 
 object InterIm:
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
