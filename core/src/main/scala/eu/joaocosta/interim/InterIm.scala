@@ -1,5 +1,6 @@
 package eu.joaocosta.interim
 
+import eu.joaocosta.interim.TextLayout._
 import eu.joaocosta.interim.skins._
 
 object InterIm:
@@ -7,19 +8,18 @@ object InterIm:
 
   def window[T](inputState: InputState, uiState: UiState)(
       run: (inputState: InputState, uiState: UiState) ?=> T
-  ): (List[RenderOp], UiState, T) =
-    val nextState = uiState.clone()
+  ): (List[RenderOp], T) =
     // prepare
-    nextState.ops.clear()
-    nextState.hotItem = None
+    uiState.ops.clear()
+    uiState.hotItem = None
     // run
     given is: InputState = inputState
-    given us: UiState    = nextState
+    given us: UiState    = uiState
     val res              = run
     // finish
-    if (!inputState.mouseDown) nextState.activeItem = None
+    if (!inputState.mouseDown) uiState.activeItem = None
     // return
-    (nextState.ops.toList, nextState, res)
+    (uiState.ops.toList, res)
 
   def grid[T](area: Rect, numRows: Int, numColumns: Int, padding: Int)(body: Vector[Vector[Rect]] => T): T =
     body(rows(area, numRows, padding)(_.map(subArea => columns(subArea, numColumns, padding)(identity))))
@@ -43,10 +43,18 @@ object InterIm:
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 
-  def text(area: Rect, text: String, fontSize: Int, color: Color, center: Boolean = false)(implicit
+  def text(
+      area: Rect,
+      text: String,
+      fontSize: Int,
+      color: Color,
+      horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Left,
+      verticalAlignment: VerticalAlignment = VerticalAlignment.Top
+  )(implicit
       uiState: UiState
   ): Unit =
-    if (text.nonEmpty) uiState.ops.addOne(RenderOp.DrawText(area, text, fontSize, color, center))
+    if (text.nonEmpty)
+      uiState.ops.addOne(RenderOp.DrawText(area, text, fontSize, color, horizontalAlignment, verticalAlignment))
 
   def button(
       id: ItemId,
@@ -56,7 +64,7 @@ object InterIm:
       skin: ButtonSkin = ButtonSkin.Default()
   ): Component[Boolean] =
     val buttonArea = skin.buttonArea(area)
-    val itemStatus = summon[UiState].setHotActive(id, buttonArea)
+    val itemStatus = UiState.registerItem(id, buttonArea)
     skin.renderButton(area, label, fontSize, itemStatus)
     itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
@@ -64,7 +72,7 @@ object InterIm:
       value: Boolean
   ): Component[Boolean] =
     val checkboxArea = skin.checkboxArea(area)
-    val itemStatus   = summon[UiState].setHotActive(id, checkboxArea)
+    val itemStatus   = UiState.registerItem(id, checkboxArea)
     skin.renderCheckbox(area, value, itemStatus)
     if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
     else value
@@ -77,7 +85,7 @@ object InterIm:
     val sliderArea   = skin.sliderArea(area)
     val sliderSize   = skin.sliderSize
     val range        = max - min
-    val itemStatus   = summon[UiState].setHotActive(id, sliderArea)
+    val itemStatus   = UiState.registerItem(id, sliderArea)
     val clampedValue = math.max(min, math.min(value, max))
     skin.renderSlider(area, min, clampedValue, max, itemStatus)
     if (itemStatus.active)

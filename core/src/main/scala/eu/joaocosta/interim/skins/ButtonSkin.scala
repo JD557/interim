@@ -1,5 +1,6 @@
 package eu.joaocosta.interim.skins
 
+import eu.joaocosta.interim.TextLayout._
 import eu.joaocosta.interim._
 
 trait ButtonSkin:
@@ -31,14 +32,14 @@ object ButtonSkin:
       itemStatus match
         case UiState.ItemStatus(false, false) =>
           InterIm.rectangle(buttonArea, inactiveColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, true)
+          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, false) =>
           InterIm.rectangle(buttonArea, hotColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, true)
+          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(false, true) =>
           InterIm.rectangle(buttonArea, activeColor)
-          InterIm.text(buttonArea, label, fontSize, textColor, true)
+          InterIm.text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, true) =>
           val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
           InterIm.rectangle(clickedArea, activeColor)
-          InterIm.text(clickedArea, label, fontSize, textColor, true)
+          InterIm.text(clickedArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
