@@ -1,6 +1,6 @@
-package eu.joaocosta.guila.skins
+package eu.joaocosta.interim.skins
 
-import eu.joaocosta.guila._
+import eu.joaocosta.interim._
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
@@ -20,21 +20,21 @@ object ButtonSkin:
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
     def renderButton(area: Rect, text: String, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
       val buttonArea = this.buttonArea(area)
-      Guila.rectangle(
+      InterIm.rectangle(
         buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
       ) // Shadow
       (hot, active) match
         case (false, false) =>
-          Guila.rectangle(buttonArea, inactiveColor)
-          Guila.text(buttonArea, text, textColor, true)
+          InterIm.rectangle(buttonArea, inactiveColor)
+          InterIm.text(buttonArea, text, textColor, true)
         case (true, false) =>
-          Guila.rectangle(buttonArea, hotColor)
-          Guila.text(buttonArea, text, textColor, true)
+          InterIm.rectangle(buttonArea, hotColor)
+          InterIm.text(buttonArea, text, textColor, true)
         case (false, true) =>
-          Guila.rectangle(buttonArea, activeColor)
-          Guila.text(buttonArea, text, textColor, true)
+          InterIm.rectangle(buttonArea, activeColor)
+          InterIm.text(buttonArea, text, textColor, true)
         case (true, true) =>
           val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
-          Guila.rectangle(clickedArea, activeColor)
-          Guila.text(clickedArea, text, textColor, true)
+          InterIm.rectangle(clickedArea, activeColor)
+          InterIm.text(clickedArea, text, textColor, true)

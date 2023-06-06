@@ -1,6 +1,6 @@
-package eu.joaocosta.guila.skins
+package eu.joaocosta.interim.skins
 
-import eu.joaocosta.guila._
+import eu.joaocosta.interim._
 
 trait SliderSkin:
   def sliderSize: Int
@@ -33,11 +33,11 @@ object SliderSkin:
           val sliderFill = area.w - 2 * padding
           val pos        = value * (sliderArea.h - sliderSize) / max
           Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
-      Guila.rectangle(area, scrollbarColor) // Scrollbar
+      InterIm.rectangle(area, scrollbarColor) // Scrollbar
       (hot, active) match
         case (false, false) =>
-          Guila.rectangle(sliderRect, inactiveColor)
+          InterIm.rectangle(sliderRect, inactiveColor)
         case (true, false) =>
-          Guila.rectangle(sliderRect, hotColor)
+          InterIm.rectangle(sliderRect, hotColor)
         case _ =>
-          Guila.rectangle(sliderRect, activeColor)
+          InterIm.rectangle(sliderRect, activeColor)

@@ -1,4 +1,4 @@
-package eu.joaocosta.guila
+package eu.joaocosta.interim
 
 final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def x1 = x

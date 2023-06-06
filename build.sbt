@@ -1,14 +1,14 @@
-ThisBuild / organization       := "eu.joaocosta"
-ThisBuild / scalaVersion       := "3.3.0"
-ThisBuild / licenses           := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
-ThisBuild / homepage           := Some(url("https://github.com/JD557/guila"))
+ThisBuild / organization := "eu.joaocosta"
+ThisBuild / scalaVersion := "3.3.0"
+ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / homepage     := Some(url("https://github.com/JD557/interim"))
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/JD557/guila"),
-    "scm:git@github.com:JD557/guila.git"
+    url("https://github.com/JD557/interim"),
+    "scm:git@github.com:JD557/interim.git"
   )
 )
-ThisBuild / versionScheme := Some("semver-spec")
+ThisBuild / versionScheme   := Some("semver-spec")
 ThisBuild / autoAPIMappings := true
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
@@ -30,7 +30,7 @@ def docSettings(projectName: String) = Seq(
         "-project-version",
         version.value,
         "-social-links:" +
-          "github::https://github.com/JD557/Minart"
+          "github::https://github.com/JD557/interim"
       )
     else Seq()
   )
@@ -38,14 +38,14 @@ def docSettings(projectName: String) = Seq(
 
 lazy val core = (projectMatrix in file("core"))
   .settings(
-    name := "guila",
+    name := "interim",
     Compile / doc / scalacOptions ++=
       Seq(
         "-project",
-        "GUIla",
+        "interim",
         "-project-version",
         version.value,
-        "-social-links:github::https://github.com/JD557/guila"
+        "-social-links:github::https://github.com/JD557/interim"
       )
   )
   .jvmPlatform(scalaVersions = Seq("3.3.0"))

@@ -1,4 +1,4 @@
-package eu.joaocosta.guila
+package eu.joaocosta.interim
 
 type ItemId = (Int | String) | List[(Int | String)]
 

@@ -1,8 +1,8 @@
-package eu.joaocosta.guila
+package eu.joaocosta.interim
 
-import eu.joaocosta.guila.skins._
+import eu.joaocosta.interim.skins._
 
-object Guila:
+object InterIm:
   private def setHotActive(id: ItemId, area: Rect)(implicit
       inputState: InputState,
       uiState: UiState

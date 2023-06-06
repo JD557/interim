@@ -1,6 +1,6 @@
-package eu.joaocosta.guila.skins
+package eu.joaocosta.interim.skins
 
-import eu.joaocosta.guila._
+import eu.joaocosta.interim._
 
 trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
@@ -20,13 +20,13 @@ object CheckboxSkin:
       val checkboxArea = this.checkboxArea(area)
       (hot, active) match
         case (false, false) =>
-          Guila.rectangle(checkboxArea, inactiveColor)
+          InterIm.rectangle(checkboxArea, inactiveColor)
         case (true, false) =>
-          Guila.rectangle(checkboxArea, hotColor)
+          InterIm.rectangle(checkboxArea, hotColor)
         case (_, true) =>
-          Guila.rectangle(checkboxArea, activeColor)
+          InterIm.rectangle(checkboxArea, activeColor)
       if (value)
-        Guila.rectangle(
+        InterIm.rectangle(
           checkboxArea.shrink(padding),
           checkColor
         )

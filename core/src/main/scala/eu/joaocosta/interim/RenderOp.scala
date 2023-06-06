@@ -1,4 +1,4 @@
-package eu.joaocosta.guila
+package eu.joaocosta.interim
 
 import scala.annotation.tailrec
 
