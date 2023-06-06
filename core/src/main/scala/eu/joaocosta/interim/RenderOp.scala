@@ -7,6 +7,7 @@ enum RenderOp:
   case DrawText(
       area: Rect,
       text: String,
+      fontSize: Int,
       color: Color,
       center: Boolean
   )
@@ -15,7 +16,10 @@ object RenderOp:
   final case class DrawChar(area: Rect, char: Char, color: Color)
 
   extension (textOp: DrawText)
-    def asDrawChars(charWidth: Char => Int, charHeight: Int, lineHeight: Int): List[DrawChar] =
+    def asDrawChars(
+        charWidth: Char => Int = _ => textOp.fontSize,
+        lineHeight: Int = (textOp.fontSize * 1.3).toInt
+    ): List[DrawChar] =
       def centerH(chars: List[DrawChar]): List[DrawChar] =
         val minX   = chars.map(_.area.x).minOption.getOrElse(0)
         val maxX   = chars.map(c => c.area.x + c.area.w).maxOption.getOrElse(0)
@@ -40,8 +44,8 @@ object RenderOp:
           case char :: cs =>
             val isNewline = char == '\n'
             val width     = charWidth(char)
-            if (dy + charHeight > textOp.area.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
-            else if (isNewline || width < textOp.area.w && dx + width > textOp.area.w) // Newline
+            if (dy + textOp.fontSize > textOp.area.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
+            else if (isNewline || width < textOp.area.w && dx + width > textOp.area.w)      // Newline
               val line = if (textOp.center) centerH(lineAcc) else lineAcc
               layout(if (isNewline) remaining.tail else remaining, 0, dy + lineHeight, Nil, line ++ textAcc)
             else
@@ -49,7 +53,7 @@ object RenderOp:
                 x = textOp.area.x + dx,
                 y = textOp.area.y + dy,
                 w = width,
-                h = charHeight
+                h = textOp.fontSize
               )
               layout(cs, dx + width, dy, DrawChar(charArea, char, textOp.color) :: lineAcc, textAcc)
         }

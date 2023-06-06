@@ -53,13 +53,21 @@ object InterIm:
   def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 
-  def text(area: Rect, text: String, color: Color, center: Boolean = false)(implicit uiState: UiState): Unit =
-    if (text.nonEmpty) uiState.ops.addOne(RenderOp.DrawText(area, text, color, center))
+  def text(area: Rect, text: String, fontSize: Int, color: Color, center: Boolean = false)(implicit
+      uiState: UiState
+  ): Unit =
+    if (text.nonEmpty) uiState.ops.addOne(RenderOp.DrawText(area, text, fontSize, color, center))
 
-  def button(id: ItemId, area: Rect, label: String = "", skin: ButtonSkin = ButtonSkin.Default()): Component[Boolean] =
+  def button(
+      id: ItemId,
+      area: Rect,
+      label: String = "",
+      fontSize: Int = 8,
+      skin: ButtonSkin = ButtonSkin.Default()
+  ): Component[Boolean] =
     val buttonArea    = skin.buttonArea(area)
     val (hot, active) = setHotActive(id, buttonArea)
-    skin.renderButton(area, label, hot, active)
+    skin.renderButton(area, label, fontSize, hot, active)
     hot && active && summon[InputState].mouseDown == false
 
   def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
