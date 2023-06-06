@@ -3,11 +3,13 @@ package eu.joaocosta.interim.api
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
-object Components:
+object Components extends Components
+
+trait Components:
 
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
 
-  def button(
+  final def button(
       id: ItemId,
       area: Rect,
       label: String = "",
@@ -19,7 +21,7 @@ object Components:
     skin.renderButton(area, label, fontSize, itemStatus)
     itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
-  def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
+  final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
       value: Boolean
   ): Component[Boolean] =
     val checkboxArea = skin.checkboxArea(area)
@@ -28,7 +30,7 @@ object Components:
     if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
     else value
 
-  def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
+  final def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
       min: Int,
       value: Int,
       max: Int
