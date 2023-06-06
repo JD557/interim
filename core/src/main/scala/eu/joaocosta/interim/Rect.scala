@@ -1,5 +1,7 @@
 package eu.joaocosta.interim
 
+import scala.annotation.alpha
+
 final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def x1 = x
   def y1 = y
@@ -21,7 +23,8 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def transpose: Rect =
     copy(w = h, h = w)
 
-  def ||(that: Rect): Rect =
+  @alpha("merge")
+  def ++(that: Rect): Rect =
     val minX = math.min(this.x1, that.x1)
     val maxX = math.max(this.x2, that.x2)
     val minY = math.min(this.y1, that.y1)

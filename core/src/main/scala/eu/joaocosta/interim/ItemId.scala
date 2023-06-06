@@ -1,5 +1,7 @@
 package eu.joaocosta.interim
 
+import scala.annotation.alpha
+
 type ItemId = (Int | String) | List[(Int | String)]
 
 object ItemId:
@@ -12,5 +14,6 @@ object ItemId:
       }
 
   extension (parentId: ItemId)
+    @alpha("addChild")
     def |>(childId: ItemId): ItemId =
       parentId.toIdList ++ childId.toIdList
