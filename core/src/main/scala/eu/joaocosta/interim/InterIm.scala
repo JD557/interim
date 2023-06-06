@@ -80,20 +80,23 @@ object InterIm:
     else value
 
   def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
+      min: Int,
       value: Int,
       max: Int
   ): Component[Int] =
     val sliderArea    = skin.sliderArea(area)
     val sliderSize    = skin.sliderSize
+    val range         = max - min
     val (hot, active) = setHotActive(id, sliderArea)
-    skin.renderSlider(area, value, max, hot, active)
+    val clampedValue  = math.max(min, math.min(value, max))
+    skin.renderSlider(area, min, clampedValue, max, hot, active)
     if (active)
       if (area.w > area.h)
         val mousePos = summon[InputState].mouseX - sliderArea.x - sliderSize / 2
         val maxPos   = sliderArea.w - sliderSize
-        math.max(0, math.min((mousePos * max) / maxPos, max))
+        math.max(min, math.min(min + (mousePos * range) / maxPos, max))
       else
         val mousePos = summon[InputState].mouseY - sliderArea.y - sliderSize / 2
         val maxPos   = sliderArea.h - sliderSize
-        math.max(0, math.min((mousePos * max) / maxPos, max))
+        math.max(min, math.min((mousePos * range) / maxPos, max))
     else value
