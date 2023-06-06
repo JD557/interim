@@ -15,7 +15,8 @@ object CheckboxSkin:
       checkColor: Color = Color(32, 27, 33)
   ) extends CheckboxSkin:
     def checkboxArea(area: Rect): Rect =
-      area
+      val smallSide = math.min(area.w, area.h)
+      area.copy(w = smallSide, h = smallSide)
     def renderCheckbox(area: Rect, value: Boolean, hot: Boolean, active: Boolean)(implicit uiState: UiState): Unit =
       val checkboxArea = this.checkboxArea(area)
       (hot, active) match
