@@ -30,10 +30,8 @@ trait Components:
     if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
     else value
 
-  final def slider(id: ItemId, area: Rect, skin: SliderSkin = SliderSkin.Default())(
-      min: Int,
-      value: Int,
-      max: Int
+  final def slider(id: ItemId, area: Rect, min: Int, max: Int, skin: SliderSkin = SliderSkin.Default())(
+      value: Int
   ): Component[Int] =
     val sliderArea   = skin.sliderArea(area)
     val sliderSize   = skin.sliderSize
