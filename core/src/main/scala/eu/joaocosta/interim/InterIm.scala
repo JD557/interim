@@ -9,6 +9,7 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     // prepare
     uiState.ops.clear()
     uiState.hotItem = None
+    if (inputState.mouseDown) uiState.keyboardFocusItem = None
     // run
     given is: InputState = inputState
     given us: UiState    = uiState

@@ -21,11 +21,11 @@ object CheckboxSkin:
     def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit =
       val checkboxArea = this.checkboxArea(area)
       itemStatus match
-        case UiState.ItemStatus(false, false) =>
+        case UiState.ItemStatus(false, false, _) =>
           rectangle(checkboxArea, inactiveColor)
-        case UiState.ItemStatus(true, false) =>
+        case UiState.ItemStatus(true, false, _) =>
           rectangle(checkboxArea, hotColor)
-        case UiState.ItemStatus(_, true) =>
+        case UiState.ItemStatus(_, true, _) =>
           rectangle(checkboxArea, activeColor)
       if (value)
         rectangle(

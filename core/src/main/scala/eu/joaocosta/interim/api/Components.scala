@@ -51,3 +51,12 @@ trait Components:
         val maxPos   = sliderArea.h - sliderSize
         math.max(min, math.min((mousePos * range) / maxPos, max))
     else value
+
+  final def textInput(id: ItemId, area: Rect, skin: TextInputSkin = TextInputSkin.Default())(
+      value: String
+  ): Component[String] =
+    val textInputArea = skin.textInputArea(area)
+    val itemStatus    = UiState.registerItem(id, textInputArea)
+    skin.renderTextInput(area, value, itemStatus)
+    if (itemStatus.keyboardFocus) summon[InputState].appendKeyboardInput(value)
+    else value
