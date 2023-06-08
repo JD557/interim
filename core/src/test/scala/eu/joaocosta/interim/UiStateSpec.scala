@@ -2,8 +2,8 @@ package eu.joaocosta.interim
 
 import scala.collection.mutable
 
-class UiStateSpec extends munit.FunSuite {
-  test("registerItem should not mark an item not under the cursor") {
+class UiStateSpec extends munit.FunSuite:
+  test("registerItem should not mark an item not under the cursor"):
     implicit val uiState    = new UiState()
     implicit val inputState = InputState(0, 0, false, "")
     val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
@@ -13,9 +13,8 @@ class UiStateSpec extends munit.FunSuite {
     assertEquals(uiState.hotItem, None)
     assertEquals(uiState.activeItem, None)
     assertEquals(uiState.keyboardFocusItem, None)
-  }
 
-  test("registerItem should mark an item under the cursor as hot") {
+  test("registerItem should mark an item under the cursor as hot"):
     implicit val uiState    = new UiState()
     implicit val inputState = InputState(5, 5, false, "")
     val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
@@ -25,9 +24,8 @@ class UiStateSpec extends munit.FunSuite {
     assertEquals(uiState.hotItem, Some(1))
     assertEquals(uiState.activeItem, None)
     assertEquals(uiState.keyboardFocusItem, None)
-  }
 
-  test("registerItem should mark a clicked item as active and focused") {
+  test("registerItem should mark a clicked item as active and focused"):
     implicit val uiState    = new UiState()
     implicit val inputState = InputState(5, 5, true, "")
     val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
@@ -37,9 +35,8 @@ class UiStateSpec extends munit.FunSuite {
     assertEquals(uiState.hotItem, Some(1))
     assertEquals(uiState.activeItem, Some(1))
     assertEquals(uiState.keyboardFocusItem, Some(1))
-  }
 
-  test("registerItem should not override an active item with another one") {
+  test("registerItem should not override an active item with another one"):
     val uiState     = new UiState()
     val inputState1 = InputState(5, 5, true, "")
     UiState.registerItem(1, Rect(1, 1, 10, 10))(uiState, inputState1)
@@ -52,5 +49,3 @@ class UiStateSpec extends munit.FunSuite {
     assertEquals(uiState.hotItem, Some(2))
     assertEquals(uiState.activeItem, Some(1))
     assertEquals(uiState.keyboardFocusItem, Some(1))
-  }
-}
