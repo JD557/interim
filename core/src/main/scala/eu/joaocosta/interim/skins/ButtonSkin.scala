@@ -6,7 +6,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
-  def renderButton(area: Rect, text: String, fontSize: Int, itemStatus: UiState.ItemStatus)(implicit
+  def renderButton(area: Rect, label: Option[(String, Int)], itemStatus: UiState.ItemStatus)(implicit
       uiState: UiState
   ): Unit
 
@@ -22,10 +22,11 @@ object ButtonSkin:
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
-    def renderButton(area: Rect, label: String, fontSize: Int, itemStatus: UiState.ItemStatus)(implicit
+    def renderButton(area: Rect, label: Option[(String, Int)], itemStatus: UiState.ItemStatus)(implicit
         uiState: UiState
     ): Unit =
-      val buttonArea = this.buttonArea(area)
+      val buttonArea  = this.buttonArea(area)
+      val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
       rectangle(
         buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
@@ -33,14 +34,16 @@ object ButtonSkin:
       itemStatus match
         case UiState.ItemStatus(false, false, _) =>
           rectangle(buttonArea, inactiveColor)
-          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, false, _) =>
           rectangle(buttonArea, hotColor)
-          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(false, true, _) =>
           rectangle(buttonArea, activeColor)
-          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, true, _) =>
-          val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
           rectangle(clickedArea, activeColor)
-          text(clickedArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+      label.foreach { case (labelText, fontSize) =>
+        itemStatus match
+          case UiState.ItemStatus(true, true, _) =>
+            text(clickedArea, textColor, labelText, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+          case _ =>
+            text(buttonArea, textColor, labelText, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+      }

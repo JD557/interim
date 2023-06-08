@@ -12,13 +12,12 @@ trait Components:
   final def button(
       id: ItemId,
       area: Rect,
-      label: String = "",
-      fontSize: Int = 8,
+      label: Option[(String, Int)] = None,
       skin: ButtonSkin = ButtonSkin.Default()
   ): Component[Boolean] =
     val buttonArea = skin.buttonArea(area)
     val itemStatus = UiState.registerItem(id, buttonArea)
-    skin.renderButton(area, label, fontSize, itemStatus)
+    skin.renderButton(area, label, itemStatus)
     itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
   final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
