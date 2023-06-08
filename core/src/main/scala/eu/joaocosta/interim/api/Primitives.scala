@@ -11,13 +11,16 @@ trait Primitives:
 
   final def text(
       area: Rect,
+      color: Color,
       text: String,
       fontSize: Int,
-      color: Color,
       horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Left,
       verticalAlignment: VerticalAlignment = VerticalAlignment.Top
   )(implicit
       uiState: UiState
   ): Unit =
     if (text.nonEmpty)
-      uiState.ops.addOne(RenderOp.DrawText(area, text, fontSize, color, horizontalAlignment, verticalAlignment))
+      uiState.ops.addOne(RenderOp.DrawText(area, color, text, fontSize, horizontalAlignment, verticalAlignment))
+
+  final def custom[T](area: Rect, color: Color, data: T)(implicit uiState: UiState): Unit =
+    uiState.ops.addOne(RenderOp.Custom(area, color, data))

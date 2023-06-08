@@ -29,18 +29,18 @@ object ButtonSkin:
       rectangle(
         buttonArea.move(dx = shadowDelta, dy = shadowDelta),
         shadowColor
-      ) // Shadow
+      )
       itemStatus match
         case UiState.ItemStatus(false, false, _) =>
           rectangle(buttonArea, inactiveColor)
-          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, false, _) =>
           rectangle(buttonArea, hotColor)
-          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(false, true, _) =>
           rectangle(buttonArea, activeColor)
-          text(buttonArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case UiState.ItemStatus(true, true, _) =>
           val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
           rectangle(clickedArea, activeColor)
-          text(clickedArea, label, fontSize, textColor, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(clickedArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)

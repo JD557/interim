@@ -32,9 +32,9 @@ object TextInputSkin:
           rectangle(textInputArea, inactiveColor)
       text(
         textInputArea.shrink(padding),
+        textColor,
         value,
         fontSize,
-        textColor,
         TextLayout.HorizontalAlignment.Left,
         TextLayout.VerticalAlignment.Center
       )

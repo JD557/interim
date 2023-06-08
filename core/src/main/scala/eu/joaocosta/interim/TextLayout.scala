@@ -63,5 +63,5 @@ object TextLayout:
               w = width,
               h = textOp.fontSize
             )
-            layout(cs, dx + width, dy, RenderOp.DrawChar(charArea, char, textOp.color) :: lineAcc, textAcc)
+            layout(cs, dx + width, dy, RenderOp.DrawChar(charArea, textOp.color, char) :: lineAcc, textAcc)
     layout(textOp.text.toList, 0, 0, Nil, Nil)

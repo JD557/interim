@@ -4,15 +4,16 @@ enum RenderOp:
   case DrawRect(area: Rect, color: Color)
   case DrawText(
       area: Rect,
+      color: Color,
       text: String,
       fontSize: Int,
-      color: Color,
       horizontalAlignment: TextLayout.HorizontalAlignment,
       verticalAlignment: TextLayout.VerticalAlignment
   )
+  case Custom[T](area: Rect, color: Color, data: T)
 
 object RenderOp:
-  final case class DrawChar(area: Rect, char: Char, color: Color)
+  final case class DrawChar(area: Rect, color: Color, char: Char)
 
   extension (textOp: DrawText)
     def asDrawChars(
