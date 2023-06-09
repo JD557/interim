@@ -74,3 +74,23 @@ trait Components:
     skin.renderTextInput(area, value, itemStatus)
     if (itemStatus.keyboardFocus) summon[InputState].appendKeyboardInput(value)
     else value
+
+  /** Draggable handle. Returns the moved area.
+    *
+    *  It's important that this element moves along with the moved area.
+    */
+  final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.Default())(
+      value: Rect
+  ): Component[Rect] =
+    val handleArea = skin.handleArea(area)
+    val itemStatus = UiState.registerItem(id, handleArea)
+    skin.renderHandle(area, value, itemStatus)
+    if (itemStatus.active)
+      val handleCenterX = handleArea.x + handleArea.w / 2
+      val handleCenterY = handleArea.y + handleArea.h / 2
+      val mouseX        = summon[InputState].mouseX
+      val mouseY        = summon[InputState].mouseY
+      val deltaX        = mouseX - handleCenterX
+      val deltaY        = mouseY - handleCenterY
+      value.move(deltaX, deltaY)
+    else value
