@@ -3,12 +3,20 @@ package eu.joaocosta.interim.api
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
+/** Object containing the default components.
+  *
+  * By convention, all components are functions in the form `def component(id, area, ...params, skin)(value): Value`.
+  */
 object Components extends Components
 
 trait Components:
 
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
 
+  /** Button component. Returns true if it's being clicked, false otherwise.
+    *
+    * @param label optional text label (and font size in px) to show on this button
+    */
   final def button(
       id: ItemId,
       area: Rect,
@@ -20,6 +28,8 @@ trait Components:
     skin.renderButton(area, label, itemStatus)
     itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
+  /** Checkbox component. Returns true if it's enabled, false otherwise.
+    */
   final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.Default())(
       value: Boolean
   ): Component[Boolean] =
@@ -29,6 +39,11 @@ trait Components:
     if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
     else value
 
+  /** Slider component. Returns the current position of the slider, between min and max.
+    *
+    * @param min minimum value for this slider
+    * @param max maximum value fr this slider
+    */
   final def slider(id: ItemId, area: Rect, min: Int, max: Int, skin: SliderSkin = SliderSkin.Default())(
       value: Int
   ): Component[Int] =
@@ -49,6 +64,8 @@ trait Components:
         math.max(min, math.min((mousePos * range) / maxPos, max))
     else value
 
+  /** Text input component. Returns the current string inputed.
+    */
   final def textInput(id: ItemId, area: Rect, skin: TextInputSkin = TextInputSkin.Default())(
       value: String
   ): Component[String] =

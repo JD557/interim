@@ -2,9 +2,15 @@ package eu.joaocosta.interim
 
 import scala.annotation.alpha
 
+/** Identifier of an item. Should be unique for each item.
+  *
+  * Can be either a Int, a String, or a sequence of that (which is especially useful for composite components).
+  */
 type ItemId = (Int | String) | List[(Int | String)]
 
 object ItemId:
+  /** Helper method to convert an ItemId into a List
+    */
   extension (itemId: ItemId)
     def toIdList: List[(Int | String)] =
       itemId match {
@@ -13,6 +19,8 @@ object ItemId:
         case list: List[(Int | String)] => list
       }
 
+  /** Operator to add a child to an item id. Useful for composite components.
+    */
   extension (parentId: ItemId)
     @alpha("addChild")
     def |>(childId: ItemId): ItemId =

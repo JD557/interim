@@ -2,6 +2,8 @@ package eu.joaocosta.interim.api
 
 import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
 
+/** Object containing some aliases for some constants.
+  */
 object Constants extends Constants
 
 trait Constants:
