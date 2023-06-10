@@ -15,11 +15,11 @@ object ButtonSkin:
       shadowDelta: Int = 4,
       clickDelta: Int = 2,
       fontSize: Int = 8,
-      shadowColor: Color = Color(32, 27, 33),
-      textColor: Color = Color(32, 27, 33),
-      inactiveColor: Color = Color(37, 199, 238),
-      hotColor: Color = Color(123, 228, 255),
-      activeColor: Color = Color(123, 228, 255)
+      shadowColor: Color = ColorScheme.black,
+      textColor: Color = ColorScheme.black,
+      inactiveColor: Color = ColorScheme.lightPrimary,
+      hotColor: Color = ColorScheme.lightPrimaryHighlight,
+      activeColor: Color = ColorScheme.lightPrimaryHighlight
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)

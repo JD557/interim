@@ -14,9 +14,9 @@ trait WindowSkin:
 object WindowSkin:
   final case class Default(
       fontSize: Int = 8,
-      textColor: Color = Color(32, 27, 33),
-      panelColor: Color = Color(246, 247, 251),
-      titleColor: Color = Color(213, 212, 207)
+      textColor: Color = ColorScheme.black,
+      panelColor: Color = ColorScheme.white,
+      titleColor: Color = ColorScheme.lightGray
   ) extends WindowSkin:
     def titleArea(area: Rect): Rect =
       area.copy(h = fontSize * 2)

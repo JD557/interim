@@ -10,10 +10,10 @@ trait CheckboxSkin:
 object CheckboxSkin:
   final case class Default(
       padding: Int = 4,
-      inactiveColor: Color = Color(213, 212, 207),
-      hotColor: Color = Color(37, 199, 238),
-      activeColor: Color = Color(123, 228, 255),
-      checkColor: Color = Color(32, 27, 33)
+      inactiveColor: Color = ColorScheme.lightGray,
+      hotColor: Color = ColorScheme.lightPrimary,
+      activeColor: Color = ColorScheme.lightPrimaryHighlight,
+      checkColor: Color = ColorScheme.black
   ) extends CheckboxSkin:
     def checkboxArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)

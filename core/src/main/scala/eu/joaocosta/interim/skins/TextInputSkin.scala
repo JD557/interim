@@ -12,11 +12,11 @@ object TextInputSkin:
       border: Int = 2,
       padding: Int = 4,
       fontSize: Int = 8,
-      inactiveColor: Color = Color(213, 212, 207),
-      hotColor: Color = Color(37, 199, 238),
-      activeColor: Color = Color(123, 228, 255),
-      borderColor: Color = Color(32, 27, 33),
-      textColor: Color = Color(32, 27, 33)
+      inactiveColor: Color = ColorScheme.lightGray,
+      hotColor: Color = ColorScheme.lightPrimary,
+      activeColor: Color = ColorScheme.lightPrimaryHighlight,
+      borderColor: Color = ColorScheme.black,
+      textColor: Color = ColorScheme.black
   ) extends TextInputSkin:
     def textInputArea(area: Rect): Rect =
       area.shrink(padding)

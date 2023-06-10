@@ -14,8 +14,8 @@ object SliderSkin:
   final case class Default(
       padding: Int = 8,
       val sliderSize: Int = 8,
-      scrollbarColor: Color = Color(213, 212, 207),
-      inactiveColor: Color = Color(37, 199, 238),
+      scrollbarColor: Color = ColorScheme.lightGray,
+      inactiveColor: Color = ColorScheme.lightPrimary,
       hotColor: Color = Color(123, 228, 255),
       activeColor: Color = Color(123, 228, 255)
   ) extends SliderSkin:

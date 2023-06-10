@@ -9,9 +9,9 @@ trait HandleSkin:
 
 object HandleSkin:
   final case class Default(
-      inactiveColor: Color = Color(32, 27, 33),
-      hotColor: Color = Color(32, 27, 33),
-      activeColor: Color = Color(123, 228, 255)
+      inactiveColor: Color = ColorScheme.black,
+      hotColor: Color = ColorScheme.black,
+      activeColor: Color = ColorScheme.lightPrimaryHighlight
   ) extends HandleSkin:
     def handleArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
