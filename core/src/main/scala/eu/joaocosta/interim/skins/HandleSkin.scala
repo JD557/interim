@@ -7,7 +7,7 @@ trait HandleSkin:
   def handleArea(area: Rect): Rect
   def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object HandleSkin:
+object HandleSkin extends DefaultSkin[HandleSkin]:
   final case class Default(
       inactiveColor: Color,
       hotColor: Color,

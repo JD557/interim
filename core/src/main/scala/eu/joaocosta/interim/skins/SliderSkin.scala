@@ -10,7 +10,7 @@ trait SliderSkin:
       uiState: UiState
   ): Unit
 
-object SliderSkin:
+object SliderSkin extends DefaultSkin[SliderSkin]:
   final case class Default(
       padding: Int,
       sliderSize: Int,

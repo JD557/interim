@@ -21,7 +21,7 @@ trait Components:
       id: ItemId,
       area: Rect,
       label: String,
-      skin: ButtonSkin = ButtonSkin.lightDefault
+      skin: ButtonSkin = ButtonSkin.default()
   ): Component[Boolean] =
     val buttonArea = skin.buttonArea(area)
     val itemStatus = UiState.registerItem(id, buttonArea)
@@ -30,7 +30,7 @@ trait Components:
 
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */
-  final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.lightDefault)(
+  final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.default())(
       value: Boolean
   ): Component[Boolean] =
     val checkboxArea = skin.checkboxArea(area)
@@ -44,7 +44,7 @@ trait Components:
     * @param min minimum value for this slider
     * @param max maximum value fr this slider
     */
-  final def slider(id: ItemId, area: Rect, min: Int, max: Int, skin: SliderSkin = SliderSkin.lightDefault)(
+  final def slider(id: ItemId, area: Rect, min: Int, max: Int, skin: SliderSkin = SliderSkin.default())(
       value: Int
   ): Component[Int] =
     val sliderArea   = skin.sliderArea(area)
@@ -66,7 +66,7 @@ trait Components:
 
   /** Text input component. Returns the current string inputed.
     */
-  final def textInput(id: ItemId, area: Rect, skin: TextInputSkin = TextInputSkin.lightDefault)(
+  final def textInput(id: ItemId, area: Rect, skin: TextInputSkin = TextInputSkin.default())(
       value: String
   ): Component[String] =
     val textInputArea = skin.textInputArea(area)
@@ -82,7 +82,7 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.lightDefault)(
+  final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default())(
       value: Rect
   ): Component[Rect] =
     val handleArea = skin.handleArea(area)

@@ -7,7 +7,7 @@ trait TextInputSkin:
   def textInputArea(area: Rect): Rect
   def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object TextInputSkin:
+object TextInputSkin extends DefaultSkin[TextInputSkin]:
   final case class Default(
       border: Int,
       fontSize: Int,

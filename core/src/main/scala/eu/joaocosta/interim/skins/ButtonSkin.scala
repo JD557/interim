@@ -10,7 +10,7 @@ trait ButtonSkin:
       uiState: UiState
   ): Unit
 
-object ButtonSkin:
+object ButtonSkin extends DefaultSkin[ButtonSkin]:
   final case class Default(
       shadowDelta: Int,
       clickDelta: Int,

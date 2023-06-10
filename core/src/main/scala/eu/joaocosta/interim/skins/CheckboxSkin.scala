@@ -7,7 +7,7 @@ trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
   def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object CheckboxSkin:
+object CheckboxSkin extends DefaultSkin[CheckboxSkin]:
   final case class Default(
       padding: Int,
       inactiveColor: Color,

@@ -11,7 +11,7 @@ trait WindowSkin:
   def panelArea(area: Rect): Rect
   def renderWindow(area: Rect, title: String)(implicit uiState: UiState): Unit
 
-object WindowSkin:
+object WindowSkin extends DefaultSkin[WindowSkin]:
   final case class Default(
       fontSize: Int,
       textColor: Color,
