@@ -1,7 +1,5 @@
 package eu.joaocosta.interim
 
-import scala.collection.mutable
-
 class UiStateSpec extends munit.FunSuite:
   test("registerItem should not mark an item not under the cursor"):
     implicit val uiState    = new UiState()
