@@ -15,12 +15,12 @@ trait Components:
 
   /** Button component. Returns true if it's being clicked, false otherwise.
     *
-    * @param label optional text label (and font size in px) to show on this button
+    * @param label text label to show on this button
     */
   final def button(
       id: ItemId,
       area: Rect,
-      label: Option[(String, Int)] = None,
+      label: String,
       skin: ButtonSkin = ButtonSkin.Default()
   ): Component[Boolean] =
     val buttonArea = skin.buttonArea(area)

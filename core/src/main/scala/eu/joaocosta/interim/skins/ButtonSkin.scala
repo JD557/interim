@@ -6,7 +6,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
-  def renderButton(area: Rect, label: Option[(String, Int)], itemStatus: UiState.ItemStatus)(implicit
+  def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(implicit
       uiState: UiState
   ): Unit
 
@@ -14,6 +14,7 @@ object ButtonSkin:
   final case class Default(
       shadowDelta: Int = 4,
       clickDelta: Int = 2,
+      fontSize: Int = 8,
       shadowColor: Color = Color(32, 27, 33),
       textColor: Color = Color(32, 27, 33),
       inactiveColor: Color = Color(37, 199, 238),
@@ -22,7 +23,7 @@ object ButtonSkin:
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
-    def renderButton(area: Rect, label: Option[(String, Int)], itemStatus: UiState.ItemStatus)(implicit
+    def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(implicit
         uiState: UiState
     ): Unit =
       val buttonArea  = this.buttonArea(area)
@@ -40,10 +41,8 @@ object ButtonSkin:
           rectangle(buttonArea, activeColor)
         case UiState.ItemStatus(true, true, _) =>
           rectangle(clickedArea, activeColor)
-      label.foreach { case (labelText, fontSize) =>
-        itemStatus match
-          case UiState.ItemStatus(true, true, _) =>
-            text(clickedArea, textColor, labelText, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
-          case _ =>
-            text(buttonArea, textColor, labelText, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
-      }
+      itemStatus match
+        case UiState.ItemStatus(true, true, _) =>
+          text(clickedArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+        case _ =>
+          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
