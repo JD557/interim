@@ -12,12 +12,12 @@ trait SliderSkin:
 
 object SliderSkin:
   final case class Default(
-      padding: Int = 8,
-      val sliderSize: Int = 8,
-      scrollbarColor: Color = ColorScheme.lightGray,
-      inactiveColor: Color = ColorScheme.lightPrimary,
-      hotColor: Color = Color(123, 228, 255),
-      activeColor: Color = Color(123, 228, 255)
+      padding: Int,
+      sliderSize: Int,
+      scrollbarColor: Color,
+      inactiveColor: Color,
+      hotColor: Color,
+      activeColor: Color
   ) extends SliderSkin:
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
@@ -42,3 +42,12 @@ object SliderSkin:
           rectangle(sliderRect, hotColor)
         case _ =>
           rectangle(sliderRect, activeColor)
+
+  val lightDefault = Default(
+    padding = 8,
+    sliderSize = 8,
+    scrollbarColor = ColorScheme.lightGray,
+    inactiveColor = ColorScheme.lightPrimary,
+    hotColor = ColorScheme.lightPrimaryHighlight,
+    activeColor = ColorScheme.lightPrimaryHighlight
+  )

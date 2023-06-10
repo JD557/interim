@@ -13,10 +13,10 @@ trait WindowSkin:
 
 object WindowSkin:
   final case class Default(
-      fontSize: Int = 8,
-      textColor: Color = ColorScheme.black,
-      panelColor: Color = ColorScheme.white,
-      titleColor: Color = ColorScheme.lightGray
+      fontSize: Int,
+      textColor: Color,
+      panelColor: Color,
+      titleColor: Color
   ) extends WindowSkin:
     def titleArea(area: Rect): Rect =
       area.copy(h = fontSize * 2)
@@ -30,3 +30,10 @@ object WindowSkin:
       rectangle(titleArea, titleColor)
       text(titleArea, textColor, title, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
       rectangle(panelArea, panelColor)
+
+  val lightDefault = Default(
+    fontSize = 8,
+    textColor = ColorScheme.black,
+    panelColor = ColorScheme.white,
+    titleColor = ColorScheme.lightGray
+  )

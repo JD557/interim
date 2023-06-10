@@ -12,14 +12,14 @@ trait ButtonSkin:
 
 object ButtonSkin:
   final case class Default(
-      shadowDelta: Int = 4,
-      clickDelta: Int = 2,
-      fontSize: Int = 8,
-      shadowColor: Color = ColorScheme.black,
-      textColor: Color = ColorScheme.black,
-      inactiveColor: Color = ColorScheme.lightPrimary,
-      hotColor: Color = ColorScheme.lightPrimaryHighlight,
-      activeColor: Color = ColorScheme.lightPrimaryHighlight
+      shadowDelta: Int,
+      clickDelta: Int,
+      fontSize: Int,
+      shadowColor: Color,
+      textColor: Color,
+      inactiveColor: Color,
+      hotColor: Color,
+      activeColor: Color
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
@@ -46,3 +46,14 @@ object ButtonSkin:
           text(clickedArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
         case _ =>
           text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+
+  val lightDefault = Default(
+    shadowDelta = 4,
+    clickDelta = 2,
+    fontSize = 8,
+    shadowColor = ColorScheme.black,
+    textColor = ColorScheme.black,
+    inactiveColor = ColorScheme.lightPrimary,
+    hotColor = ColorScheme.lightPrimaryHighlight,
+    activeColor = ColorScheme.lightPrimaryHighlight
+  )

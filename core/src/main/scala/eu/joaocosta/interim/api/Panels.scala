@@ -33,8 +33,8 @@ trait Panels:
       area: Rect,
       title: String,
       movable: Boolean = false,
-      skin: WindowSkin = WindowSkin.Default(),
-      handleSkin: HandleSkin = HandleSkin.Default()
+      skin: WindowSkin = WindowSkin.lightDefault,
+      handleSkin: HandleSkin = HandleSkin.lightDefault
   )(
       body: Rect => T
   ): Components.Component[(T, Rect)] =

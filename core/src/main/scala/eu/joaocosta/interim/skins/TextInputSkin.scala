@@ -9,14 +9,14 @@ trait TextInputSkin:
 
 object TextInputSkin:
   final case class Default(
-      border: Int = 2,
-      padding: Int = 4,
-      fontSize: Int = 8,
-      inactiveColor: Color = ColorScheme.lightGray,
-      hotColor: Color = ColorScheme.lightPrimary,
-      activeColor: Color = ColorScheme.lightPrimaryHighlight,
-      borderColor: Color = ColorScheme.black,
-      textColor: Color = ColorScheme.black
+      border: Int,
+      padding: Int,
+      fontSize: Int,
+      inactiveColor: Color,
+      hotColor: Color,
+      activeColor: Color,
+      borderColor: Color,
+      textColor: Color
   ) extends TextInputSkin:
     def textInputArea(area: Rect): Rect =
       area.shrink(padding)
@@ -38,3 +38,14 @@ object TextInputSkin:
         TextLayout.HorizontalAlignment.Left,
         TextLayout.VerticalAlignment.Center
       )
+
+  val lightDefault = Default(
+    border = 2,
+    padding = 4,
+    fontSize = 8,
+    inactiveColor = ColorScheme.lightGray,
+    hotColor = ColorScheme.lightPrimary,
+    activeColor = ColorScheme.lightPrimaryHighlight,
+    borderColor = ColorScheme.black,
+    textColor = ColorScheme.black
+  )

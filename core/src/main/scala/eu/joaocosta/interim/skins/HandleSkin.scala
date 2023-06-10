@@ -9,9 +9,9 @@ trait HandleSkin:
 
 object HandleSkin:
   final case class Default(
-      inactiveColor: Color = ColorScheme.black,
-      hotColor: Color = ColorScheme.black,
-      activeColor: Color = ColorScheme.lightPrimaryHighlight
+      inactiveColor: Color,
+      hotColor: Color,
+      activeColor: Color
   ) extends HandleSkin:
     def handleArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
@@ -25,3 +25,9 @@ object HandleSkin:
           rectangle(handleArea, hotColor)
         case UiState.ItemStatus(_, true, _) =>
           rectangle(handleArea, activeColor)
+
+  val lightDefault = Default(
+    inactiveColor = ColorScheme.black,
+    hotColor = ColorScheme.black,
+    activeColor = ColorScheme.lightPrimaryHighlight
+  )
