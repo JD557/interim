@@ -77,7 +77,10 @@ trait Components:
 
   /** Draggable handle. Returns the moved area.
     *
-    *  It's important that this element moves along with the moved area.
+    * It's important that this element moves along with the moved area.
+    *
+    * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
+    * with movable = true.
     */
   final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.Default())(
       value: Rect
