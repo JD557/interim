@@ -34,6 +34,11 @@ object RenderOp:
     */
   final case class DrawChar(area: Rect, color: Color, char: Char)
 
+  /** Converts a DrawText operation into a sequence of simpler DrawChar operations.
+    *
+    * @param charWith function that, given a char, returns its width in pixels
+    * @param lineHeight line height to use, in pixels
+    */
   extension (textOp: DrawText)
     def asDrawChars(
         charWidth: Char => Int = _ => textOp.fontSize,
