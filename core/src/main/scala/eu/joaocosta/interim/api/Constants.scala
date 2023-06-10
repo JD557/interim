@@ -14,3 +14,5 @@ trait Constants:
   final val alignTop         = VerticalAlignment.Top
   final val centerVertically = VerticalAlignment.Center
   final val alignBottom      = VerticalAlignment.Bottom
+
+  final val maxSize = Int.MaxValue
