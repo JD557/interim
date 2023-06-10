@@ -23,16 +23,14 @@ ThisBuild / scalafixOnCompile := true
 
 def docSettings(projectName: String) = Seq(
   Compile / doc / scalacOptions ++= (
-    if (scalaBinaryVersion.value.startsWith("3"))
-      Seq(
-        "-project",
-        projectName,
-        "-project-version",
-        version.value,
-        "-social-links:" +
-          "github::https://github.com/JD557/interim"
-      )
-    else Seq()
+    Seq(
+      "-project",
+      projectName,
+      "-project-version",
+      version.value,
+      "-social-links:" +
+        "github::https://github.com/JD557/interim"
+    )
   )
 )
 
