@@ -1,0 +1,92 @@
+name: Compile and Test
+
+on: [push, pull_request]
+
+env:
+  CI: true # disables SBT super shell which has problems with CI environments
+
+jobs:
+  compile-lib:
+    name: Compile library and test
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        scala: ["3"]
+        platform: [JVM, JS, Native]
+
+    env:
+      PROJECT: core${{ matrix.platform != 'JVM' && matrix.platform || '' }}${{ matrix.scala }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8 and SBT
+      uses: actions/setup-java@v2
+      with:
+        distribution: temurin
+        java-version: 8
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
+    - name: Cache SBT ivy cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Compile (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+      run: sbt -J-Xmx3G -Dsbt.color=always $PROJECT/compile
+    - name: Install scala-native libraries
+      if: matrix.platform == 'native'
+      run: sudo apt-get update && sudo apt-get -y install libunwind-dev libre2-dev
+    - name: Compile tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+      run: sbt -J-Xmx3G -Dsbt.color=always $PROJECT/test:compile
+    - name: Run tests (Scala ${{ matrix.scala }} - ${{ matrix.platform }})
+      run: sbt -J-Xmx3G -Dsbt.color=always $PROJECT/test
+  compile-examples:
+    name: Compile examples
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8 and SBT
+      uses: actions/setup-java@v2
+      with:
+        distribution: temurin
+        java-version: 8
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
+    - name: Cache SBT ivy cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-sbt-ivy-cache-${{ hashFiles('**/build.sbt') }}
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Install Scala-CLI
+      run: |
+        curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
+        chmod +x scala-cli
+        sudo mv scala-cli /usr/local/bin/scala-cli
+    - name: Publish Local
+      run: sbt -J-Xmx3G -Dsbt.color=always publishLocal
+    - name: Compile examples (Snapshot)
+      run: |
+        cd examples/snapshot
+        ls | grep .md | xargs scala-cli compile example-minart-backend.scala
