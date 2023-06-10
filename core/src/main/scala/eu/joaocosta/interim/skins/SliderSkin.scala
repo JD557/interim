@@ -47,7 +47,16 @@ object SliderSkin:
     padding = 8,
     sliderSize = 8,
     scrollbarColor = ColorScheme.lightGray,
-    inactiveColor = ColorScheme.lightPrimary,
-    hotColor = ColorScheme.lightPrimaryHighlight,
+    inactiveColor = ColorScheme.darkGray,
+    hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight
+  )
+
+  val darkDefault = Default(
+    padding = 8,
+    sliderSize = 8,
+    scrollbarColor = ColorScheme.darkGray,
+    inactiveColor = ColorScheme.lightGray,
+    hotColor = ColorScheme.darkPrimary,
+    activeColor = ColorScheme.darkPrimaryHighlight
   )

@@ -22,7 +22,7 @@ object ButtonSkin:
       activeColor: Color
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
-      area.copy(w = area.w - shadowDelta, h = area.h - shadowDelta)
+      area.copy(w = area.w - math.max(shadowDelta, clickDelta), h = area.h - math.max(shadowDelta, clickDelta))
     def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(implicit
         uiState: UiState
     ): Unit =
@@ -51,9 +51,20 @@ object ButtonSkin:
     shadowDelta = 4,
     clickDelta = 2,
     fontSize = 8,
-    shadowColor = ColorScheme.black,
+    shadowColor = ColorScheme.darkGray,
     textColor = ColorScheme.black,
     inactiveColor = ColorScheme.lightPrimary,
     hotColor = ColorScheme.lightPrimaryHighlight,
     activeColor = ColorScheme.lightPrimaryHighlight
+  )
+
+  val darkDefault = Default(
+    shadowDelta = 0,
+    clickDelta = 2,
+    fontSize = 8,
+    shadowColor = ColorScheme.black,
+    textColor = ColorScheme.white,
+    inactiveColor = ColorScheme.darkPrimary,
+    hotColor = ColorScheme.darkPrimaryHighlight,
+    activeColor = ColorScheme.darkPrimaryHighlight
   )

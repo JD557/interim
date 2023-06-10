@@ -10,28 +10,27 @@ trait TextInputSkin:
 object TextInputSkin:
   final case class Default(
       border: Int,
-      padding: Int,
       fontSize: Int,
       inactiveColor: Color,
       hotColor: Color,
       activeColor: Color,
-      borderColor: Color,
+      textAreaColor: Color,
       textColor: Color
   ) extends TextInputSkin:
     def textInputArea(area: Rect): Rect =
-      area.shrink(padding)
+      area.shrink(border)
     def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit =
       val textInputArea = this.textInputArea(area)
-      rectangle(area, borderColor)
       itemStatus match
         case UiState.ItemStatus(_, _, true) | UiState.ItemStatus(_, true, _) =>
-          rectangle(textInputArea, activeColor)
+          rectangle(area, activeColor)
         case UiState.ItemStatus(true, _, _) =>
-          rectangle(textInputArea, hotColor)
+          rectangle(area, hotColor)
         case UiState.ItemStatus(_, _, _) =>
-          rectangle(textInputArea, inactiveColor)
+          rectangle(area, inactiveColor)
+      rectangle(textInputArea, textAreaColor)
       text(
-        textInputArea.shrink(padding),
+        textInputArea.shrink(border),
         textColor,
         value,
         fontSize,
@@ -40,12 +39,21 @@ object TextInputSkin:
       )
 
   val lightDefault = Default(
-    border = 2,
-    padding = 4,
+    border = 4,
     fontSize = 8,
-    inactiveColor = ColorScheme.lightGray,
+    inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight,
-    borderColor = ColorScheme.black,
+    textAreaColor = ColorScheme.lightGray,
     textColor = ColorScheme.black
+  )
+
+  val darkDefault = Default(
+    border = 4,
+    fontSize = 8,
+    inactiveColor = ColorScheme.lightGray,
+    hotColor = ColorScheme.darkPrimary,
+    activeColor = ColorScheme.darkPrimaryHighlight,
+    textAreaColor = ColorScheme.darkGray,
+    textColor = ColorScheme.white
   )

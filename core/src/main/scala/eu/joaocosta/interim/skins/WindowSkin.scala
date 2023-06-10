@@ -37,3 +37,10 @@ object WindowSkin:
     panelColor = ColorScheme.white,
     titleColor = ColorScheme.lightGray
   )
+
+  val darkDefault = Default(
+    fontSize = 8,
+    textColor = ColorScheme.white,
+    panelColor = ColorScheme.black,
+    titleColor = ColorScheme.darkGray
+  )

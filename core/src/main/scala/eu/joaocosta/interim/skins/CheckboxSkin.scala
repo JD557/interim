@@ -40,3 +40,11 @@ object CheckboxSkin:
     activeColor = ColorScheme.lightPrimaryHighlight,
     checkColor = ColorScheme.black
   )
+
+  val darkDefault = Default(
+    padding = 4,
+    inactiveColor = ColorScheme.darkGray,
+    hotColor = ColorScheme.darkPrimary,
+    activeColor = ColorScheme.darkPrimaryHighlight,
+    checkColor = ColorScheme.white
+  )

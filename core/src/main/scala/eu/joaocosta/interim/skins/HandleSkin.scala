@@ -28,6 +28,12 @@ object HandleSkin:
 
   val lightDefault = Default(
     inactiveColor = ColorScheme.black,
-    hotColor = ColorScheme.black,
+    hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight
+  )
+
+  val darkDefault = Default(
+    inactiveColor = ColorScheme.white,
+    hotColor = ColorScheme.darkPrimary,
+    activeColor = ColorScheme.darkPrimaryHighlight
   )
