@@ -59,7 +59,8 @@ def application(inputState: InputState) =
         text = counter.toString,
         fontSize = 8,
         horizontalAlignment = centerHorizontally,
-        verticalAlignment = centerVertically)
+        verticalAlignment = centerVertically
+      )
       if (button(id = "plus", area = column(2), label = "+"))
         counter = counter + 1
     }
@@ -97,6 +98,7 @@ def dynamicApp(inputState: InputState) =
         text = counter.toString,
         fontSize = 8,
         horizontalAlignment = centerHorizontally,
-        verticalAlignment = centerVertically)
+        verticalAlignment = centerVertically
+      )
     }
 ```

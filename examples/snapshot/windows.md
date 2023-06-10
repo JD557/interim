@@ -35,7 +35,7 @@ import eu.joaocosta.interim.*
 val uiState = new UiState()
 
 var windowArea = Rect(x = 10, y = 10, w = 110, h = 50)
-var counter = 0
+var counter    = 0
 
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
@@ -50,7 +50,8 @@ def application(inputState: InputState) =
           text = counter.toString,
           fontSize = 8,
           horizontalAlignment = centerHorizontally,
-          verticalAlignment = centerVertically)
+          verticalAlignment = centerVertically
+        )
         if (button(id = "plus", area = column(2), label = "+"))
           counter = counter + 1
       }

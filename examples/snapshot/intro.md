@@ -62,7 +62,8 @@ def application(inputState: InputState) =
       text = counter.toString,
       fontSize = 8,
       horizontalAlignment = centerHorizontally,
-      verticalAlignment = centerVertically)
+      verticalAlignment = centerVertically
+    )
     if (button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"))
       counter = counter + 1
 ```
@@ -133,7 +134,8 @@ def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
       text = counter.toString,
       fontSize = 8,
       horizontalAlignment = centerHorizontally,
-      verticalAlignment = centerVertically)
+      verticalAlignment = centerVertically
+    )
     val incrementCounter = button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
     if (decrementCounter && !incrementCounter) counter - 1
     else if (!decrementCounter && incrementCounter) counter + 1
@@ -158,7 +160,8 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
       text = counter.toString,
       fontSize = 8,
       horizontalAlignment = centerHorizontally,
-      verticalAlignment = centerVertically)
+      verticalAlignment = centerVertically
+    )
     if (button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"))
       _counter = counter + 1
     _counter
