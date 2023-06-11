@@ -50,3 +50,22 @@ lazy val core = (projectMatrix in file("core"))
   .jvmPlatform(scalaVersions = Seq("3.3.0"))
   .jsPlatform(scalaVersions = Seq("3.3.0"))
   .nativePlatform(scalaVersions = Seq("3.3.0"))
+
+releaseCrossBuild    := true
+releaseTagComment    := s"Release ${(ThisBuild / version).value}"
+releaseCommitMessage := s"Set version to ${(ThisBuild / version).value}"
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
