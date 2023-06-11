@@ -10,7 +10,7 @@ trait ButtonSkin:
       uiState: UiState
   ): Unit
 
-object ButtonSkin extends DefaultSkin[ButtonSkin]:
+object ButtonSkin extends DefaultSkin:
   final case class Default(
       shadowDelta: Int,
       clickDelta: Int,
@@ -47,7 +47,7 @@ object ButtonSkin extends DefaultSkin[ButtonSkin]:
         case _ =>
           text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     shadowDelta = 4,
     clickDelta = 2,
     fontSize = 8,
@@ -58,7 +58,7 @@ object ButtonSkin extends DefaultSkin[ButtonSkin]:
     activeColor = ColorScheme.lightPrimaryHighlight
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     shadowDelta = 0,
     clickDelta = 2,
     fontSize = 8,

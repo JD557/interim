@@ -7,7 +7,7 @@ trait TextInputSkin:
   def textInputArea(area: Rect): Rect
   def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object TextInputSkin extends DefaultSkin[TextInputSkin]:
+object TextInputSkin extends DefaultSkin:
   final case class Default(
       border: Int,
       fontSize: Int,
@@ -38,7 +38,7 @@ object TextInputSkin extends DefaultSkin[TextInputSkin]:
         TextLayout.VerticalAlignment.Center
       )
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     border = 4,
     fontSize = 8,
     inactiveColor = ColorScheme.darkGray,
@@ -48,7 +48,7 @@ object TextInputSkin extends DefaultSkin[TextInputSkin]:
     textColor = ColorScheme.black
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     border = 4,
     fontSize = 8,
     inactiveColor = ColorScheme.lightGray,

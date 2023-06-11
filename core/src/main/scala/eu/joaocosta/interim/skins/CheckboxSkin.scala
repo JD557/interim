@@ -7,7 +7,7 @@ trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
   def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object CheckboxSkin extends DefaultSkin[CheckboxSkin]:
+object CheckboxSkin extends DefaultSkin:
   final case class Default(
       padding: Int,
       inactiveColor: Color,
@@ -33,7 +33,7 @@ object CheckboxSkin extends DefaultSkin[CheckboxSkin]:
           checkColor
         )
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     padding = 4,
     inactiveColor = ColorScheme.lightGray,
     hotColor = ColorScheme.lightPrimary,
@@ -41,7 +41,7 @@ object CheckboxSkin extends DefaultSkin[CheckboxSkin]:
     checkColor = ColorScheme.black
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     padding = 4,
     inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.darkPrimary,

@@ -11,7 +11,7 @@ trait WindowSkin:
   def panelArea(area: Rect): Rect
   def renderWindow(area: Rect, title: String)(implicit uiState: UiState): Unit
 
-object WindowSkin extends DefaultSkin[WindowSkin]:
+object WindowSkin extends DefaultSkin:
   final case class Default(
       fontSize: Int,
       textColor: Color,
@@ -31,14 +31,14 @@ object WindowSkin extends DefaultSkin[WindowSkin]:
       text(titleArea, textColor, title, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
       rectangle(panelArea, panelColor)
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     fontSize = 8,
     textColor = ColorScheme.black,
     panelColor = ColorScheme.white,
     titleColor = ColorScheme.lightGray
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     fontSize = 8,
     textColor = ColorScheme.white,
     panelColor = ColorScheme.black,

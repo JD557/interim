@@ -7,7 +7,7 @@ trait HandleSkin:
   def handleArea(area: Rect): Rect
   def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
 
-object HandleSkin extends DefaultSkin[HandleSkin]:
+object HandleSkin extends DefaultSkin:
   final case class Default(
       inactiveColor: Color,
       hotColor: Color,
@@ -26,13 +26,13 @@ object HandleSkin extends DefaultSkin[HandleSkin]:
         case UiState.ItemStatus(_, true, _) =>
           rectangle(handleArea, activeColor)
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     inactiveColor = ColorScheme.black,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     inactiveColor = ColorScheme.white,
     hotColor = ColorScheme.darkPrimary,
     activeColor = ColorScheme.darkPrimaryHighlight
