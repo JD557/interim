@@ -2,10 +2,12 @@ package eu.joaocosta.interim.skins
 
 /** Default Skin companion object. Includes both a light and dark mode.
   */
-trait DefaultSkin[Skin]:
-  def default(): Skin =
+trait DefaultSkin:
+  type Default
+
+  def default(): Default =
     if (ColorScheme.lightModeEnabled()) lightDefault
     else darkDefault
 
-  def lightDefault: Skin
-  def darkDefault: Skin
+  def lightDefault: Default
+  def darkDefault: Default

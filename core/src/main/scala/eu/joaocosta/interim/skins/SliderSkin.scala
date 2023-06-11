@@ -10,7 +10,7 @@ trait SliderSkin:
       uiState: UiState
   ): Unit
 
-object SliderSkin extends DefaultSkin[SliderSkin]:
+object SliderSkin extends DefaultSkin:
   final case class Default(
       padding: Int,
       sliderSize: Int,
@@ -43,7 +43,7 @@ object SliderSkin extends DefaultSkin[SliderSkin]:
         case _ =>
           rectangle(sliderRect, activeColor)
 
-  val lightDefault = Default(
+  val lightDefault: Default = Default(
     padding = 8,
     sliderSize = 8,
     scrollbarColor = ColorScheme.lightGray,
@@ -52,7 +52,7 @@ object SliderSkin extends DefaultSkin[SliderSkin]:
     activeColor = ColorScheme.lightPrimaryHighlight
   )
 
-  val darkDefault = Default(
+  val darkDefault: Default = Default(
     padding = 8,
     sliderSize = 8,
     scrollbarColor = ColorScheme.darkGray,
