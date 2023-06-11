@@ -1,6 +1,7 @@
 # InterIm
 
 ![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/eu.joaocosta/interim_3?server=https%3A%2F%2Foss.sonatype.org)
+ [![scaladoc](https://javadoc.io/badge2/eu.joaocosta/interim_3/javadoc.svg)](https://javadoc.io/doc/eu.joaocosta/interim_3)
 
 InterIm is an [Immediate mode GUI](https://en.wikipedia.org/wiki/Immediate_mode_GUI) library in pure Scala (JVM/JS/Native).
 
