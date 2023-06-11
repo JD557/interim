@@ -1,3 +1,5 @@
+import ReleaseTransformations._
+
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / scalaVersion := "3.3.0"
 ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
@@ -62,10 +64,10 @@ releaseProcess := Seq[ReleaseStep](
   runTest,
   setReleaseVersion,
   commitReleaseVersion,
-  tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
-  releaseStepCommand("sonatypeBundleRelease"),
+  // tagRelease,
+  // releaseStepCommandAndRemaining("+publishSigned"),
+  // releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
-  commitNextVersion,
-  pushChanges
+  commitNextVersion
+  // pushChanges
 )
