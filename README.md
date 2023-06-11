@@ -9,6 +9,33 @@ While this might sound like a limitation, it actually allows for an easy integra
 
 To know more about the library and how to get started check the [examples](https://github.com/JD557/interim/tree/master/examples).
 
+**NOTE:** This library is still in heavy development. Expect big breaking changes in future versions.
+
+## Features
+
+![Example of a color picker](examples/snapshot/assets/colorpicker.png)
+
+### Primitives and Components
+
+- Rectangles
+- Text
+- Buttons
+- Checkboxes
+- Sliders
+- Text Input
+- Movable components (including windows)
+
+### Layouts
+
+- Grid based
+- Row based (equally sized or dynamically sized)
+- Column based (equally sized or dynamically sized)
+
+### Skins
+
+- Configurable skins for all components
+- Light and dark mode
+
 ## Acknowledgments
 
 This project was heavily inspired by [Jari Komppa's Immediate Mode GUI tutorial](https://solhsa.com/imgui/) and [microui](https://github.com/rxi/microui).
