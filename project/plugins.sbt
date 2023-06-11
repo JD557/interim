@@ -1,6 +1,8 @@
 addSbtPlugin("ch.epfl.scala"    % "sbt-scalafix"      % "0.11.0")
 addSbtPlugin("com.eed3si9n"     % "sbt-projectmatrix" % "0.9.0")
+addSbtPlugin("com.github.sbt"   % "sbt-pgp"           % "2.2.1")
 addSbtPlugin("com.github.sbt"   % "sbt-release"       % "1.1.0")
 addSbtPlugin("org.scala-js"     % "sbt-scalajs"       % "1.13.1")
 addSbtPlugin("org.scala-native" % "sbt-scala-native"  % "0.4.14")
 addSbtPlugin("org.scalameta"    % "sbt-scalafmt"      % "2.5.0")
+addSbtPlugin("org.xerial.sbt"   % "sbt-sonatype"      % "3.9.21")
