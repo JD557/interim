@@ -1,6 +1,6 @@
 # InterIm
 
-InterIm is an [Immediate mode GUI](https://en.wikipedia.org/wiki/Immediate_mode_GUI) library in pure Scala.
+InterIm is an [Immediate mode GUI](https://en.wikipedia.org/wiki/Immediate_mode_GUI) library in pure Scala (JVM/JS/Native).
 
 It provides methods to build an interface and return a sequence of simple render operations (render rectangles and render text).
 
