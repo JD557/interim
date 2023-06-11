@@ -89,4 +89,5 @@ jobs:
     - name: Compile examples (Snapshot)
       run: |
         cd examples/snapshot
+        ls | grep .scala | xargs scala-cli compile
         ls | grep .md | xargs scala-cli compile example-minart-backend.scala
