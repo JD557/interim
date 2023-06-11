@@ -8,3 +8,7 @@ The library does not perform any rendering. The resulting output must be interpr
 While this might sound like a limitation, it actually allows for an easy integration with other libraries.
 
 To know more about the library and how to get started check the [examples](https://github.com/JD557/interim/tree/master/examples).
+
+## Acknowledgments
+
+This project was heavily inspired by [Jari Komppa's Immediate Mode GUI tutorial](https://solhsa.com/imgui/) and [microui](https://github.com/rxi/microui).
