@@ -1,5 +1,7 @@
 # InterIm
 
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/eu.joaocosta/interim_3?server=https%3A%2F%2Foss.sonatype.org)
+
 InterIm is an [Immediate mode GUI](https://en.wikipedia.org/wiki/Immediate_mode_GUI) library in pure Scala (JVM/JS/Native).
 
 It provides methods to build an interface and return a sequence of simple render operations (render rectangles and render text).
