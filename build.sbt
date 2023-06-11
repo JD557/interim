@@ -64,10 +64,10 @@ releaseProcess := Seq[ReleaseStep](
   runTest,
   setReleaseVersion,
   commitReleaseVersion,
-  // tagRelease,
-  // releaseStepCommandAndRemaining("+publishSigned"),
-  // releaseStepCommand("sonatypeBundleRelease"),
+  tagRelease,
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
-  commitNextVersion
-  // pushChanges
+  commitNextVersion,
+  pushChanges
 )
