@@ -84,8 +84,9 @@ def application(inputState: InputState) =
       area =>
         dynamicRows(area = area.shrink(5), padding = 10) { newRow =>
           val newQuery = textInput("query", newRow(32))(query)
-          query = newQuery
-          if (query != newQuery) resultDelta = 0
+          if (query != newQuery)
+            resultDelta = 0
+            query = newQuery
           val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.toLowerCase))
           dynamicColumns(area = newRow(maxSize), padding = 10) { newColumn =>
             if (results.size > 5)
