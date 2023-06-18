@@ -40,7 +40,7 @@ def docSettings(projectName: String) = Seq(
 lazy val core = (projectMatrix in file("core"))
   .settings(
     name                                    := "interim",
-    libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M7" % Test,
+    libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M8" % Test,
     Compile / doc / scalacOptions ++=
       Seq(
         "-project",
