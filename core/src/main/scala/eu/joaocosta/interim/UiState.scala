@@ -17,7 +17,7 @@ final class UiState private (
 ):
   def this() = this(None, None, None, new mutable.Queue[RenderOp]())
   override def clone(): UiState = new UiState(hotItem, activeItem, keyboardFocusItem, ops.clone())
-  private def registerItem(id: ItemId, area: Rect)(implicit inputState: InputState): UiState.ItemStatus =
+  private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiState.ItemStatus =
     if (area.isMouseOver)
       hotItem = Some(id)
       if ((activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
@@ -42,5 +42,5 @@ object UiState:
     *
     * @return the item status of the registered component.
     */
-  def registerItem(id: ItemId, area: Rect)(implicit uiState: UiState, inputState: InputState): UiState.ItemStatus =
+  def registerItem(id: ItemId, area: Rect)(using uiState: UiState, inputState: InputState): UiState.ItemStatus =
     uiState.registerItem(id, area)

@@ -24,9 +24,7 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     uiState.hotItem = None
     if (inputState.mouseDown) uiState.keyboardFocusItem = None
     // run
-    given is: InputState = inputState
-    given us: UiState    = uiState
-    val res              = run
+    val res = run(using inputState, uiState)
     // finish
     if (!inputState.mouseDown) uiState.activeItem = None
     // return

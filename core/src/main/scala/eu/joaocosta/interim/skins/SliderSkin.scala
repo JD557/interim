@@ -6,7 +6,7 @@ import eu.joaocosta.interim.api.Primitives.*
 trait SliderSkin:
   def sliderSize: Int
   def sliderArea(area: Rect): Rect
-  def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(implicit
+  def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
       uiState: UiState
   ): Unit
 
@@ -21,7 +21,7 @@ object SliderSkin extends DefaultSkin:
   ) extends SliderSkin:
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
-    def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(implicit
+    def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
         uiState: UiState
     ): Unit =
       val sliderArea = this.sliderArea(area)

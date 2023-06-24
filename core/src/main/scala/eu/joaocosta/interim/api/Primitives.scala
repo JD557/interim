@@ -12,7 +12,7 @@ object Primitives extends Primitives
 trait Primitives:
   /** Draws a rectangle filling a the specified area with a color.
     */
-  final def rectangle(area: Rect, color: Color)(implicit uiState: UiState): Unit =
+  final def rectangle(area: Rect, color: Color)(using uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.DrawRect(area, color))
 
   /** Draws a block of text in the specified area with a color.
@@ -29,7 +29,7 @@ trait Primitives:
       fontSize: Int,
       horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Left,
       verticalAlignment: VerticalAlignment = VerticalAlignment.Top
-  )(implicit
+  )(using
       uiState: UiState
   ): Unit =
     if (text.nonEmpty)
@@ -42,5 +42,5 @@ trait Primitives:
     *
     * @param data custom value to be interpreted by the backend.
     */
-  final def custom[T](area: Rect, color: Color, data: T)(implicit uiState: UiState): Unit =
+  final def custom[T](area: Rect, color: Color, data: T)(using uiState: UiState): Unit =
     uiState.ops.addOne(RenderOp.Custom(area, color, data))
