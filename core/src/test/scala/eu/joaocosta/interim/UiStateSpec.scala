@@ -2,9 +2,9 @@ package eu.joaocosta.interim
 
 class UiStateSpec extends munit.FunSuite:
   test("registerItem should not mark an item not under the cursor"):
-    implicit val uiState    = new UiState()
-    implicit val inputState = InputState(0, 0, false, "")
-    val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(0, 0, false, "")
+    val itemStatus               = UiState.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, false)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
@@ -13,9 +13,9 @@ class UiStateSpec extends munit.FunSuite:
     assertEquals(uiState.keyboardFocusItem, None)
 
   test("registerItem should mark an item under the cursor as hot"):
-    implicit val uiState    = new UiState()
-    implicit val inputState = InputState(5, 5, false, "")
-    val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(5, 5, false, "")
+    val itemStatus               = UiState.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
@@ -24,9 +24,9 @@ class UiStateSpec extends munit.FunSuite:
     assertEquals(uiState.keyboardFocusItem, None)
 
   test("registerItem should mark a clicked item as active and focused"):
-    implicit val uiState    = new UiState()
-    implicit val inputState = InputState(5, 5, true, "")
-    val itemStatus          = UiState.registerItem(1, Rect(1, 1, 10, 10))
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(5, 5, true, "")
+    val itemStatus               = UiState.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
     assertEquals(itemStatus.keyboardFocus, true)
@@ -37,10 +37,10 @@ class UiStateSpec extends munit.FunSuite:
   test("registerItem should not override an active item with another one"):
     val uiState     = new UiState()
     val inputState1 = InputState(5, 5, true, "")
-    UiState.registerItem(1, Rect(1, 1, 10, 10))(uiState, inputState1)
+    UiState.registerItem(1, Rect(1, 1, 10, 10))(using uiState, inputState1)
     val inputState2 = InputState(20, 20, true, "")
-    UiState.registerItem(1, Rect(1, 1, 10, 10))(uiState, inputState2)
-    val itemStatus = UiState.registerItem(2, Rect(15, 15, 10, 10))(uiState, inputState2)
+    UiState.registerItem(1, Rect(1, 1, 10, 10))(using uiState, inputState2)
+    val itemStatus = UiState.registerItem(2, Rect(15, 15, 10, 10))(using uiState, inputState2)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)

@@ -5,7 +5,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait TextInputSkin:
   def textInputArea(area: Rect): Rect
-  def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
+  def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit
 
 object TextInputSkin extends DefaultSkin:
   final case class Default(
@@ -19,7 +19,7 @@ object TextInputSkin extends DefaultSkin:
   ) extends TextInputSkin:
     def textInputArea(area: Rect): Rect =
       area.shrink(border)
-    def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit =
+    def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit =
       val textInputArea = this.textInputArea(area)
       itemStatus match
         case UiState.ItemStatus(_, _, true) | UiState.ItemStatus(_, true, _) =>

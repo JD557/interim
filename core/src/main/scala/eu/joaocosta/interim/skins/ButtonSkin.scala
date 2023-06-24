@@ -6,7 +6,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
-  def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(implicit
+  def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(using
       uiState: UiState
   ): Unit
 
@@ -23,7 +23,7 @@ object ButtonSkin extends DefaultSkin:
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - math.max(shadowDelta, clickDelta), h = area.h - math.max(shadowDelta, clickDelta))
-    def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(implicit
+    def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(using
         uiState: UiState
     ): Unit =
       val buttonArea  = this.buttonArea(area)

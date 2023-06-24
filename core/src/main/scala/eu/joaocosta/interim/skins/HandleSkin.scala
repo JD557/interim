@@ -5,7 +5,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait HandleSkin:
   def handleArea(area: Rect): Rect
-  def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit
+  def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit
 
 object HandleSkin extends DefaultSkin:
   final case class Default(
@@ -16,7 +16,7 @@ object HandleSkin extends DefaultSkin:
     def handleArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
       area.copy(w = smallSide, h = smallSide)
-    def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(implicit uiState: UiState): Unit =
+    def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit =
       val handleArea = this.handleArea(area)
       itemStatus match
         case UiState.ItemStatus(false, false, _) =>
