@@ -127,16 +127,18 @@ For example we could rewrite our application as:
 def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
   ui(inputState, uiState):
-    val decrementCounter = button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-")
-    text(
-      area = Rect(x = 40, y = 10, w = 30, h = 30),
-      color = Color(0, 0, 0),
-      text = counter.toString,
-      fontSize = 8,
-      horizontalAlignment = centerHorizontally,
-      verticalAlignment = centerVertically
+    val (decrementCounter, _, incrementCounter) = (
+      button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"),
+      text(
+        area = Rect(x = 40, y = 10, w = 30, h = 30),
+        color = Color(0, 0, 0),
+        text = counter.toString,
+        fontSize = 8,
+        horizontalAlignment = centerHorizontally,
+        verticalAlignment = centerVertically
+      ),
+      button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
     )
-    val incrementCounter = button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
     if (decrementCounter && !incrementCounter) counter - 1
     else if (!decrementCounter && incrementCounter) counter + 1
     else counter
@@ -150,8 +152,8 @@ One possible solution to this is to use local mutability:
 ```scala
 def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
+  var _counter = counter
   ui(inputState, uiState):
-    var _counter = counter
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
       _counter = counter - 1
     text(
