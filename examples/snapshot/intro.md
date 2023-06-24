@@ -115,12 +115,6 @@ In this examples, we'll simply call this basic `MinartBackend` with:
 MinartBackend.run(application)
 ```
 
-There's also an incomplete example of this application with a backend using
-[Doodle](https://github.com/creativescala/doodle) in [doodle-example.scala](doodle-example.scala).
-
-(Unfortunately, this backend doesn't play well with scala-cli markdown files, so all examples will run on the Minart
-backend)
-
 ## A note on state and mutability
 
 You might have noticed that our application returns two parameters, and we are ignoring the second one.
