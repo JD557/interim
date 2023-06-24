@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli --power intro.md example-minart-backend.scala
+scala-cli intro.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion
@@ -115,12 +115,6 @@ In this examples, we'll simply call this basic `MinartBackend` with:
 MinartBackend.run(application)
 ```
 
-There's also an incomplete example of this application with a backend using
-[Doodle](https://github.com/creativescala/doodle) in [doodle-example.scala](doodle-example.scala).
-
-(Unfortunately, this backend doesn't play well with scala-cli markdown files, so all examples will run on the Minart
-backend)
-
 ## A note on state and mutability
 
 You might have noticed that our application returns two parameters, and we are ignoring the second one.
@@ -133,16 +127,18 @@ For example we could rewrite our application as:
 def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
   ui(inputState, uiState):
-    val decrementCounter = button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-")
-    text(
-      area = Rect(x = 40, y = 10, w = 30, h = 30),
-      color = Color(0, 0, 0),
-      text = counter.toString,
-      fontSize = 8,
-      horizontalAlignment = centerHorizontally,
-      verticalAlignment = centerVertically
+    val (decrementCounter, _, incrementCounter) = (
+      button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"),
+      text(
+        area = Rect(x = 40, y = 10, w = 30, h = 30),
+        color = Color(0, 0, 0),
+        text = counter.toString,
+        fontSize = 8,
+        horizontalAlignment = centerHorizontally,
+        verticalAlignment = centerVertically
+      ),
+      button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
     )
-    val incrementCounter = button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
     if (decrementCounter && !incrementCounter) counter - 1
     else if (!decrementCounter && incrementCounter) counter + 1
     else counter
@@ -156,8 +152,8 @@ One possible solution to this is to use local mutability:
 ```scala
 def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
+  var _counter = counter
   ui(inputState, uiState):
-    var _counter = counter
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
       _counter = counter - 1
     text(
