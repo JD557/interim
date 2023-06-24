@@ -3,9 +3,9 @@ package eu.joaocosta.interim
 class RectSpec extends munit.FunSuite:
   test("isMouseOver detects collisions with the mouse"):
     val rect = Rect(10, 10, 10, 10)
-    assertEquals(rect.isMouseOver(InputState(0, 0, false, "")), false)
-    assertEquals(rect.isMouseOver(InputState(15, 15, false, "")), true)
-    assertEquals(rect.isMouseOver(InputState(30, 30, false, "")), false)
+    assertEquals(rect.isMouseOver(using InputState(0, 0, false, "")), false)
+    assertEquals(rect.isMouseOver(using InputState(15, 15, false, "")), true)
+    assertEquals(rect.isMouseOver(using InputState(30, 30, false, "")), false)
 
   test("shrink and grow the rectangle"):
     val rect = Rect(10, 10, 10, 10)
