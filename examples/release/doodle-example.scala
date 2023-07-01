@@ -1,5 +1,5 @@
 //> using scala "3.3.0"
-//> using lib "org.creativescala::doodle::0.18.0"
+//> using lib "org.creativescala::doodle::0.19.0"
 //> using lib "eu.joaocosta::interim::0.1.0"
 
 /** This file contains a example of an alternatve graphical backend written in Doodle.
