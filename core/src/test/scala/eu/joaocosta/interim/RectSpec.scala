@@ -23,3 +23,15 @@ class RectSpec extends munit.FunSuite:
     val rect2 = Rect(15, 10, 10, 10)
     assertEquals(rect1 ++ rect2, Rect(10, 10, 15, 10))
     assertEquals(rect2 ++ rect1, Rect(10, 10, 15, 10))
+
+  test("intersect returns an empty rect when there's a gap"):
+    val rect1 = Rect(10, 10, 10, 10)
+    val rect2 = Rect(30, 10, 10, 10)
+    assertEquals((rect1 & rect2).isEmpty, true)
+    assertEquals((rect2 & rect1).isEmpty, true)
+
+  test("intersect shrinks two rects when they intersect"):
+    val rect1 = Rect(10, 10, 10, 10)
+    val rect2 = Rect(15, 10, 10, 10)
+    assertEquals(rect1 & rect2, Rect(15, 10, 5, 10))
+    assertEquals(rect2 & rect1, Rect(15, 10, 5, 10))

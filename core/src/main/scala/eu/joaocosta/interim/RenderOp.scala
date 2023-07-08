@@ -20,6 +20,7 @@ enum RenderOp:
       color: Color,
       text: String,
       fontSize: Int,
+      textArea: Rect,
       horizontalAlignment: TextLayout.HorizontalAlignment,
       verticalAlignment: TextLayout.VerticalAlignment
   )
@@ -44,3 +45,10 @@ object RenderOp:
         charWidth: Char => Int = _ => textOp.fontSize,
         lineHeight: Int = (textOp.fontSize * 1.3).toInt
     ): List[DrawChar] = TextLayout.asDrawChars(textOp, charWidth, lineHeight)
+
+  extension (renderOp: RenderOp)
+    def clip(rect: Rect): RenderOp =
+      renderOp match
+        case dr: DrawRect => dr.copy(area = dr.area & rect)
+        case dt: DrawText => dt.copy(area = dt.area & rect)
+        case c: Custom[_] => c.copy(area = c.area & rect)

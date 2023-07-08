@@ -33,7 +33,7 @@ trait Primitives:
       uiState: UiState
   ): Unit =
     if (text.nonEmpty)
-      uiState.ops.addOne(RenderOp.DrawText(area, color, text, fontSize, horizontalAlignment, verticalAlignment))
+      uiState.ops.addOne(RenderOp.DrawText(area, color, text, fontSize, area, horizontalAlignment, verticalAlignment))
 
   /** Advanced operation to add a custom primitive to the list of render operations.
     *

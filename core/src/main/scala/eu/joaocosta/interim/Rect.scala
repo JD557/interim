@@ -14,6 +14,10 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def x2 = x + w
   def y2 = y + h
 
+  /** Returns true if the rectangle has no area
+    */
+  def isEmpty: Boolean = w <= 0 || h <= 0
+
   /** Checks if the mouse is over this area.
     */
   def isMouseOver(using inputState: InputState): Boolean =
@@ -50,3 +54,13 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
     val minY = math.min(this.y1, that.y1)
     val maxY = math.max(this.y2, that.y2)
     Rect(x = minX, y = minY, w = maxX - minX, h = maxY - minY)
+
+  /** Intersects this rectangle with another one.
+    */
+  @alpha("intersect")
+  def &(that: Rect): Rect =
+    val maxX1 = math.max(this.x1, that.x1)
+    val maxY1 = math.max(this.y1, that.y1)
+    val minX2 = math.min(this.x2, that.x2)
+    val minY2 = math.min(this.y2, that.y2)
+    Rect(x = maxX1, y = maxY1, w = minX2 - maxX1, h = minY2 - maxY1)

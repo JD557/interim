@@ -1,8 +1,31 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.Rect
+import eu.joaocosta.interim.{Color, InputState, Rect, RenderOp, UiState}
 
 class LayoutsSpec extends munit.FunSuite:
+  test("clip correctly clips render ops"):
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(0, 0, false, "")
+    Layouts.clip(Rect(10, 10, 10, 10)):
+      Primitives.rectangle(Rect(0, 0, 15, 15), Color(0, 0, 0))
+    assertEquals(uiState.ops.toList, List(RenderOp.DrawRect(Rect(10, 10, 5, 5), Color(0, 0, 0))))
+
+  test("clip ignores input outside the clip area"):
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(5, 5, false, "")
+    val itemStatus =
+      Layouts.clip(Rect(10, 10, 10, 10)):
+        UiState.registerItem(1, Rect(0, 0, 15, 15))
+    assertEquals(itemStatus.hot, false)
+
+  test("clip considers input inside the clip area"):
+    given uiState: UiState       = new UiState()
+    given inputState: InputState = InputState(12, 12, false, "")
+    val itemStatus =
+      Layouts.clip(Rect(10, 10, 10, 10)):
+        UiState.registerItem(1, Rect(0, 0, 15, 15))
+    assertEquals(itemStatus.hot, true)
+
   test("grid correctly lays out elements in a grid"):
     val areas = Layouts.grid(Rect(10, 10, 100, 100), numRows = 3, numColumns = 2, padding = 8)(identity)
     val expected =
@@ -13,16 +36,31 @@ class LayoutsSpec extends munit.FunSuite:
       )
     assertEquals(areas, expected)
 
+  test("grid returns nothing for an empty grid"):
+    val areas    = Layouts.grid(Rect(10, 10, 100, 100), numRows = 0, numColumns = 0, padding = 8)(identity)
+    val expected = Vector.empty
+    assertEquals(areas, expected)
+
   test("rows correctly lays out elements in rows"):
     val areas = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(identity)
     val expected =
       Vector(Rect(10, 10, 100, 28), Rect(10, 46, 100, 28), Rect(10, 82, 100, 28))
     assertEquals(areas, expected)
 
+  test("rows returns nothing for 0 rows"):
+    val areas    = Layouts.rows(Rect(10, 10, 100, 100), numRows = 0, padding = 8)(identity)
+    val expected = Vector.empty
+    assertEquals(areas, expected)
+
   test("columns correctly lays out elements in columns"):
     val areas = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(identity)
     val expected =
       Vector(Rect(10, 10, 28, 100), Rect(46, 10, 28, 100), Rect(82, 10, 28, 100))
+    assertEquals(areas, expected)
+
+  test("columns returns nothing for 0 columns"):
+    val areas    = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 0, padding = 8)(identity)
+    val expected = Vector.empty
     assertEquals(areas, expected)
 
   test("dynamicRows correctly lays out elements in rows"):
