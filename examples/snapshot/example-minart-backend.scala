@@ -77,7 +77,7 @@ object MinartBackend:
         canvas.redraw()
       }
       .configure(
-        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(255, 150, 100)),
+        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
         LoopFrequency.hz60
       )
       .run()
@@ -109,7 +109,7 @@ object MinartBackend:
         newState
       }
       .configure(
-        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(255, 150, 100)),
+        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
         LoopFrequency.hz60,
         initialState
       )
