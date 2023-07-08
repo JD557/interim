@@ -20,7 +20,7 @@ trait Layouts:
       if (area.isMouseOver) inputState
       else inputState.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
     val result = body(using newInputState, newUiState)
-    newUiState.ops.mapInPlace(_.clip(area))
+    newUiState.ops.mapInPlace(_.clip(area)).filterInPlace(!_.area.isEmpty)
     uiState ++= newUiState
     result
 
