@@ -13,16 +13,31 @@ class LayoutsSpec extends munit.FunSuite:
       )
     assertEquals(areas, expected)
 
+  test("grid returns nothing for an empty grid"):
+    val areas    = Layouts.grid(Rect(10, 10, 100, 100), numRows = 0, numColumns = 0, padding = 8)(identity)
+    val expected = Vector.empty
+    assertEquals(areas, expected)
+
   test("rows correctly lays out elements in rows"):
     val areas = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(identity)
     val expected =
       Vector(Rect(10, 10, 100, 28), Rect(10, 46, 100, 28), Rect(10, 82, 100, 28))
     assertEquals(areas, expected)
 
+  test("rows returns nothing for 0 rows"):
+    val areas    = Layouts.rows(Rect(10, 10, 100, 100), numRows = 0, padding = 8)(identity)
+    val expected = Vector.empty
+    assertEquals(areas, expected)
+
   test("columns correctly lays out elements in columns"):
     val areas = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(identity)
     val expected =
       Vector(Rect(10, 10, 28, 100), Rect(46, 10, 28, 100), Rect(82, 10, 28, 100))
+    assertEquals(areas, expected)
+
+  test("columns returns nothing for 0 columns"):
+    val areas    = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 0, padding = 8)(identity)
+    val expected = Vector.empty
     assertEquals(areas, expected)
 
   test("dynamicRows correctly lays out elements in rows"):

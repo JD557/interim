@@ -23,24 +23,28 @@ trait Layouts:
     * The body receives a `row: Vector[Rect]`, where `row(y)` is the rect of the y-th row.
     */
   final def rows[T](area: Rect, numRows: Int, padding: Int)(body: Vector[Rect] => T): T =
-    val rowSize = (area.h - (numRows - 1) * padding) / numRows
-    val vec = for
-      row <- (0 until numRows)
-      dy = row * (rowSize + padding)
-    yield Rect(area.x, area.y + dy, area.w, rowSize)
-    body(vec.toVector)
+    if (numRows <= 0) body(Vector.empty)
+    else
+      val rowSize = (area.h - (numRows - 1) * padding) / numRows
+      val vec = for
+        row <- (0 until numRows)
+        dy = row * (rowSize + padding)
+      yield Rect(area.x, area.y + dy, area.w, rowSize)
+      body(vec.toVector)
 
   /** Lays out the components in a sequence of columns where all elements have the same size, separated by a padding.
     *
     * The body receives a `column: Vector[Rect]`, where `column(y)` is the rect of the x-th column.
     */
   final def columns[T](area: Rect, numColumns: Int, padding: Int)(body: Vector[Rect] => T): T =
-    val columnSize = (area.w - (numColumns - 1) * padding) / numColumns
-    val vec = for
-      column <- (0 until numColumns)
-      dx = column * (columnSize + padding)
-    yield Rect(area.x + dx, area.y, columnSize, area.h)
-    body(vec.toVector)
+    if (numColumns <= 0) body(Vector.empty)
+    else
+      val columnSize = (area.w - (numColumns - 1) * padding) / numColumns
+      val vec = for
+        column <- (0 until numColumns)
+        dx = column * (columnSize + padding)
+      yield Rect(area.x + dx, area.y, columnSize, area.h)
+      body(vec.toVector)
 
   /** Lays out the components in a sequence of rows of different sizes, separated by a padding.
     *
