@@ -48,8 +48,8 @@ object ButtonSkin extends DefaultSkin:
           text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
 
   val lightDefault: Default = Default(
-    shadowDelta = 4,
-    clickDelta = 2,
+    shadowDelta = 2,
+    clickDelta = 1,
     fontSize = 8,
     shadowColor = ColorScheme.darkGray,
     textColor = ColorScheme.black,

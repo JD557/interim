@@ -18,13 +18,13 @@ object HandleSkin extends DefaultSkin:
       area.copy(w = smallSide, h = smallSide)
     def renderHandle(area: Rect, value: Rect, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit =
       val handleArea = this.handleArea(area)
-      itemStatus match
-        case UiState.ItemStatus(false, false, _) =>
-          rectangle(handleArea, inactiveColor)
-        case UiState.ItemStatus(true, false, _) =>
-          rectangle(handleArea, hotColor)
-        case UiState.ItemStatus(_, true, _) =>
-          rectangle(handleArea, activeColor)
+      val color = itemStatus match
+        case UiState.ItemStatus(false, false, _) => inactiveColor
+        case UiState.ItemStatus(true, false, _)  => hotColor
+        case UiState.ItemStatus(_, true, _)      => activeColor
+      val lineHeight = handleArea.h / 3
+      rectangle(handleArea.copy(h = lineHeight), color)
+      rectangle(handleArea.copy(y = handleArea.y + 2 * lineHeight, h = lineHeight), color)
 
   val lightDefault: Default = Default(
     inactiveColor = ColorScheme.black,
