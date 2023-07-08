@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.Rect
+import eu.joaocosta.interim.{InputState, Rect, UiState}
 
 /** Objects containing all default layouts.
   *
@@ -9,6 +9,20 @@ import eu.joaocosta.interim.Rect
 object Layouts extends Layouts
 
 trait Layouts:
+
+  /** Clipped region.
+    *
+    * The body will be rendered only inside the clipped area. Input outside the area will also be ignored.
+    */
+  final def clip[T](area: Rect)(body: (InputState, UiState) ?=> T)(using inputState: InputState, uiState: UiState): T =
+    val newUiState = uiState.fork()
+    val newInputState =
+      if (area.isMouseOver) inputState
+      else inputState.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
+    val result = body(using newInputState, newUiState)
+    newUiState.ops.mapInPlace(_.clip(area))
+    uiState ++= newUiState
+    result
 
   /** Lays out the components in a grid where all elements have the same size, separated by a padding.
     *

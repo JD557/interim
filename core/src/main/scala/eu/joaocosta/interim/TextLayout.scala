@@ -45,23 +45,24 @@ object TextLayout:
       remaining match
         case Nil =>
           alignV(
-            alignH(lineAcc, textOp.area.w, textOp.horizontalAlignment) ++ textAcc,
-            textOp.area.h,
+            alignH(lineAcc, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc,
+            textOp.textArea.h,
             textOp.verticalAlignment
           )
         case char :: cs =>
           val isNewline = char == '\n'
           val width     = charWidth(char)
-          if (dy + textOp.fontSize > textOp.area.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
-          else if (isNewline || width < textOp.area.w && dx + width > textOp.area.w)      // Newline
-            val line = alignH(lineAcc, textOp.area.h, textOp.horizontalAlignment)
+          if (dy + textOp.fontSize > textOp.textArea.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
+          else if (isNewline || width < textOp.textArea.w && dx + width > textOp.textArea.w)  // Newline
+            val line = alignH(lineAcc, textOp.textArea.h, textOp.horizontalAlignment)
             layout(if (isNewline) remaining.tail else remaining, 0, dy + lineHeight, Nil, line ++ textAcc)
           else
             val charArea = Rect(
-              x = textOp.area.x + dx,
-              y = textOp.area.y + dy,
+              x = textOp.textArea.x + dx,
+              y = textOp.textArea.y + dy,
               w = width,
               h = textOp.fontSize
             )
             layout(cs, dx + width, dy, RenderOp.DrawChar(charArea, textOp.color, char) :: lineAcc, textAcc)
-    layout(textOp.text.toList, 0, 0, Nil, Nil)
+
+    layout(textOp.text.toList, 0, 0, Nil, Nil).filter(char => (char.area & textOp.area) == char.area)
