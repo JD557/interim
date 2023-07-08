@@ -13,9 +13,33 @@ package eu.joaocosta.interim
   * For DrawText, the backend is expected to layout the text. However, there's a `asDrawChars` method that applies
   * some naive layout logic and returns simpler [[RenderOp.DrawChar]] operations.
   */
-enum RenderOp:
-  case DrawRect(area: Rect, color: Color)
-  case DrawText(
+sealed trait RenderOp {
+  def area: Rect
+  def color: Color
+
+  def clip(rect: Rect): RenderOp
+}
+
+object RenderOp:
+  /** Operation to draw a rectangle on the screen.
+    *
+    *  @param area area to render
+    *  @param color color of the rectangle
+    */
+  final case class DrawRect(area: Rect, color: Color) extends RenderOp:
+    def clip(rect: Rect): DrawRect = copy(area = area & rect)
+
+  /** Operation to draw text on the screen.
+    *
+    *  @param area area to render, text outside this area should not be shown
+    *  @param color text color
+    *  @param text string to render
+    *  @param fontSize font size in pixels
+    *  @param textArea area where the text should be layed out
+    *  @param horizontalAlignment how the text should be layed out horizontally
+    *  @param verticalAlignment how the text should be layed out vertically
+    */
+  final case class DrawText(
       area: Rect,
       color: Color,
       text: String,
@@ -23,10 +47,27 @@ enum RenderOp:
       textArea: Rect,
       horizontalAlignment: TextLayout.HorizontalAlignment,
       verticalAlignment: TextLayout.VerticalAlignment
-  )
-  case Custom[T](area: Rect, color: Color, data: T)
+  ) extends RenderOp:
+    def clip(rect: Rect): DrawText = copy(area = area & rect)
 
-object RenderOp:
+    /** Converts a DrawText operation into a sequence of simpler DrawChar operations.
+      *
+      * @param charWith function that, given a char, returns its width in pixels
+      * @param lineHeight line height to use, in pixels
+      */
+    def asDrawChars(
+        charWidth: Char => Int = _ => fontSize,
+        lineHeight: Int = (fontSize * 1.3).toInt
+    ): List[DrawChar] = TextLayout.asDrawChars(this, charWidth, lineHeight)
+
+  /** Operation to draw a custom element on the screen
+    *
+    *  @param area area to render
+    *  @param color fallback color
+    *  @param data domain specific data to use when rendering this element
+    */
+  final case class Custom[T](area: Rect, color: Color, data: T) extends RenderOp:
+    def clip(rect: Rect): Custom[T] = copy(area = area & rect)
 
   /** Operation to draw a single character.
     *  Note that this is not part of the RenderOp enum. InterIm components will never generate this operation.
@@ -34,21 +75,3 @@ object RenderOp:
     *  The only way to get it is to call `DrawText#asDrawChars`.
     */
   final case class DrawChar(area: Rect, color: Color, char: Char)
-
-  /** Converts a DrawText operation into a sequence of simpler DrawChar operations.
-    *
-    * @param charWith function that, given a char, returns its width in pixels
-    * @param lineHeight line height to use, in pixels
-    */
-  extension (textOp: DrawText)
-    def asDrawChars(
-        charWidth: Char => Int = _ => textOp.fontSize,
-        lineHeight: Int = (textOp.fontSize * 1.3).toInt
-    ): List[DrawChar] = TextLayout.asDrawChars(textOp, charWidth, lineHeight)
-
-  extension (renderOp: RenderOp)
-    def clip(rect: Rect): RenderOp =
-      renderOp match
-        case dr: DrawRect => dr.copy(area = dr.area & rect)
-        case dt: DrawText => dt.copy(area = dt.area & rect)
-        case c: Custom[_] => c.copy(area = c.area & rect)
