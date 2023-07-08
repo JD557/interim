@@ -47,3 +47,21 @@ class UiStateSpec extends munit.FunSuite:
     assertEquals(uiState.hotItem, Some(2))
     assertEquals(uiState.activeItem, Some(1))
     assertEquals(uiState.keyboardFocusItem, Some(1))
+
+  test("fork should create a new UiState with no ops, and merge them back with ++="):
+    val uiState: UiState = new UiState()
+    api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(0, 0, 0))(using uiState)
+    assertEquals(uiState.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
+    val forked = uiState.fork()
+    assertEquals(forked.ops.toList, Nil)
+    api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(1, 2, 3))(using forked)
+    assertEquals(uiState.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
+    assertEquals(forked.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 2, 3))))
+    uiState ++= forked
+    assertEquals(
+      uiState.ops.toList,
+      List(
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0)),
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 2, 3))
+      )
+    )

@@ -17,6 +17,7 @@ final class UiState private (
 ):
   def this() = this(None, None, None, new mutable.Queue[RenderOp]())
   override def clone(): UiState = new UiState(hotItem, activeItem, keyboardFocusItem, ops.clone())
+  def fork(): UiState           = new UiState(hotItem, activeItem, keyboardFocusItem, new mutable.Queue[RenderOp])
   private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiState.ItemStatus =
     if (area.isMouseOver)
       hotItem = Some(id)
@@ -24,6 +25,12 @@ final class UiState private (
         activeItem = Some(id)
         keyboardFocusItem = Some(id)
     UiState.ItemStatus(hotItem == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
+  def ++=(that: UiState): this.type =
+    this.hotItem = that.hotItem
+    this.activeItem = that.activeItem
+    this.keyboardFocusItem = that.keyboardFocusItem
+    this.ops ++= that.ops
+    this
 
 object UiState:
   /** Status of an item.
