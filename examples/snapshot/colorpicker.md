@@ -88,13 +88,19 @@ def application(inputState: InputState) =
             resultDelta = 0
             query = newQuery
           val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.toLowerCase))
-          dynamicColumns(area = newRow(maxSize), padding = 10) { newColumn =>
-            if (results.size > 5)
-              resultDelta = slider("result scroller", newColumn(-24), min = 0, max = results.size - 5)(resultDelta)
-            rows(area = newColumn(maxSize), numRows = 5, padding = 10) { rows =>
-              results.drop(resultDelta).zip(rows).foreach { case ((colorName, colorValue), row) =>
-                if (button(s"$colorName button", row, colorName))
-                  color = colorValue
+          val resultsArea = newRow(maxSize)
+          val buttonSize = 32
+          dynamicColumns(area = resultsArea, padding = 10) { newColumn =>
+            val resultsHeight = results.size * buttonSize
+            if (resultsHeight > resultsArea.h)
+              resultDelta = slider("result scroller", newColumn(-24), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
+            val clipArea = newColumn(maxSize)
+            clip(area = clipArea) {
+              rows(area = clipArea.copy(y = clipArea.y - resultDelta, h = resultsHeight), numRows = results.size, padding = 10) { rows =>
+                results.zip(rows).foreach { case ((colorName, colorValue), row) =>
+                  if (button(s"$colorName button", row, colorName))
+                    color = colorValue
+                }
               }
             }
           }
