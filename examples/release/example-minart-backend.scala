@@ -1,6 +1,6 @@
 //> using scala "3.3.0"
 //> using lib "eu.joaocosta::minart::0.5.2"
-//> using lib "eu.joaocosta::interim::0.1.0"
+//> using lib "eu.joaocosta::interim::0.1.2"
 
 /** This file contains a simple graphical backend written in Minart.
   *
@@ -51,6 +51,7 @@ object MinartBackend:
       }
       .mkString
 
+  // Example of a loop with global mutable state
   def run(body: InputState => (List[RenderOp], _)): Future[Unit] =
     AppLoop
       .statelessRenderLoop { (canvas: Canvas) =>
@@ -76,7 +77,40 @@ object MinartBackend:
         canvas.redraw()
       }
       .configure(
-        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(255, 150, 100)),
+        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
         LoopFrequency.hz60
+      )
+      .run()
+
+  // Example of a loop with immutable state
+  def run[S](initialState: S)(body: (InputState, S) => (List[RenderOp], S)): Future[S] =
+    AppLoop
+      .statefulRenderLoop { (state: S) => (canvas: Canvas) =>
+        val inputState = InputState(
+          canvas.getPointerInput().position.map(_.x).getOrElse(0),
+          canvas.getPointerInput().position.map(_.y).getOrElse(0),
+          canvas.getPointerInput().isPressed,
+          processKeyboard(canvas.getKeyboardInput())
+        )
+        canvas.clear()
+        val (ops, newState) = body(inputState, state)
+        ops.foreach {
+          case RenderOp.DrawRect(Rect(x, y, w, h), color) =>
+            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
+          case op: RenderOp.DrawText =>
+            op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
+              canvas
+                .blit(coloredChar(char, MinartColor(color.r, color.g, color.b)), Some(MinartColor(255, 0, 255)))(x, y)
+            }
+          case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
+            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
+        }
+        canvas.redraw()
+        newState
+      }
+      .configure(
+        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
+        LoopFrequency.hz60,
+        initialState
       )
       .run()
