@@ -31,13 +31,13 @@ trait Components:
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */
   final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.default())(
-      value: Boolean
+      value: Boolean | Ref[Boolean]
   ): Component[Boolean] =
     val checkboxArea = skin.checkboxArea(area)
     val itemStatus   = UiState.registerItem(id, checkboxArea)
-    skin.renderCheckbox(area, value, itemStatus)
-    if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) !value
-    else value
+    skin.renderCheckbox(area, Ref.get(value), itemStatus)
+    if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) Ref.modify(value, v => !v)
+    else Ref.get(value)
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *
@@ -45,35 +45,35 @@ trait Components:
     * @param max maximum value fr this slider
     */
   final def slider(id: ItemId, area: Rect, min: Int, max: Int, skin: SliderSkin = SliderSkin.default())(
-      value: Int
+      value: Int | Ref[Int]
   ): Component[Int] =
     val sliderArea   = skin.sliderArea(area)
     val sliderSize   = skin.sliderSize
     val range        = max - min
     val itemStatus   = UiState.registerItem(id, sliderArea)
-    val clampedValue = math.max(min, math.min(value, max))
+    val clampedValue = math.max(min, math.min(Ref.get[Int](value), max))
     skin.renderSlider(area, min, clampedValue, max, itemStatus)
     if (itemStatus.active)
       if (area.w > area.h)
         val mousePos = summon[InputState].mouseX - sliderArea.x - sliderSize / 2
         val maxPos   = sliderArea.w - sliderSize
-        math.max(min, math.min(min + (mousePos * range) / maxPos, max))
+        Ref.set(value, math.max(min, math.min(min + (mousePos * range) / maxPos, max)))
       else
         val mousePos = summon[InputState].mouseY - sliderArea.y - sliderSize / 2
         val maxPos   = sliderArea.h - sliderSize
-        math.max(min, math.min((mousePos * range) / maxPos, max))
-    else value
+        Ref.set(value, math.max(min, math.min((mousePos * range) / maxPos, max)))
+    else Ref.get(value)
 
   /** Text input component. Returns the current string inputed.
     */
   final def textInput(id: ItemId, area: Rect, skin: TextInputSkin = TextInputSkin.default())(
-      value: String
+      value: String | Ref[String]
   ): Component[String] =
     val textInputArea = skin.textInputArea(area)
     val itemStatus    = UiState.registerItem(id, textInputArea)
-    skin.renderTextInput(area, value, itemStatus)
-    if (itemStatus.keyboardFocus) summon[InputState].appendKeyboardInput(value)
-    else value
+    skin.renderTextInput(area, Ref.get(value), itemStatus)
+    if (itemStatus.keyboardFocus) Ref.modify(value, summon[InputState].appendKeyboardInput)
+    else Ref.get(value)
 
   /** Draggable handle. Returns the moved area.
     *
@@ -83,11 +83,11 @@ trait Components:
     * with movable = true.
     */
   final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default())(
-      value: Rect
+      value: Rect | Ref[Rect]
   ): Component[Rect] =
     val handleArea = skin.handleArea(area)
     val itemStatus = UiState.registerItem(id, handleArea)
-    skin.renderHandle(area, value, itemStatus)
+    skin.renderHandle(area, Ref.get(value), itemStatus)
     if (itemStatus.active)
       val handleCenterX = handleArea.x + handleArea.w / 2
       val handleCenterY = handleArea.y + handleArea.h / 2
@@ -95,5 +95,5 @@ trait Components:
       val mouseY        = summon[InputState].mouseY
       val deltaX        = mouseX - handleCenterX
       val deltaY        = mouseY - handleCenterY
-      value.move(deltaX, deltaY)
-    else value
+      Ref.modify(value, _.move(deltaX, deltaY))
+    else Ref.get(value)

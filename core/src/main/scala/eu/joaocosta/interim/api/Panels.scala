@@ -30,7 +30,7 @@ trait Panels:
     */
   final def window[T](
       id: ItemId,
-      area: Rect,
+      area: Rect | Ref[Rect],
       title: String,
       movable: Boolean = false,
       skin: WindowSkin = WindowSkin.default(),
@@ -38,13 +38,14 @@ trait Panels:
   )(
       body: Rect => T
   ): Components.Component[(T, Rect)] =
-    skin.renderWindow(area, title)
-    val nextArea =
+    val oldArea: Rect = Ref.get(area)
+    skin.renderWindow(oldArea, title)
+    val nextArea: Rect =
       if (movable)
         Components.moveHandle(
           id |> "internal_move_handle",
-          skin.titleTextArea(area),
+          skin.titleTextArea(oldArea),
           handleSkin
         )(area)
-      else area
-    (body(skin.panelArea(area)), nextArea)
+      else oldArea
+    (body(skin.panelArea(oldArea)), nextArea)
