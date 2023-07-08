@@ -84,7 +84,7 @@ handle the mutation themselves.
 
 The example above could also be written as:
 
-```scala
+```scala reset
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Ref
 
