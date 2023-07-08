@@ -38,7 +38,7 @@ import eu.joaocosta.interim.api.Ref
 
 val uiState = new UiState()
 
-val colorPickerArea = Ref(Rect(x = 10, y = 10, w = 210, h = 210))
+val colorPickerArea = Ref(Rect(x = 10, y = 10, w = 180, h = 180))
 val colorSearchArea = Ref(Rect(x = 300, y = 10, w = 210, h = 210))
 val resultDelta     = Ref(0)
 var color           = Color(0, 0, 0)
@@ -73,7 +73,7 @@ def application(inputState: InputState) =
       area =>
         rows(area = area.shrink(5), numRows = 5, padding = 10) { row =>
           rectangle(row(0), color)
-          text(row(1), textColor, color.toString, 8)
+          text(row(1), textColor, color.toString, 8, verticalAlignment = centerVertically)
           val r = slider("red slider", row(2), min = 0, max = 255)(color.r)
           val g = slider("green slider", row(3), min = 0, max = 255)(color.g)
           val b = slider("blue slider", row(4), min = 0, max = 255)(color.b)
@@ -84,7 +84,7 @@ def application(inputState: InputState) =
     window(id = "color search", area = colorSearchArea, title = "Color Search", movable = true) {
       area =>
         dynamicRows(area = area.shrink(5), padding = 10) { newRow =>
-          val newQuery = textInput("query", newRow(32))(query)
+          val newQuery = textInput("query", newRow(16))(query)
           if (query != newQuery)
             resultDelta := 0
             query = newQuery
@@ -94,7 +94,7 @@ def application(inputState: InputState) =
           dynamicColumns(area = resultsArea, padding = 10) { newColumn =>
             val resultsHeight = results.size * buttonSize
             if (resultsHeight > resultsArea.h)
-              slider("result scroller", newColumn(-24), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
+              slider("result scroller", newColumn(-16), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
             val clipArea = newColumn(maxSize)
             clip(area = clipArea) {
               rows(area = clipArea.copy(y = clipArea.y - resultDelta.value, h = resultsHeight), numRows = results.size, padding = 10) { rows =>

@@ -34,7 +34,7 @@ object CheckboxSkin extends DefaultSkin:
         )
 
   val lightDefault: Default = Default(
-    padding = 4,
+    padding = 2,
     inactiveColor = ColorScheme.lightGray,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight,
@@ -42,7 +42,7 @@ object CheckboxSkin extends DefaultSkin:
   )
 
   val darkDefault: Default = Default(
-    padding = 4,
+    padding = 2,
     inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.darkPrimary,
     activeColor = ColorScheme.darkPrimaryHighlight,

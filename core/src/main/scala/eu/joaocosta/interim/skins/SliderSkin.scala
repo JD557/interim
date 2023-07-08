@@ -4,7 +4,7 @@ import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Primitives.*
 
 trait SliderSkin:
-  def sliderSize: Int
+  def sliderSize(area: Rect, min: Int, max: Int): Int
   def sliderArea(area: Rect): Rect
   def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
       uiState: UiState
@@ -13,18 +13,23 @@ trait SliderSkin:
 object SliderSkin extends DefaultSkin:
   final case class Default(
       padding: Int,
-      sliderSize: Int,
+      minSliderSize: Int,
       scrollbarColor: Color,
       inactiveColor: Color,
       hotColor: Color,
       activeColor: Color
   ) extends SliderSkin:
+    def sliderSize(area: Rect, min: Int, max: Int): Int =
+      val steps = (max - min) + 1
+      math.max(minSliderSize, math.max(area.w, area.h) / steps)
+
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
     def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
         uiState: UiState
     ): Unit =
       val sliderArea = this.sliderArea(area)
+      val sliderSize = this.sliderSize(area, min, max)
       val sliderRect =
         if (area.w > area.h)
           val sliderFill = area.h - 2 * padding
@@ -44,8 +49,8 @@ object SliderSkin extends DefaultSkin:
           rectangle(sliderRect, activeColor)
 
   val lightDefault: Default = Default(
-    padding = 8,
-    sliderSize = 8,
+    padding = 1,
+    minSliderSize = 8,
     scrollbarColor = ColorScheme.lightGray,
     inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.lightPrimary,
@@ -53,8 +58,8 @@ object SliderSkin extends DefaultSkin:
   )
 
   val darkDefault: Default = Default(
-    padding = 8,
-    sliderSize = 8,
+    padding = 1,
+    minSliderSize = 8,
     scrollbarColor = ColorScheme.darkGray,
     inactiveColor = ColorScheme.lightGray,
     hotColor = ColorScheme.darkPrimary,

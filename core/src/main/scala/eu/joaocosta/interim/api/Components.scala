@@ -48,7 +48,7 @@ trait Components:
       value: Int | Ref[Int]
   ): Component[Int] =
     val sliderArea   = skin.sliderArea(area)
-    val sliderSize   = skin.sliderSize
+    val sliderSize   = skin.sliderSize(area, min, max)
     val range        = max - min
     val itemStatus   = UiState.registerItem(id, sliderArea)
     val clampedValue = math.max(min, math.min(Ref.get[Int](value), max))

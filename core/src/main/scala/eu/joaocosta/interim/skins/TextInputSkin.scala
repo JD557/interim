@@ -39,7 +39,7 @@ object TextInputSkin extends DefaultSkin:
       )
 
   val lightDefault: Default = Default(
-    border = 4,
+    border = 1,
     fontSize = 8,
     inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.lightPrimary,
@@ -49,7 +49,7 @@ object TextInputSkin extends DefaultSkin:
   )
 
   val darkDefault: Default = Default(
-    border = 4,
+    border = 1,
     fontSize = 8,
     inactiveColor = ColorScheme.lightGray,
     hotColor = ColorScheme.darkPrimary,
