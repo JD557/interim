@@ -54,7 +54,7 @@ object TextLayout:
           val width     = charWidth(char)
           if (dy + textOp.fontSize > textOp.textArea.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
           else if (isNewline || width < textOp.textArea.w && dx + width > textOp.textArea.w)  // Newline
-            val line = alignH(lineAcc, textOp.textArea.h, textOp.horizontalAlignment)
+            val line = alignH(lineAcc, textOp.textArea.w, textOp.horizontalAlignment)
             layout(if (isNewline) remaining.tail else remaining, 0, dy + lineHeight, Nil, line ++ textAcc)
           else
             val charArea = Rect(
