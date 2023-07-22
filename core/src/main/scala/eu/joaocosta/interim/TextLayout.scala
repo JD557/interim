@@ -9,6 +9,32 @@ object TextLayout:
   enum VerticalAlignment:
     case Top, Center, Bottom
 
+  private def cumulativeSum(xs: List[Int]): List[Int] = xs match {
+    case Nil => Nil
+    case _   => xs.tail.scanLeft(xs.head)(_ + _)
+  }
+
+  private def cumulativeSum[A](xs: List[A])(f: A => Int): List[(A, Int)] =
+    xs.zip(cumulativeSum(xs.map(f)))
+
+  private def getNextLine(str: String, lineSize: Int, charWidth: Char => Int): (String, String) =
+    def textSize(str: String): Int = str.iterator.map(charWidth).sum
+    if (str.isEmpty) ("", "")
+    else
+      val (nextFullLine, remainingLines) = str.span(_ != '\n')
+      // If the line fits, simply return the line
+      if (textSize(nextFullLine) < lineSize) (nextFullLine, remainingLines.drop(1))
+      else
+        val words                      = nextFullLine.split(" ").map(word => word -> textSize(word)).toList
+        val (firstWord, firstWordSize) = words.headOption.getOrElse(("", 0))
+        // If the first word is too big, it needs to be broken
+        if (firstWordSize > lineSize)
+          val (firstPart, secondPart) = cumulativeSum(firstWord.toList)(charWidth).span(_._2 < lineSize)
+          (firstPart.mkString(""), secondPart.mkString("") ++ remainingLines)
+        else // Otherwise, pick as many words as fit
+          val (selectedWords, remainingWords) = cumulativeSum(words)(_._2 + charWidth(' ')).span(_._2 < lineSize)
+          (selectedWords.map(_._1._1).mkString(" "), remainingWords.map(_._1._1).mkString(" ") ++ remainingLines)
+
   private def alignH(
       chars: List[RenderOp.DrawChar],
       areaWidth: Int,
@@ -36,33 +62,31 @@ object TextLayout:
   ): List[RenderOp.DrawChar] =
     @tailrec
     def layout(
-        remaining: List[Char],
-        dx: Int,
+        remaining: String,
         dy: Int,
-        lineAcc: List[RenderOp.DrawChar],
         textAcc: List[RenderOp.DrawChar]
     ): List[RenderOp.DrawChar] =
       remaining match
-        case Nil =>
+        case "" =>
           alignV(
-            alignH(lineAcc, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc,
+            textAcc,
             textOp.textArea.h,
             textOp.verticalAlignment
           )
-        case char :: cs =>
-          val isNewline = char == '\n'
-          val width     = charWidth(char)
-          if (dy + textOp.fontSize > textOp.textArea.h) layout(Nil, dx, dy, lineAcc, textAcc) // End here
-          else if (isNewline || width < textOp.textArea.w && dx + width > textOp.textArea.w)  // Newline
-            val line = alignH(lineAcc, textOp.textArea.w, textOp.horizontalAlignment)
-            layout(if (isNewline) remaining.tail else remaining, 0, dy + lineHeight, Nil, line ++ textAcc)
+        case str =>
+          if (dy + textOp.fontSize > textOp.textArea.h) layout("", dy, textAcc) // End here
           else
-            val charArea = Rect(
-              x = textOp.textArea.x + dx,
-              y = textOp.textArea.y + dy,
-              w = width,
-              h = textOp.fontSize
-            )
-            layout(cs, dx + width, dy, RenderOp.DrawChar(charArea, textOp.color, char) :: lineAcc, textAcc)
+            val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, charWidth)
+            val ops = cumulativeSum(thisLine.toList)(charWidth).map { case (char, dx) =>
+              val width = charWidth(char)
+              val charArea = Rect(
+                x = textOp.textArea.x + dx - width,
+                y = textOp.textArea.y + dy,
+                w = width,
+                h = textOp.fontSize
+              )
+              RenderOp.DrawChar(charArea, textOp.color, char)
+            }
+            layout(nextLine, dy + lineHeight, alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc)
 
-    layout(textOp.text.toList, 0, 0, Nil, Nil).filter(char => (char.area & textOp.area) == char.area)
+    layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
