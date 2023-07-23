@@ -51,25 +51,25 @@ trait Components:
 
   /** Radio button component. Returns value currently selected.
     *
-    * @param buttonIndex the index of this button (value that this button returns when selected)
+    * @param buttonValue the value of this button (value that this button returns when selected)
     * @param label text label to show on this button
     */
-  final def radioButton(
+  final def radioButton[T](
       id: ItemId,
       area: Rect,
-      buttonIndex: Int,
+      buttonValue: T,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): ComponentWithValue[Int] =
-    new ComponentWithValue[Int]:
-      def apply(value: Ref[Int]): Component[Int] =
+  ): ComponentWithValue[T] =
+    new ComponentWithValue[T]:
+      def apply(value: Ref[T]): Component[T] =
         val buttonArea = skin.buttonArea(area)
         val itemStatus = UiState.registerItem(id, buttonArea)
         val newValue =
           if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
-            Ref.set[Int](value, buttonIndex)
-          else Ref.get[Int](value)
-        if (newValue == buttonIndex) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
+            Ref.set[T](value, buttonValue)
+          else Ref.get[T](value)
+        if (newValue == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
         else (skin.renderButton(area, label, itemStatus))
         newValue
 
