@@ -39,6 +39,27 @@ trait Components:
     if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) Ref.modify(value, v => !v)
     else Ref.get(value)
 
+  /** Radio button component. Returns value currently selected.
+    *
+    * @param buttonIndex the index of this button (value that this button returns when selected)
+    * @param label text label to show on this button
+    */
+  final def radioButton(
+      id: ItemId,
+      area: Rect,
+      buttonIndex: Int,
+      label: String,
+      skin: ButtonSkin = ButtonSkin.default()
+  )(value: Int | Ref[Int]): Component[Int] =
+    val buttonArea = skin.buttonArea(area)
+    val itemStatus = UiState.registerItem(id, buttonArea)
+    val newValue =
+      if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) Ref.set[Int](value, buttonIndex)
+      else Ref.get[Int](value)
+    if (newValue == buttonIndex) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
+    else (skin.renderButton(area, label, itemStatus))
+    newValue
+
   /** Slider component. Returns the current position of the slider, between min and max.
     *
     * @param min minimum value for this slider

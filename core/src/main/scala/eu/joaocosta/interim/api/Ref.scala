@@ -33,8 +33,24 @@ object Ref {
     * The new value is returned. Refs will be mutated while immutable values will not.
     */
   inline def modify[T](x: T | Ref[T], f: T => T): T = x match
-    case value: T => f(value)
+    case value: T =>
+      f(value)
     case ref: Ref[T] =>
       ref.value = f(ref.value)
       ref.value
+
+  /** Creates a Ref that can be used inside a block and returns that value.
+    *
+    * Useful to set temporary mutable variables.
+    */
+  def withRef[T](initialValue: T)(block: Ref[T] => Unit): T =
+    val ref = Ref(initialValue)
+    block(ref)
+    ref.value
+
+  /** Wraps this value into a Ref and passes it to a block, returning the final value of the ref.
+    *
+    * Useful to set temporary mutable variables.
+    */
+  extension [T](x: T) def asRef(block: Ref[T] => Unit): T = withRef(x)(block)
 }

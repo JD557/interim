@@ -26,6 +26,7 @@ To know more about the library and how to get started check the [examples](https
 - Text
 - Buttons
 - Checkboxes
+- Radio Buttons
 - Sliders
 - Text Input
 - Movable components (including windows)
