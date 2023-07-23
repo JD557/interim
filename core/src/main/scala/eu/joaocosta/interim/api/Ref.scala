@@ -18,7 +18,7 @@ object Ref {
 
   /** Gets a value from a Ref or from a plain value.
     */
-  inline def get[T](x: T | Ref[T]): T = x match
+  inline def get[T](x: T | Ref[T]): T = inline x match
     case value: T    => value
     case ref: Ref[T] => ref.value
 
@@ -32,7 +32,7 @@ object Ref {
     *
     * The new value is returned. Refs will be mutated while immutable values will not.
     */
-  inline def modify[T](x: T | Ref[T], f: T => T): T = x match
+  inline def modify[T](x: T | Ref[T], f: T => T): T = inline x match
     case value: T =>
       f(value)
     case ref: Ref[T] =>
