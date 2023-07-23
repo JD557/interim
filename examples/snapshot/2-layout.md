@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli layout.md example-minart-backend.scala
+scala-cli 2-layout.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion
