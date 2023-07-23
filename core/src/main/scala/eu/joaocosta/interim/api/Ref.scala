@@ -4,7 +4,7 @@ package eu.joaocosta.interim.api
   *
   * When a function receives a Ref as an argument, it will probably mutate it.
   */
-final case class Ref[T](var value: T) {
+final case class Ref[T](var value: T):
 
   /** Assigns a value to this Ref.
     * Shorthand for `ref.value = x`
@@ -12,9 +12,8 @@ final case class Ref[T](var value: T) {
   def :=(newValue: T): this.type =
     value = newValue
     this
-}
 
-object Ref {
+object Ref:
 
   /** Gets a value from a Ref or from a plain value.
     */
@@ -53,4 +52,3 @@ object Ref {
     * Useful to set temporary mutable variables.
     */
   extension [T](x: T) def asRef(block: Ref[T] => Unit): T = withRef(x)(block)
-}
