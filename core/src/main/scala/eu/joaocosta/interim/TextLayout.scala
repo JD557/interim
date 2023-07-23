@@ -29,7 +29,7 @@ object TextLayout:
         // If the first word is too big, it needs to be broken
         if (textSize(firstWord) > lineSize)
           val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 < lineSize)
-          (firstPart.mkString(""), secondPart.mkString("") ++ remainingLines)
+          (firstPart.map(_._1).mkString(""), secondPart.map(_._1).mkString("") ++ remainingLines)
         else // Otherwise, pick as many words as fit
           val (selectedWords, remainingWords) = cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 < lineSize)
           (selectedWords.map(_._1).mkString(" "), remainingWords.map(_._1).mkString(" ") ++ remainingLines)
