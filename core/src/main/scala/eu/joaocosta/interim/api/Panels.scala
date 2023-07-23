@@ -28,7 +28,7 @@ trait Panels:
     * @param title of this window
     * @param movable if true, the window will include a move handle in the title bar
     */
-  final def window[T](
+  final inline def window[T](
       id: ItemId,
       area: Rect | Ref[Rect],
       title: String,
@@ -42,10 +42,12 @@ trait Panels:
     skin.renderWindow(oldArea, title)
     val nextArea: Rect =
       if (movable)
-        Components.moveHandle(
-          id |> "internal_move_handle",
-          skin.titleTextArea(oldArea),
-          handleSkin
-        )(area)
+        Components
+          .moveHandle(
+            id |> "internal_move_handle",
+            skin.titleTextArea(oldArea),
+            handleSkin
+          )
+          .applyUnion(area)
       else oldArea
     (body(skin.panelArea(oldArea)), nextArea)
