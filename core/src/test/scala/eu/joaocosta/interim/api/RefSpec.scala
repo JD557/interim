@@ -38,9 +38,28 @@ class RefSpec extends munit.FunSuite:
     }
     assertEquals(result, 2)
 
+  // Braces needed due to https://github.com/scalameta/scalafmt/issues/3597
+  test("withRefs allows to build a case class from temporary Ref value") {
+    case class Foo(x: Int, y: String)
+    val result = Ref.withRefs(Foo(1, "asd")) { (x, y) =>
+      x := 2
+      y := "dsa"
+    }
+    assertEquals(result, Foo(2, "dsa"))
+  }
+
   test("asRef allows to use a temporary Ref value"):
     import Ref.asRef
     val result = 0.asRef { ref =>
       Ref.modify[Int](ref, _ + 2)
     }
     assertEquals(result, 2)
+
+  test("asRefs allows to build a case class from temporary Ref value"):
+    import Ref.asRefs
+    case class Foo(x: Int, y: String)
+    val result = Foo(1, "asd").asRefs { (x, y) =>
+      x := 2
+      y := "dsa"
+    }
+    assertEquals(result, Foo(2, "dsa"))
