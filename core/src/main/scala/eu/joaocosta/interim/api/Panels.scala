@@ -47,7 +47,6 @@ trait Panels:
             id |> "internal_move_handle",
             skin.titleTextArea(oldArea),
             handleSkin
-          )
-          .applyUnion(area)
+          )(area)
       else oldArea
     (body(skin.panelArea(oldArea)), nextArea)
