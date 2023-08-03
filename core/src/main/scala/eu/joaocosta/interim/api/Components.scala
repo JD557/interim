@@ -14,12 +14,12 @@ trait Components:
   type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
 
   trait ComponentWithValue[T] {
-    def apply(value: Ref[T]): Component[T]
-    def apply(value: T): Component[T] =
+    def applyRef(value: Ref[T]): Component[T]
+    def applyValue(value: T): Component[T] =
       apply(Ref(value))
-    inline def applyUnion(value: T | Ref[T]): Component[T] = inline value match
-      case x: T      => apply(x)
-      case x: Ref[T] => apply(x)
+    inline def apply(value: T | Ref[T]): Component[T] = inline value match
+      case x: T      => applyValue(x)
+      case x: Ref[T] => applyRef(x)
   }
 
   /** Button component. Returns true if it's being clicked, false otherwise.
@@ -41,7 +41,7 @@ trait Components:
     */
   final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.default()): ComponentWithValue[Boolean] =
     new ComponentWithValue[Boolean]:
-      def apply(value: Ref[Boolean]): Component[Boolean] =
+      def applyRef(value: Ref[Boolean]): Component[Boolean] =
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiState.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, Ref.get[Boolean](value), itemStatus)
@@ -62,7 +62,7 @@ trait Components:
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithValue[T] =
     new ComponentWithValue[T]:
-      def apply(value: Ref[T]): Component[T] =
+      def applyRef(value: Ref[T]): Component[T] =
         val buttonArea = skin.buttonArea(area)
         val itemStatus = UiState.registerItem(id, buttonArea)
         val newValue =
@@ -86,7 +86,7 @@ trait Components:
       skin: SliderSkin = SliderSkin.default()
   ): ComponentWithValue[Int] =
     new ComponentWithValue[Int]:
-      def apply(value: Ref[Int]): Component[Int] =
+      def applyRef(value: Ref[Int]): Component[Int] =
         val sliderArea   = skin.sliderArea(area)
         val sliderSize   = skin.sliderSize(area, min, max)
         val range        = max - min
@@ -112,7 +112,7 @@ trait Components:
       skin: TextInputSkin = TextInputSkin.default()
   ): ComponentWithValue[String] =
     new ComponentWithValue[String]:
-      def apply(value: Ref[String]): Component[String] =
+      def applyRef(value: Ref[String]): Component[String] =
         val textInputArea = skin.textInputArea(area)
         val itemStatus    = UiState.registerItem(id, textInputArea)
         skin.renderTextInput(area, Ref.get(value), itemStatus)
@@ -128,7 +128,7 @@ trait Components:
     */
   final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
-      def apply(value: Ref[Rect]): Component[Rect] =
+      def applyRef(value: Ref[Rect]): Component[Rect] =
         val handleArea = skin.handleArea(area)
         val itemStatus = UiState.registerItem(id, handleArea)
         skin.renderHandle(area, Ref.get(value), itemStatus)
