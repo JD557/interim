@@ -168,3 +168,5 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
       _counter = counter + 1
     _counter
 ```
+
+InterIm also provides some tools to make local mutability easier and safer. Those are introduced in later examples.
