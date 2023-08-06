@@ -79,11 +79,11 @@ def application(inputState: InputState, appState: AppState) =
       window(id = "color picker", area = colorPickerArea, title = "Color Picker", movable = true) {
         area =>
           rows(area = area.shrink(5), numRows = 5, padding = 10) { row =>
-            rectangle(row(0), color.value)
-            text(row(1), textColor, color.value.toString, 8, verticalAlignment = centerVertically)
-            val r = slider("red slider", row(2), min = 0, max = 255)(color.value.r)
-            val g = slider("green slider", row(3), min = 0, max = 255)(color.value.g)
-            val b = slider("blue slider", row(4), min = 0, max = 255)(color.value.b)
+            rectangle(row(0), color.get)
+            text(row(1), textColor, color.get.toString, 8, verticalAlignment = centerVertically)
+            val r = slider("red slider", row(2), min = 0, max = 255)(color.get.r)
+            val g = slider("green slider", row(3), min = 0, max = 255)(color.get.g)
+            val b = slider("blue slider", row(4), min = 0, max = 255)(color.get.b)
             color := Color(r, g, b)
           }
       }
@@ -91,10 +91,10 @@ def application(inputState: InputState, appState: AppState) =
       window(id = "color search", area = colorSearchArea, title = "Color Search", movable = true) {
         area =>
           dynamicRows(area = area.shrink(5), padding = 10) { newRow =>
-            val oldQuery = query.value
+            val oldQuery = query.get
             textInput("query", newRow(16))(query)
-            if (query.value != oldQuery) resultDelta := 0
-            val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.value.toLowerCase))
+            if (query.get != oldQuery) resultDelta := 0
+            val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
             val resultsArea = newRow(maxSize)
             val buttonSize = 32
             dynamicColumns(area = resultsArea, padding = 10) { newColumn =>
@@ -103,7 +103,7 @@ def application(inputState: InputState, appState: AppState) =
                 slider("result scroller", newColumn(-16), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
               val clipArea = newColumn(maxSize)
               clip(area = clipArea) {
-                rows(area = clipArea.copy(y = clipArea.y - resultDelta.value, h = resultsHeight), numRows = results.size, padding = 10) { rows =>
+                rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10) { rows =>
                   results.zip(rows).foreach { case ((colorName, colorValue), row) =>
                     if (button(s"$colorName button", row, colorName))
                       color := colorValue

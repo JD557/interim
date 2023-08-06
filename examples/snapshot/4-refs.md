@@ -89,17 +89,17 @@ def applicationRef(inputState: InputState, appState: AppState) =
       window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
         columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
           if (button(id = "minus", area = column(0), label = "-"))
-            counter := counter.value - 1 // Counter is a Ref, so we need to use :=
+            counter := counter.get - 1 // Counter is a Ref, so we need to use :=
           text(
             area = column(1),
             color = Color(0, 0, 0),
-            text = counter.value.toString,  // Counter is a Ref, so we need to use .value
+            text = counter.get.toString,  // Counter is a Ref, so we need to use .get
             fontSize = 8,
             horizontalAlignment = centerHorizontally,
             verticalAlignment = centerVertically
           )
           if (button(id = "plus", area = column(2), label = "+"))
-            counter := counter.value + 1  // Counter is a Ref, so we need to use :=
+            counter := counter.get + 1  // Counter is a Ref, so we need to use :=
         }
       }
     }

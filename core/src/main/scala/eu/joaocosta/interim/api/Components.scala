@@ -44,10 +44,10 @@ trait Components:
       def applyRef(value: Ref[Boolean]): Component[Boolean] =
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiState.registerItem(id, checkboxArea)
-        skin.renderCheckbox(area, Ref.get[Boolean](value), itemStatus)
+        skin.renderCheckbox(area, value.get, itemStatus)
         if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
-          Ref.modify[Boolean](value, v => !v)
-        else Ref.get(value)
+          value.modify(!_).get
+        else value.get
 
   /** Radio button component. Returns value currently selected.
     *
@@ -65,13 +65,11 @@ trait Components:
       def applyRef(value: Ref[T]): Component[T] =
         val buttonArea = skin.buttonArea(area)
         val itemStatus = UiState.registerItem(id, buttonArea)
-        val newValue =
-          if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
-            Ref.set[T](value, buttonValue)
-          else Ref.get[T](value)
-        if (newValue == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
+        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
+          value := buttonValue
+        if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
         else (skin.renderButton(area, label, itemStatus))
-        newValue
+        value.get
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *
@@ -91,18 +89,18 @@ trait Components:
         val sliderSize   = skin.sliderSize(area, min, max)
         val range        = max - min
         val itemStatus   = UiState.registerItem(id, sliderArea)
-        val clampedValue = math.max(min, math.min(Ref.get[Int](value), max))
+        val clampedValue = math.max(min, math.min(value.get, max))
         skin.renderSlider(area, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
           if (area.w > area.h)
             val mousePos = summon[InputState].mouseX - sliderArea.x - sliderSize / 2
             val maxPos   = sliderArea.w - sliderSize
-            Ref.set(value, math.max(min, math.min(min + (mousePos * range) / maxPos, max)))
+            value := math.max(min, math.min(min + (mousePos * range) / maxPos, max))
           else
             val mousePos = summon[InputState].mouseY - sliderArea.y - sliderSize / 2
             val maxPos   = sliderArea.h - sliderSize
-            Ref.set(value, math.max(min, math.min((mousePos * range) / maxPos, max)))
-        else Ref.get(value)
+            value := math.max(min, math.min((mousePos * range) / maxPos, max))
+        value.get
 
   /** Text input component. Returns the current string inputed.
     */
@@ -115,9 +113,10 @@ trait Components:
       def applyRef(value: Ref[String]): Component[String] =
         val textInputArea = skin.textInputArea(area)
         val itemStatus    = UiState.registerItem(id, textInputArea)
-        skin.renderTextInput(area, Ref.get(value), itemStatus)
-        if (itemStatus.keyboardFocus) Ref.modify(value, summon[InputState].appendKeyboardInput)
-        else Ref.get(value)
+        skin.renderTextInput(area, value.get, itemStatus)
+        if (itemStatus.keyboardFocus)
+          value.modify(summon[InputState].appendKeyboardInput)
+        value.get
 
   /** Draggable handle. Returns the moved area.
     *
@@ -131,7 +130,7 @@ trait Components:
       def applyRef(value: Ref[Rect]): Component[Rect] =
         val handleArea = skin.handleArea(area)
         val itemStatus = UiState.registerItem(id, handleArea)
-        skin.renderHandle(area, Ref.get(value), itemStatus)
+        skin.renderHandle(area, value.get, itemStatus)
         if (itemStatus.active)
           val handleCenterX = handleArea.x + handleArea.w / 2
           val handleCenterY = handleArea.y + handleArea.h / 2
@@ -139,5 +138,5 @@ trait Components:
           val mouseY        = summon[InputState].mouseY
           val deltaX        = mouseX - handleCenterX
           val deltaY        = mouseY - handleCenterY
-          Ref.modify(value, _.move(deltaX, deltaY))
-        else Ref.get(value)
+          value.modify(_.move(deltaX, deltaY))
+        value.get

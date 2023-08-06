@@ -1,44 +1,32 @@
 package eu.joaocosta.interim.api
 
+import scala.annotation.targetName
 import scala.deriving.Mirror
 
 /** A mutable reference to a variable.
   *
   * When a function receives a Ref as an argument, it will probably mutate it.
   */
-final case class Ref[T](var value: T):
+final case class Ref[T](private var value: T):
+  /** Returns the value of this Ref.
+    */
+  def get: T = value
 
   /** Assigns a value to this Ref.
-    * Shorthand for `ref.value = x`
     */
+  @targetName("set")
   def :=(newValue: T): this.type =
     value = newValue
     this
 
+  /** Modifies the value pf this Ref.
+    * Shorthand for `ref := f(ref.value)`
+    */
+  def modify(f: T => T): this.type =
+    value = f(value)
+    this
+
 object Ref:
-
-  /** Gets a value from a Ref or from a plain value.
-    */
-  inline def get[T](x: T | Ref[T]): T = inline x match
-    case value: T    => value
-    case ref: Ref[T] => ref.value
-
-  /** Sets a value from a Ref or from a plain value.
-    *
-    * The new value is returned. Refs will be mutated while immutable values will not.
-    */
-  inline def set[T](x: T | Ref[T], v: T): T = modify(x, _ => v)
-
-  /** Modifies a value from a Ref or from a plain value.
-    *
-    * The new value is returned. Refs will be mutated while immutable values will not.
-    */
-  inline def modify[T](x: T | Ref[T], f: T => T): T = inline x match
-    case value: T =>
-      f(value)
-    case ref: Ref[T] =>
-      ref.value = f(ref.value)
-      ref.value
 
   /** Creates a Ref that can be used inside a block and returns that value.
     *
