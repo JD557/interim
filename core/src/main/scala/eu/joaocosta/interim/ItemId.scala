@@ -1,6 +1,6 @@
 package eu.joaocosta.interim
 
-import scala.annotation.alpha
+import scala.annotation.targetName
 
 /** Identifier of an item. Should be unique for each item.
   *
@@ -22,6 +22,6 @@ object ItemId:
   /** Operator to add a child to an item id. Useful for composite components.
     */
   extension (parentId: ItemId)
-    @alpha("addChild")
+    @targetName("addChild")
     def |>(childId: ItemId): ItemId =
       parentId.toIdList ++ childId.toIdList
