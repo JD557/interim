@@ -22,7 +22,7 @@ object MinartBackend:
     def coloredChar(char: Char, color: MinartColor): SurfaceView
 
   case class BitmapFont(file: String, width: Int, height: Int, fontFirstChar: Char = '\u0000') extends Font:
-    private val spriteSheet = SpriteSheet(Image.loadBmpImage(Resource(file)).get, width, height)
+    private val spriteSheet        = SpriteSheet(Image.loadBmpImage(Resource(file)).get, width, height)
     def charWidth(char: Char): Int = width
     def coloredChar(char: Char, color: MinartColor): SurfaceView =
       spriteSheet.getSprite(char.toInt - fontFirstChar.toInt).map {
@@ -38,7 +38,7 @@ object MinartBackend:
       else
         val scale = fontSize / baseFont.height.toDouble
         new Font:
-          def charWidth(char: Char): Int = (baseFont.width * scale).toInt
+          def charWidth(char: Char): Int                               = (baseFont.width * scale).toInt
           def coloredChar(char: Char, color: MinartColor): SurfaceView = baseFont.coloredChar(char, color).scale(scale)
 
   // Gloop font by Polyducks: https://twitter.com/PolyDucks
