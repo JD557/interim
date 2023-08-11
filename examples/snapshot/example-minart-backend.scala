@@ -17,11 +17,11 @@ import eu.joaocosta.interim.*
 
 object MinartBackend:
 
-  trait Font:
+  trait MinartFont:
     def charWidth(char: Char): Int
     def coloredChar(char: Char, color: MinartColor): SurfaceView
 
-  case class BitmapFont(file: String, width: Int, height: Int, fontFirstChar: Char = '\u0000') extends Font:
+  case class BitmapFont(file: String, width: Int, height: Int, fontFirstChar: Char = '\u0000') extends MinartFont:
     private val spriteSheet        = SpriteSheet(Image.loadBmpImage(Resource(file)).get, width, height)
     def charWidth(char: Char): Int = width
     def coloredChar(char: Char, color: MinartColor): SurfaceView =
@@ -32,12 +32,12 @@ object MinartBackend:
 
   case class BitmapFontPack(fonts: List[BitmapFont]):
     val sortedFonts = fonts.sortBy(_.height)
-    def withSize(fontSize: Int): Font =
+    def withSize(fontSize: Int): MinartFont =
       val baseFont = sortedFonts.filter(_.height <= fontSize).lastOption.getOrElse(sortedFonts.head)
       if (baseFont.height == fontSize) baseFont
       else
         val scale = fontSize / baseFont.height.toDouble
-        new Font:
+        new MinartFont:
           def charWidth(char: Char): Int                               = (baseFont.width * scale).toInt
           def coloredChar(char: Char, color: MinartColor): SurfaceView = baseFont.coloredChar(char, color).scale(scale)
 
@@ -82,8 +82,8 @@ object MinartBackend:
       case RenderOp.DrawRect(Rect(x, y, w, h), color) =>
         canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
       case op: RenderOp.DrawText =>
-        val font = gloop.withSize(op.fontSize)
-        op.asDrawChars(charWidth = font.charWidth).foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
+        val font = gloop.withSize(op.font.fontSize)
+        op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
           val charSprite = font.coloredChar(char, MinartColor(color.r, color.g, color.b))
           canvas
             .blit(charSprite, Some(MinartColor(255, 0, 255)))(x, y)

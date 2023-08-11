@@ -48,7 +48,7 @@ def application(inputState: InputState) =
           area = column(1),
           color = Color(0, 0, 0),
           text = counter.toString,
-          fontSize = 8,
+          font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
