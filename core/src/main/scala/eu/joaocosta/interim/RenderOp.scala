@@ -34,7 +34,7 @@ object RenderOp:
     *  @param area area to render, text outside this area should not be shown
     *  @param color text color
     *  @param text string to render
-    *  @param fontSize font size in pixels
+    *  @param font font size and style
     *  @param textArea area where the text should be layed out
     *  @param horizontalAlignment how the text should be layed out horizontally
     *  @param verticalAlignment how the text should be layed out vertically
@@ -43,7 +43,7 @@ object RenderOp:
       area: Rect,
       color: Color,
       text: String,
-      fontSize: Int,
+      font: Font,
       textArea: Rect,
       horizontalAlignment: TextLayout.HorizontalAlignment,
       verticalAlignment: TextLayout.VerticalAlignment
@@ -52,13 +52,11 @@ object RenderOp:
 
     /** Converts a DrawText operation into a sequence of simpler DrawChar operations.
       *
-      * @param charWith function that, given a char, returns its width in pixels
       * @param lineHeight line height to use, in pixels
       */
     def asDrawChars(
-        charWidth: Char => Int = _ => fontSize,
-        lineHeight: Int = (fontSize * 1.3).toInt
-    ): List[DrawChar] = TextLayout.asDrawChars(this, charWidth, lineHeight)
+        lineHeight: Int = (font.fontSize * 1.3).toInt
+    ): List[DrawChar] = TextLayout.asDrawChars(this, lineHeight)
 
   /** Operation to draw a custom element on the screen
     *

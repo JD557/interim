@@ -56,7 +56,6 @@ object TextLayout:
 
   private[interim] def asDrawChars(
       textOp: RenderOp.DrawText,
-      charWidth: Char => Int,
       lineHeight: Int
   ): List[RenderOp.DrawChar] =
     @tailrec
@@ -73,16 +72,16 @@ object TextLayout:
             textOp.verticalAlignment
           )
         case str =>
-          if (dy + textOp.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
+          if (dy + textOp.font.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
           else
-            val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, charWidth)
-            val ops = cumulativeSum(thisLine)(charWidth).map { case (char, dx) =>
-              val width = charWidth(char)
+            val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, textOp.font.charWidth)
+            val ops = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
+              val width = textOp.font.charWidth(char)
               val charArea = Rect(
                 x = textOp.textArea.x + dx - width,
                 y = textOp.textArea.y + dy,
                 w = width,
-                h = textOp.fontSize
+                h = textOp.font.fontSize
               )
               RenderOp.DrawChar(charArea, textOp.color, char)
             }.toList

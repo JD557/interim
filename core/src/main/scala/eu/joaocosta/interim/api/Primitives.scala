@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
 import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
-import eu.joaocosta.interim.{Color, Rect, RenderOp, UiState}
+import eu.joaocosta.interim.{Color, Font, Rect, RenderOp, UiState}
 
 /** Object containing the default primitives.
   *
@@ -18,7 +18,7 @@ trait Primitives:
   /** Draws a block of text in the specified area with a color.
     *
     * @param text text to write
-    * @param fontSize font size in px
+    * @param font font definition
     * @param horizontalAlignment how the text should be aligned horizontally
     * @param verticalAlignment how the text should be aligned vertically
     */
@@ -26,14 +26,14 @@ trait Primitives:
       area: Rect,
       color: Color,
       text: String,
-      fontSize: Int,
+      font: Font = Font.default,
       horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Left,
       verticalAlignment: VerticalAlignment = VerticalAlignment.Top
   )(using
       uiState: UiState
   ): Unit =
     if (text.nonEmpty)
-      uiState.ops.addOne(RenderOp.DrawText(area, color, text, fontSize, area, horizontalAlignment, verticalAlignment))
+      uiState.ops.addOne(RenderOp.DrawText(area, color, text, font, area, horizontalAlignment, verticalAlignment))
 
   /** Advanced operation to add a custom primitive to the list of render operations.
     *

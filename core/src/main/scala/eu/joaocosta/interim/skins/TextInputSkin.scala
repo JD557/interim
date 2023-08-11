@@ -10,7 +10,7 @@ trait TextInputSkin:
 object TextInputSkin extends DefaultSkin:
   final case class Default(
       border: Int,
-      fontSize: Int,
+      font: Font,
       inactiveColor: Color,
       hotColor: Color,
       activeColor: Color,
@@ -33,14 +33,14 @@ object TextInputSkin extends DefaultSkin:
         textInputArea.shrink(border),
         textColor,
         value,
-        fontSize,
+        font,
         TextLayout.HorizontalAlignment.Left,
         TextLayout.VerticalAlignment.Center
       )
 
   val lightDefault: Default = Default(
     border = 1,
-    fontSize = 8,
+    font = Font.default,
     inactiveColor = ColorScheme.darkGray,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight,
@@ -50,7 +50,7 @@ object TextInputSkin extends DefaultSkin:
 
   val darkDefault: Default = Default(
     border = 1,
-    fontSize = 8,
+    font = Font.default,
     inactiveColor = ColorScheme.lightGray,
     hotColor = ColorScheme.darkPrimary,
     activeColor = ColorScheme.darkPrimaryHighlight,
