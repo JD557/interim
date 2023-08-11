@@ -60,7 +60,7 @@ def application(inputState: InputState) =
       area = Rect(x = 40, y = 10, w = 30, h = 30),
       color = Color(0, 0, 0),
       text = counter.toString,
-      fontSize = 8,
+      font = Font.default,
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )
@@ -133,7 +133,7 @@ def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
         area = Rect(x = 40, y = 10, w = 30, h = 30),
         color = Color(0, 0, 0),
         text = counter.toString,
-        fontSize = 8,
+        font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       ),
@@ -160,7 +160,7 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
       area = Rect(x = 40, y = 10, w = 30, h = 30),
       color = Color(0, 0, 0),
       text = counter.toString,
-      fontSize = 8,
+      font = Font.default,
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )

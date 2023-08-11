@@ -80,7 +80,7 @@ def application(inputState: InputState, appState: AppState) =
         area =>
           rows(area = area.shrink(5), numRows = 5, padding = 10) { row =>
             rectangle(row(0), color.get)
-            text(row(1), textColor, color.get.toString, 8, verticalAlignment = centerVertically)
+            text(row(1), textColor, color.get.toString, Font.default, alignLeft, centerVertically)
             val r = slider("red slider", row(2), min = 0, max = 255)(color.get.r)
             val g = slider("green slider", row(3), min = 0, max = 255)(color.get.g)
             val b = slider("blue slider", row(4), min = 0, max = 255)(color.get.b)
@@ -119,7 +119,7 @@ def application(inputState: InputState, appState: AppState) =
           if (checkbox(id = "dark mode", newColumn(-16))(skins.ColorScheme.darkModeEnabled()))
             skins.ColorScheme.useDarkMode()
           else skins.ColorScheme.useLightMode()
-          text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", 8, alignRight)
+          text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", Font.default, alignRight)
         }
       }
     }

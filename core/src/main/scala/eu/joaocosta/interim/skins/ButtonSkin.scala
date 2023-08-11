@@ -14,7 +14,7 @@ object ButtonSkin extends DefaultSkin:
   final case class Default(
       shadowDelta: Int,
       clickDelta: Int,
-      fontSize: Int,
+      font: Font,
       shadowColor: Color,
       textColor: Color,
       inactiveColor: Color,
@@ -43,14 +43,14 @@ object ButtonSkin extends DefaultSkin:
           rectangle(clickedArea, activeColor)
       itemStatus match
         case UiState.ItemStatus(true, true, _) =>
-          text(clickedArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(clickedArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
         case _ =>
-          text(buttonArea, textColor, label, fontSize, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(buttonArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
 
   val lightDefault: Default = Default(
     shadowDelta = 2,
     clickDelta = 1,
-    fontSize = 8,
+    font = Font.default,
     shadowColor = ColorScheme.darkGray,
     textColor = ColorScheme.black,
     inactiveColor = ColorScheme.lightPrimary,
@@ -61,7 +61,7 @@ object ButtonSkin extends DefaultSkin:
   val darkDefault: Default = Default(
     shadowDelta = 0,
     clickDelta = 2,
-    fontSize = 8,
+    font = Font.default,
     shadowColor = ColorScheme.black,
     textColor = ColorScheme.white,
     inactiveColor = ColorScheme.darkPrimary,

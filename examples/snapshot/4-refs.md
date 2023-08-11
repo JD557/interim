@@ -48,7 +48,7 @@ def application(inputState: InputState) =
           area = column(1),
           color = Color(0, 0, 0),
           text = counter.toString,
-          fontSize = 8,
+          font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
@@ -94,7 +94,7 @@ def applicationRef(inputState: InputState, appState: AppState) =
             area = column(1),
             color = Color(0, 0, 0),
             text = counter.get.toString,  // Counter is a Ref, so we need to use .get
-            fontSize = 8,
+            font = Font.default,
             horizontalAlignment = centerHorizontally,
             verticalAlignment = centerVertically
           )
