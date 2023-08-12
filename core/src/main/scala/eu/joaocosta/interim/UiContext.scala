@@ -55,7 +55,9 @@ object UiContext:
   /** Status of an item.
     *
     *  @param hot if the mouse is on top of the item
-    *  @param active if the mouse clicked the item (and is still pressed down)
+    *  @param active if the mouse clicked the item (and is still pressed down).
+    *                This value stays true for one extra frame, so that it's
+    *                possible to trigger an action on mouse up.
     *  @param selected if this was the last element clicked
     */
   final case class ItemStatus(hot: Boolean, active: Boolean, selected: Boolean)
