@@ -11,21 +11,21 @@ import eu.joaocosta.interim.TextLayout.*
 object InterIm extends api.Primitives with api.Layouts with api.Components with api.Constants with api.Panels:
   /** Wraps the UI interactions. All API calls should happen inside the body (run parameter).
     *
-    * This method takes an input state and a UI state and mutates the UI state accordingly.
+    * This method takes an input state and a UI context and mutates the UI context accordingly.
     * This should be called on every frame.
     *
     * The method returns a list of operations to render and the result of the body.
     */
-  def ui[T](inputState: InputState, uiState: UiState)(
-      run: (inputState: InputState, uiState: UiState) ?=> T
+  def ui[T](inputState: InputState, uiContext: UiContext)(
+      run: (inputState: InputState, uiContext: UiContext) ?=> T
   ): (List[RenderOp], T) =
     // prepare
-    uiState.ops.clear()
-    uiState.hotItem = None
-    if (inputState.mouseDown) uiState.keyboardFocusItem = None
+    uiContext.ops.clear()
+    uiContext.hotItem = None
+    if (inputState.mouseDown) uiContext.keyboardFocusItem = None
     // run
-    val res = run(using inputState, uiState)
+    val res = run(using inputState, uiContext)
     // finish
-    if (!inputState.mouseDown) uiState.activeItem = None
+    if (!inputState.mouseDown) uiContext.activeItem = None
     // return
-    (uiState.ops.toList, res)
+    (uiContext.ops.toList, res)

@@ -1,29 +1,29 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.{Color, InputState, Rect, RenderOp, UiState}
+import eu.joaocosta.interim.{Color, InputState, Rect, RenderOp, UiContext}
 
 class LayoutsSpec extends munit.FunSuite:
   test("clip correctly clips render ops"):
-    given uiState: UiState       = new UiState()
+    given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(0, 0, false, "")
     Layouts.clip(Rect(10, 10, 10, 10)):
       Primitives.rectangle(Rect(0, 0, 15, 15), Color(0, 0, 0))
-    assertEquals(uiState.ops.toList, List(RenderOp.DrawRect(Rect(10, 10, 5, 5), Color(0, 0, 0))))
+    assertEquals(uiContext.ops.toList, List(RenderOp.DrawRect(Rect(10, 10, 5, 5), Color(0, 0, 0))))
 
   test("clip ignores input outside the clip area"):
-    given uiState: UiState       = new UiState()
+    given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(5, 5, false, "")
     val itemStatus =
       Layouts.clip(Rect(10, 10, 10, 10)):
-        UiState.registerItem(1, Rect(0, 0, 15, 15))
+        UiContext.registerItem(1, Rect(0, 0, 15, 15))
     assertEquals(itemStatus.hot, false)
 
   test("clip considers input inside the clip area"):
-    given uiState: UiState       = new UiState()
+    given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(12, 12, false, "")
     val itemStatus =
       Layouts.clip(Rect(10, 10, 10, 10)):
-        UiState.registerItem(1, Rect(0, 0, 15, 15))
+        UiContext.registerItem(1, Rect(0, 0, 15, 15))
     assertEquals(itemStatus.hot, true)
 
   test("grid correctly lays out elements in a grid"):

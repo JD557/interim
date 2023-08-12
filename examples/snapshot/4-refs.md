@@ -31,14 +31,14 @@ The example above could also be written as:
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Ref
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 
 val windowArea = Ref(Rect(x = 10, y = 10, w = 110, h = 50)) // Now a val instead of a var
 var counter    = 0
 
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     // window takes area as a ref, so will mutate the window area variable
     window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
@@ -76,7 +76,7 @@ of `Ref`s that can be used inside the block. At the end of the block, a new obje
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Ref
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 
 case class AppState(counter: Int = 0, windowArea: Rect = Rect(x = 10, y = 10, w = 110, h = 50))
 val initialState = AppState()
@@ -84,7 +84,7 @@ val initialState = AppState()
 def applicationRef(inputState: InputState, appState: AppState) =
   import eu.joaocosta.interim.InterIm._
   import eu.joaocosta.interim.api.Ref.asRefs
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     appState.asRefs { (counter, windowArea) =>
       window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
         columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>

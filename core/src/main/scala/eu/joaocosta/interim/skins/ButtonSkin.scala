@@ -6,8 +6,8 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
-  def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(using
-      uiState: UiState
+  def renderButton(area: Rect, label: String, itemStatus: UiContext.ItemStatus)(using
+      uiContext: UiContext
   ): Unit
 
 object ButtonSkin extends DefaultSkin:
@@ -23,8 +23,8 @@ object ButtonSkin extends DefaultSkin:
   ) extends ButtonSkin:
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - math.max(shadowDelta, clickDelta), h = area.h - math.max(shadowDelta, clickDelta))
-    def renderButton(area: Rect, label: String, itemStatus: UiState.ItemStatus)(using
-        uiState: UiState
+    def renderButton(area: Rect, label: String, itemStatus: UiContext.ItemStatus)(using
+        uiContext: UiContext
     ): Unit =
       val buttonArea  = this.buttonArea(area)
       val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
@@ -33,16 +33,16 @@ object ButtonSkin extends DefaultSkin:
         shadowColor
       )
       itemStatus match
-        case UiState.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _) =>
           rectangle(buttonArea, inactiveColor)
-        case UiState.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _) =>
           rectangle(buttonArea, hotColor)
-        case UiState.ItemStatus(false, true, _) =>
+        case UiContext.ItemStatus(false, true, _) =>
           rectangle(buttonArea, activeColor)
-        case UiState.ItemStatus(true, true, _) =>
+        case UiContext.ItemStatus(true, true, _) =>
           rectangle(clickedArea, activeColor)
       itemStatus match
-        case UiState.ItemStatus(true, true, _) =>
+        case UiContext.ItemStatus(true, true, _) =>
           text(clickedArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
         case _ =>
           text(buttonArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)

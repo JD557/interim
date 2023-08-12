@@ -32,14 +32,14 @@ Let's go straight to the example, as things are not as confusing as they sound.
 ```scala
 import eu.joaocosta.interim.*
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 
 var windowArea = Rect(x = 10, y = 10, w = 110, h = 50)
 var counter    = 0
 
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
         if (button(id = "minus", area = column(0), label = "-"))
