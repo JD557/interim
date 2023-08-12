@@ -6,6 +6,7 @@ import eu.joaocosta.interim.Color
 object ColorScheme:
   val white     = Color(246, 247, 251)
   val lightGray = Color(177, 186, 177)
+  val pureGray  = Color(127, 127, 127)
   val darkGray  = Color(77, 77, 77)
   val black     = Color(23, 21, 23)
 
