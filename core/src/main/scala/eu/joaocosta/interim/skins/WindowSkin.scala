@@ -9,7 +9,7 @@ trait WindowSkin:
   def titleArea(area: Rect): Rect
   def titleTextArea(area: Rect): Rect
   def panelArea(area: Rect): Rect
-  def renderWindow(area: Rect, title: String)(using uiState: UiState): Unit
+  def renderWindow(area: Rect, title: String)(using uiContext: UiContext): Unit
 
 object WindowSkin extends DefaultSkin:
   final case class Default(
@@ -24,7 +24,7 @@ object WindowSkin extends DefaultSkin:
       area.copy(h = font.fontSize * 2).shrink(font.fontSize / 2)
     def panelArea(area: Rect): Rect =
       area.copy(y = area.y + font.fontSize * 2, h = area.h - font.fontSize * 2)
-    def renderWindow(area: Rect, title: String)(using uiState: UiState): Unit =
+    def renderWindow(area: Rect, title: String)(using uiContext: UiContext): Unit =
       val titleArea = this.titleArea(area)
       val panelArea = this.panelArea(area)
       rectangle(titleArea, titleColor)

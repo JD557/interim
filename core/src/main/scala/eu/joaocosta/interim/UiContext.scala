@@ -6,38 +6,38 @@ import scala.collection.mutable
   *
   * This object keeps the mutable state of the UI and should not be manipulated manually.
   *
-  * Instead, it should be created with `new UiState()` at the start of the application and passed on every frame to
+  * Instead, it should be created with `new UiContext()` at the start of the application and passed on every frame to
   * [[eu.joaocosta.interim.InterIm.ui]].
   */
-final class UiState private (
+final class UiContext private (
     private[interim] var hotItem: Option[ItemId],
     private[interim] var activeItem: Option[ItemId],
     private[interim] var keyboardFocusItem: Option[ItemId],
     private[interim] val ops: mutable.Queue[RenderOp]
 ):
 
-  private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiState.ItemStatus =
+  private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiContext.ItemStatus =
     if (area.isMouseOver)
       hotItem = Some(id)
       if ((activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
         activeItem = Some(id)
         keyboardFocusItem = Some(id)
-    UiState.ItemStatus(hotItem == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
+    UiContext.ItemStatus(hotItem == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
 
   def this() = this(None, None, None, new mutable.Queue[RenderOp]())
 
-  override def clone(): UiState = new UiState(hotItem, activeItem, keyboardFocusItem, ops.clone())
+  override def clone(): UiContext = new UiContext(hotItem, activeItem, keyboardFocusItem, ops.clone())
 
-  def fork(): UiState = new UiState(hotItem, activeItem, keyboardFocusItem, new mutable.Queue[RenderOp])
+  def fork(): UiContext = new UiContext(hotItem, activeItem, keyboardFocusItem, new mutable.Queue[RenderOp])
 
-  def ++=(that: UiState): this.type =
+  def ++=(that: UiContext): this.type =
     this.hotItem = that.hotItem
     this.activeItem = that.activeItem
     this.keyboardFocusItem = that.keyboardFocusItem
     this.ops ++= that.ops
     this
 
-object UiState:
+object UiContext:
   /** Status of an item.
     *
     *  @param hot if the mouse is on top of the item
@@ -54,5 +54,5 @@ object UiState:
     *
     * @return the item status of the registered component.
     */
-  def registerItem(id: ItemId, area: Rect)(using uiState: UiState, inputState: InputState): UiState.ItemStatus =
-    uiState.registerItem(id, area)
+  def registerItem(id: ItemId, area: Rect)(using uiContext: UiContext, inputState: InputState): UiContext.ItemStatus =
+    uiContext.registerItem(id, area)

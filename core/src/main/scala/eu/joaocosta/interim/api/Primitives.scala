@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
 import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
-import eu.joaocosta.interim.{Color, Font, Rect, RenderOp, UiState}
+import eu.joaocosta.interim.{Color, Font, Rect, RenderOp, UiContext}
 
 /** Object containing the default primitives.
   *
@@ -12,8 +12,8 @@ object Primitives extends Primitives
 trait Primitives:
   /** Draws a rectangle filling a the specified area with a color.
     */
-  final def rectangle(area: Rect, color: Color)(using uiState: UiState): Unit =
-    uiState.ops.addOne(RenderOp.DrawRect(area, color))
+  final def rectangle(area: Rect, color: Color)(using uiContext: UiContext): Unit =
+    uiContext.ops.addOne(RenderOp.DrawRect(area, color))
 
   /** Draws a block of text in the specified area with a color.
     *
@@ -30,10 +30,10 @@ trait Primitives:
       horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Left,
       verticalAlignment: VerticalAlignment = VerticalAlignment.Top
   )(using
-      uiState: UiState
+      uiContext: UiContext
   ): Unit =
     if (text.nonEmpty)
-      uiState.ops.addOne(RenderOp.DrawText(area, color, text, font, area, horizontalAlignment, verticalAlignment))
+      uiContext.ops.addOne(RenderOp.DrawText(area, color, text, font, area, horizontalAlignment, verticalAlignment))
 
   /** Advanced operation to add a custom primitive to the list of render operations.
     *
@@ -42,5 +42,5 @@ trait Primitives:
     *
     * @param data custom value to be interpreted by the backend.
     */
-  final def custom[T](area: Rect, color: Color, data: T)(using uiState: UiState): Unit =
-    uiState.ops.addOne(RenderOp.Custom(area, color, data))
+  final def custom[T](area: Rect, color: Color, data: T)(using uiContext: UiContext): Unit =
+    uiContext.ops.addOne(RenderOp.Custom(area, color, data))

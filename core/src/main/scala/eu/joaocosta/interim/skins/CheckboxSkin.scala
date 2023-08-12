@@ -5,7 +5,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait CheckboxSkin:
   def checkboxArea(area: Rect): Rect
-  def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit
+  def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
 object CheckboxSkin extends DefaultSkin:
   final case class Default(
@@ -18,14 +18,14 @@ object CheckboxSkin extends DefaultSkin:
     def checkboxArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
       area.copy(w = smallSide, h = smallSide)
-    def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit =
+    def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val checkboxArea = this.checkboxArea(area)
       itemStatus match
-        case UiState.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _) =>
           rectangle(checkboxArea, inactiveColor)
-        case UiState.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _) =>
           rectangle(checkboxArea, hotColor)
-        case UiState.ItemStatus(_, true, _) =>
+        case UiContext.ItemStatus(_, true, _) =>
           rectangle(checkboxArea, activeColor)
       if (value)
         rectangle(

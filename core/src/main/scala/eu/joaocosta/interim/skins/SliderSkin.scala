@@ -6,8 +6,8 @@ import eu.joaocosta.interim.api.Primitives.*
 trait SliderSkin:
   def sliderSize(area: Rect, min: Int, max: Int): Int
   def sliderArea(area: Rect): Rect
-  def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
-      uiState: UiState
+  def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
+      uiContext: UiContext
   ): Unit
 
 object SliderSkin extends DefaultSkin:
@@ -25,8 +25,8 @@ object SliderSkin extends DefaultSkin:
 
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
-    def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiState.ItemStatus)(using
-        uiState: UiState
+    def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
+        uiContext: UiContext
     ): Unit =
       val sliderArea = this.sliderArea(area)
       val sliderSize = this.sliderSize(area, min, max)
@@ -41,9 +41,9 @@ object SliderSkin extends DefaultSkin:
           Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
       rectangle(area, scrollbarColor) // Scrollbar
       itemStatus match
-        case UiState.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _) =>
           rectangle(sliderRect, inactiveColor)
-        case UiState.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _) =>
           rectangle(sliderRect, hotColor)
         case _ =>
           rectangle(sliderRect, activeColor)

@@ -5,7 +5,7 @@ import eu.joaocosta.interim.api.Primitives.*
 
 trait TextInputSkin:
   def textInputArea(area: Rect): Rect
-  def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit
+  def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
 object TextInputSkin extends DefaultSkin:
   final case class Default(
@@ -19,14 +19,14 @@ object TextInputSkin extends DefaultSkin:
   ) extends TextInputSkin:
     def textInputArea(area: Rect): Rect =
       area.shrink(border)
-    def renderTextInput(area: Rect, value: String, itemStatus: UiState.ItemStatus)(using uiState: UiState): Unit =
+    def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val textInputArea = this.textInputArea(area)
       itemStatus match
-        case UiState.ItemStatus(_, _, true) | UiState.ItemStatus(_, true, _) =>
+        case UiContext.ItemStatus(_, _, true) | UiContext.ItemStatus(_, true, _) =>
           rectangle(area, activeColor)
-        case UiState.ItemStatus(true, _, _) =>
+        case UiContext.ItemStatus(true, _, _) =>
           rectangle(area, hotColor)
-        case UiState.ItemStatus(_, _, _) =>
+        case UiContext.ItemStatus(_, _, _) =>
           rectangle(area, inactiveColor)
       rectangle(textInputArea, textAreaColor)
       text(

@@ -37,13 +37,13 @@ First, let's start by setting our state:
 var counter = 0
 ```
 
-We also need to create a `UiState`. This is the object InterIm uses to keep it's mutable internal state
+We also need to create a `UiContext`. This is the object InterIm uses to keep it's mutable internal state
 between each call.
 
 ```scala
 import eu.joaocosta.interim.*
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 ```
 
 Now, let's write our interface. We are going to need the following components:
@@ -53,7 +53,7 @@ Now, let's write our interface. We are going to need the following components:
 ```scala
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
       counter = counter - 1
     text(
@@ -76,7 +76,7 @@ from our backend.
 Then, we import `import eu.joaocosta.interim.InterIm._`. This enables the InterIm DSL, which give us access to our
 component functions.
 
-Next, we start our UI with `ui(inputState, uiState)`. All DSL operation must happen inside this block which,
+Next, we start our UI with `ui(inputState, uiContext)`. All DSL operation must happen inside this block which,
 in the end, returns the sequence of render operations that must be executed by the backend.
 
 Now, to the button logic:
@@ -97,7 +97,7 @@ Now that our application is defined, we can call it from our backend:
 In pseudo code, this looks like the following:
 
 ```
-val uiState = new UiState
+val uiContext = new UiContext
 
 def application(inputState: InputState) = ??? // Our application code
 
@@ -126,7 +126,7 @@ For example we could rewrite our application as:
 ```scala
 def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     val (decrementCounter, _, incrementCounter) = (
       button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"),
       text(
@@ -153,7 +153,7 @@ One possible solution to this is to use local mutability:
 def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm._
   var _counter = counter
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
       _counter = counter - 1
     text(

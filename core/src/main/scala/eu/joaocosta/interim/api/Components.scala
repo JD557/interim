@@ -11,7 +11,7 @@ object Components extends Components
 
 trait Components:
 
-  type Component[+T] = (inputState: InputState, uiState: UiState) ?=> T
+  type Component[+T] = (inputState: InputState, uiContext: UiContext) ?=> T
 
   trait ComponentWithValue[T] {
     def applyRef(value: Ref[T]): Component[T]
@@ -33,7 +33,7 @@ trait Components:
       skin: ButtonSkin = ButtonSkin.default()
   ): Component[Boolean] =
     val buttonArea = skin.buttonArea(area)
-    val itemStatus = UiState.registerItem(id, buttonArea)
+    val itemStatus = UiContext.registerItem(id, buttonArea)
     skin.renderButton(area, label, itemStatus)
     itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
 
@@ -43,7 +43,7 @@ trait Components:
     new ComponentWithValue[Boolean]:
       def applyRef(value: Ref[Boolean]): Component[Boolean] =
         val checkboxArea = skin.checkboxArea(area)
-        val itemStatus   = UiState.registerItem(id, checkboxArea)
+        val itemStatus   = UiContext.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, value.get, itemStatus)
         if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
           value.modify(!_).get
@@ -64,7 +64,7 @@ trait Components:
     new ComponentWithValue[T]:
       def applyRef(value: Ref[T]): Component[T] =
         val buttonArea = skin.buttonArea(area)
-        val itemStatus = UiState.registerItem(id, buttonArea)
+        val itemStatus = UiContext.registerItem(id, buttonArea)
         if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
           value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
@@ -88,7 +88,7 @@ trait Components:
         val sliderArea   = skin.sliderArea(area)
         val sliderSize   = skin.sliderSize(area, min, max)
         val range        = max - min
-        val itemStatus   = UiState.registerItem(id, sliderArea)
+        val itemStatus   = UiContext.registerItem(id, sliderArea)
         val clampedValue = math.max(min, math.min(value.get, max))
         skin.renderSlider(area, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
@@ -112,7 +112,7 @@ trait Components:
     new ComponentWithValue[String]:
       def applyRef(value: Ref[String]): Component[String] =
         val textInputArea = skin.textInputArea(area)
-        val itemStatus    = UiState.registerItem(id, textInputArea)
+        val itemStatus    = UiContext.registerItem(id, textInputArea)
         skin.renderTextInput(area, value.get, itemStatus)
         if (itemStatus.keyboardFocus)
           value.modify(summon[InputState].appendKeyboardInput)
@@ -129,7 +129,7 @@ trait Components:
     new ComponentWithValue[Rect]:
       def applyRef(value: Ref[Rect]): Component[Rect] =
         val handleArea = skin.handleArea(area)
-        val itemStatus = UiState.registerItem(id, handleArea)
+        val itemStatus = UiContext.registerItem(id, handleArea)
         skin.renderHandle(area, value.get, itemStatus)
         if (itemStatus.active)
           val handleCenterX = handleArea.x + handleArea.w / 2

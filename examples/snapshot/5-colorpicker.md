@@ -37,7 +37,7 @@ This one is more of a show off of what you can do.
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Ref.asRefs
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 
 case class AppState(
   colorPickerArea: Rect = Rect(x = 10, y = 10, w = 190, h = 180),
@@ -74,7 +74,7 @@ def textColor =
 def application(inputState: InputState, appState: AppState) =
   import eu.joaocosta.interim.InterIm.*
 
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     appState.asRefs { (colorPickerArea, colorSearchArea, resultDelta, color, query) =>
       window(id = "color picker", area = colorPickerArea, title = "Color Picker", movable = true) {
         area =>

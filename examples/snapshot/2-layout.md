@@ -44,12 +44,12 @@ Our application now looks like:
 ```scala
 import eu.joaocosta.interim.*
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 var counter = 0
 
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10) { column =>
       if (button(id = "minus", area = column(0), label = "-"))
         counter = counter - 1
@@ -86,7 +86,7 @@ For example, this is how our application would look like with a dynamic layout:
 ```scala
 def dynamicApp(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  ui(inputState, uiContext):
     dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10) { column =>
       if (button(id = "minus", area = column(30), label = "-")) // 30px from the left
         counter = counter - 1
