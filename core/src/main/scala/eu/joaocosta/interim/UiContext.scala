@@ -17,10 +17,12 @@ final class UiContext private (
     private[interim] val ops: mutable.TreeMap[Int, mutable.Queue[RenderOp]]
 ):
 
-  private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiContext.ItemStatus =
+  private def registerItem(id: ItemId, area: Rect, passive: Boolean)(using
+      inputState: InputState
+  ): UiContext.ItemStatus =
     if (area.isMouseOver && hotItem.forall((hotZ, _) => hotZ <= currentZ))
       hotItem = Some(currentZ -> id)
-      if ((activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
+      if (!passive && (activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
         activeItem = Some(id)
         keyboardFocusItem = Some(id)
     UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
@@ -64,10 +66,17 @@ object UiContext:
     *
     * Note that this is only required when creating new components.
     *
+    * @param id Item ID to register
+    * @param area the area of this component
+    * @param passive passive items are items such as windows that are never marked as active,
+    *                they are just registered to block components under them.
     * @return the item status of the registered component.
     */
-  def registerItem(id: ItemId, area: Rect)(using uiContext: UiContext, inputState: InputState): UiContext.ItemStatus =
-    uiContext.registerItem(id, area)
+  def registerItem(id: ItemId, area: Rect, passive: Boolean = false)(using
+      uiContext: UiContext,
+      inputState: InputState
+  ): UiContext.ItemStatus =
+    uiContext.registerItem(id, area, passive)
 
   /** Applies the operations in a code block at a specified z-index
     *  (higher z-indices show on front of lower z-indices).

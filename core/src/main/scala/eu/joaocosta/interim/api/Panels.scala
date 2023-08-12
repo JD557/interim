@@ -42,6 +42,7 @@ trait Panels:
       case ref: Ref[Rect] => ref
       case v: Rect        => Ref(v)
     }
+    UiContext.registerItem(id, areaRef.get, passive = true)
     skin.renderWindow(areaRef.get, title)
     val res = body(skin.panelArea(areaRef.get))
     if (movable)
