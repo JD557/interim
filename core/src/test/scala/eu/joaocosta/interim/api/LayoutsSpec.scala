@@ -36,6 +36,14 @@ class LayoutsSpec extends munit.FunSuite:
       )
     assertEquals(areas, expected)
 
+  test("clip correctly does not clip elements with a different z-index"):
+    given uiContext: UiContext   = new UiContext()
+    given inputState: InputState = InputState(0, 0, false, "")
+    Layouts.clip(Rect(10, 10, 10, 10)):
+      Primitives.onTop:
+        Primitives.rectangle(Rect(0, 0, 15, 15), Color(0, 0, 0))
+    assertEquals(uiContext.getOrderedOps(), List(RenderOp.DrawRect(Rect(0, 0, 15, 15), Color(0, 0, 0))))
+
   test("grid returns nothing for an empty grid"):
     val areas    = Layouts.grid(Rect(10, 10, 100, 100), numRows = 0, numColumns = 0, padding = 8)(identity)
     val expected = Vector.empty
