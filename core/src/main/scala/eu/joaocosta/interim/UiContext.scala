@@ -10,10 +10,11 @@ import scala.collection.mutable
   * [[eu.joaocosta.interim.InterIm.ui]].
   */
 final class UiContext private (
+    private[interim] var currentZ: Int,
     private[interim] var hotItem: Option[ItemId],
     private[interim] var activeItem: Option[ItemId],
     private[interim] var keyboardFocusItem: Option[ItemId],
-    private[interim] val ops: mutable.Queue[RenderOp]
+    private[interim] val ops: mutable.TreeMap[Int, mutable.Queue[RenderOp]]
 ):
 
   private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiContext.ItemStatus =
@@ -24,17 +25,28 @@ final class UiContext private (
         keyboardFocusItem = Some(id)
     UiContext.ItemStatus(hotItem == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
 
-  def this() = this(None, None, None, new mutable.Queue[RenderOp]())
+  private[interim] def getOrderedOps(): List[RenderOp] =
+    ops.values.toList.flatten
 
-  override def clone(): UiContext = new UiContext(hotItem, activeItem, keyboardFocusItem, ops.clone())
+  def this() = this(0, None, None, None, new mutable.TreeMap())
 
-  def fork(): UiContext = new UiContext(hotItem, activeItem, keyboardFocusItem, new mutable.Queue[RenderOp])
+  override def clone(): UiContext =
+    new UiContext(currentZ, hotItem, activeItem, keyboardFocusItem, ops.clone().mapValuesInPlace((_, v) => v.clone()))
+
+  def fork(): UiContext = new UiContext(currentZ, hotItem, activeItem, keyboardFocusItem, new mutable.TreeMap())
 
   def ++=(that: UiContext): this.type =
     this.hotItem = that.hotItem
     this.activeItem = that.activeItem
     this.keyboardFocusItem = that.keyboardFocusItem
-    this.ops ++= that.ops
+    that.ops.foreach: (z, ops) =>
+      if (this.ops.contains(z)) this.ops(z) ++= that.ops(z)
+      else this.ops(z) = that.ops(z)
+    this
+
+  def pushRenderOp(op: RenderOp): this.type =
+    if (!this.ops.contains(currentZ)) this.ops(currentZ) = new mutable.Queue()
+    this.ops(currentZ).addOne(op)
     this
 
 object UiContext:
@@ -56,3 +68,13 @@ object UiContext:
     */
   def registerItem(id: ItemId, area: Rect)(using uiContext: UiContext, inputState: InputState): UiContext.ItemStatus =
     uiContext.registerItem(id, area)
+
+  /** Applies the operations in a code block at a specified z-index
+    *  (higher z-indices show on front of lower z-indices).
+    */
+  def withZIndex[T](zIndex: Int)(body: (UiContext) ?=> T)(using uiContext: UiContext): T =
+    val oldZ = uiContext.currentZ
+    uiContext.currentZ = zIndex
+    val res = body(using uiContext)
+    uiContext.currentZ = oldZ
+    res

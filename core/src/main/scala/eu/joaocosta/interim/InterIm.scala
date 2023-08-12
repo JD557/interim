@@ -21,6 +21,7 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
   ): (List[RenderOp], T) =
     // prepare
     uiContext.ops.clear()
+    uiContext.currentZ = 0
     uiContext.hotItem = None
     if (inputState.mouseDown) uiContext.keyboardFocusItem = None
     // run
@@ -28,4 +29,4 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     // finish
     if (!inputState.mouseDown) uiContext.activeItem = None
     // return
-    (uiContext.ops.toList, res)
+    (uiContext.getOrderedOps(), res)

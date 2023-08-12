@@ -8,7 +8,7 @@ class LayoutsSpec extends munit.FunSuite:
     given inputState: InputState = InputState(0, 0, false, "")
     Layouts.clip(Rect(10, 10, 10, 10)):
       Primitives.rectangle(Rect(0, 0, 15, 15), Color(0, 0, 0))
-    assertEquals(uiContext.ops.toList, List(RenderOp.DrawRect(Rect(10, 10, 5, 5), Color(0, 0, 0))))
+    assertEquals(uiContext.getOrderedOps(), List(RenderOp.DrawRect(Rect(10, 10, 5, 5), Color(0, 0, 0))))
 
   test("clip ignores input outside the clip area"):
     given uiContext: UiContext   = new UiContext()
