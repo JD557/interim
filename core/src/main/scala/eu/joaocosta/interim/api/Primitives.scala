@@ -13,7 +13,7 @@ trait Primitives:
   /** Draws a rectangle filling a the specified area with a color.
     */
   final def rectangle(area: Rect, color: Color)(using uiContext: UiContext): Unit =
-    uiContext.ops.addOne(RenderOp.DrawRect(area, color))
+    uiContext.pushRenderOp(RenderOp.DrawRect(area, color))
 
   /** Draws a block of text in the specified area with a color.
     *
@@ -33,7 +33,7 @@ trait Primitives:
       uiContext: UiContext
   ): Unit =
     if (text.nonEmpty)
-      uiContext.ops.addOne(RenderOp.DrawText(area, color, text, font, area, horizontalAlignment, verticalAlignment))
+      uiContext.pushRenderOp(RenderOp.DrawText(area, color, text, font, area, horizontalAlignment, verticalAlignment))
 
   /** Advanced operation to add a custom primitive to the list of render operations.
     *
@@ -43,4 +43,12 @@ trait Primitives:
     * @param data custom value to be interpreted by the backend.
     */
   final def custom[T](area: Rect, color: Color, data: T)(using uiContext: UiContext): Unit =
-    uiContext.ops.addOne(RenderOp.Custom(area, color, data))
+    uiContext.pushRenderOp(RenderOp.Custom(area, color, data))
+
+  /** Applies the operations in a code block at the next z-index. */
+  def onTop[T](body: (UiContext) ?=> T)(using uiContext: UiContext): T =
+    UiContext.withZIndex(uiContext.currentZ + 1)(body)
+
+  /** Applies the operations in a code block at the previous z-index. */
+  def onBottom[T](body: (UiContext) ?=> T)(using uiContext: UiContext): T =
+    UiContext.withZIndex(uiContext.currentZ - 1)(body)

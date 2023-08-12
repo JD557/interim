@@ -19,7 +19,7 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
-    assertEquals(uiContext.hotItem, Some(1))
+    assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, None)
     assertEquals(uiContext.keyboardFocusItem, None)
 
@@ -30,7 +30,7 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
     assertEquals(itemStatus.keyboardFocus, true)
-    assertEquals(uiContext.hotItem, Some(1))
+    assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, Some(1))
     assertEquals(uiContext.keyboardFocusItem, Some(1))
 
@@ -44,24 +44,45 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
-    assertEquals(uiContext.hotItem, Some(2))
+    assertEquals(uiContext.hotItem, Some(0 -> 2))
     assertEquals(uiContext.activeItem, Some(1))
     assertEquals(uiContext.keyboardFocusItem, Some(1))
 
   test("fork should create a new UiContext with no ops, and merge them back with ++="):
     val uiContext: UiContext = new UiContext()
     api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(0, 0, 0))(using uiContext)
-    assertEquals(uiContext.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
+    assertEquals(uiContext.getOrderedOps(), List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
     val forked = uiContext.fork()
-    assertEquals(forked.ops.toList, Nil)
+    assertEquals(forked.getOrderedOps(), Nil)
     api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(1, 2, 3))(using forked)
-    assertEquals(uiContext.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
-    assertEquals(forked.ops.toList, List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 2, 3))))
+    assertEquals(uiContext.getOrderedOps(), List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0))))
+    assertEquals(forked.getOrderedOps(), List(RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 2, 3))))
     uiContext ++= forked
     assertEquals(
-      uiContext.ops.toList,
+      uiContext.getOrderedOps(),
       List(
         RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0)),
         RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 2, 3))
+      )
+    )
+
+  test("operations with a higher z-index should be returned last"):
+    given uiContext: UiContext = new UiContext()
+    UiContext.withZIndex(1):
+      api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(3, 3, 3))
+      api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(4, 4, 4))
+    UiContext.withZIndex(-1):
+      api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(0, 0, 0))
+      api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(1, 1, 1))
+    api.Primitives.rectangle(Rect(0, 0, 1, 1), Color(2, 2, 2))
+
+    assertEquals(
+      uiContext.getOrderedOps(),
+      List(
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(0, 0, 0)),
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(1, 1, 1)),
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(2, 2, 2)),
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(3, 3, 3)),
+        RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(4, 4, 4))
       )
     )

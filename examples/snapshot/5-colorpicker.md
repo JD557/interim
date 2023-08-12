@@ -28,6 +28,7 @@ This example contains:
  - Fixed and dynamic layouts, nested
  - Movable and static windows
  - Mutable References
+ - Components with different z-indexes (using `onTop` and `onBottom`)
 
 ![Color picker screenshot](assets/colorpicker.png)
 
@@ -75,54 +76,44 @@ def application(inputState: InputState, appState: AppState) =
   import eu.joaocosta.interim.InterIm.*
 
   ui(inputState, uiContext):
-    appState.asRefs { (colorPickerArea, colorSearchArea, resultDelta, color, query) =>
-      window(id = "color picker", area = colorPickerArea, title = "Color Picker", movable = true) {
-        area =>
-          rows(area = area.shrink(5), numRows = 5, padding = 10) { row =>
+    appState.asRefs: (colorPickerArea, colorSearchArea, resultDelta, color, query) =>
+      onTop:
+        window(id = "color picker", area = colorPickerArea, title = "Color Picker", movable = true): area =>
+          rows(area = area.shrink(5), numRows = 5, padding = 10): row =>
             rectangle(row(0), color.get)
             text(row(1), textColor, color.get.toString, Font.default, alignLeft, centerVertically)
             val r = slider("red slider", row(2), min = 0, max = 255)(color.get.r)
             val g = slider("green slider", row(3), min = 0, max = 255)(color.get.g)
             val b = slider("blue slider", row(4), min = 0, max = 255)(color.get.b)
             color := Color(r, g, b)
-          }
-      }
 
-      window(id = "color search", area = colorSearchArea, title = "Color Search", movable = true) {
-        area =>
-          dynamicRows(area = area.shrink(5), padding = 10) { newRow =>
-            val oldQuery = query.get
-            textInput("query", newRow(16))(query)
-            if (query.get != oldQuery) resultDelta := 0
-            val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
-            val resultsArea = newRow(maxSize)
-            val buttonSize = 32
-            dynamicColumns(area = resultsArea, padding = 10) { newColumn =>
-              val resultsHeight = results.size * buttonSize
-              if (resultsHeight > resultsArea.h)
-                slider("result scroller", newColumn(-16), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
-              val clipArea = newColumn(maxSize)
-              clip(area = clipArea) {
-                rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10) { rows =>
-                  results.zip(rows).foreach { case ((colorName, colorValue), row) =>
-                    if (button(s"$colorName button", row, colorName))
-                      color := colorValue
-                  }
+      window(id = "color search", area = colorSearchArea, title = "Color Search", movable = true): area =>
+        dynamicRows(area = area.shrink(5), padding = 10): newRow =>
+          val oldQuery = query.get
+          textInput("query", newRow(16))(query)
+          if (query.get != oldQuery) resultDelta := 0
+          val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
+          val resultsArea = newRow(maxSize)
+          val buttonSize = 32
+          dynamicColumns(area = resultsArea, padding = 10): newColumn =>
+            val resultsHeight = results.size * buttonSize
+            if (resultsHeight > resultsArea.h)
+              slider("result scroller", newColumn(-16), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
+            val clipArea = newColumn(maxSize)
+            clip(area = clipArea):
+              rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10): rows =>
+                results.zip(rows).foreach { case ((colorName, colorValue), row) =>
+                  if (button(s"$colorName button", row, colorName))
+                    color := colorValue
                 }
-              }
-            }
-          }
-      }
 
-      window(id = "settings", area = Rect(10, 430, 250, 40), title = "Settings", movable = false) { area =>
-        dynamicColumns(area = area.shrink(5), padding = 10) { newColumn =>
-          if (checkbox(id = "dark mode", newColumn(-16))(skins.ColorScheme.darkModeEnabled()))
-            skins.ColorScheme.useDarkMode()
-          else skins.ColorScheme.useLightMode()
-          text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", Font.default, alignRight)
-        }
-      }
-    }
+      onBottom:
+        window(id = "settings", area = Rect(10, 430, 250, 40), title = "Settings", movable = false): area =>
+          dynamicColumns(area = area.shrink(5), padding = 10): newColumn =>
+            if (checkbox(id = "dark mode", newColumn(-16))(skins.ColorScheme.darkModeEnabled()))
+              skins.ColorScheme.useDarkMode()
+            else skins.ColorScheme.useLightMode()
+            text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", Font.default, alignRight)
 ```
 
 Let's run it:

@@ -13,6 +13,8 @@ trait Layouts:
   /** Clipped region.
     *
     * The body will be rendered only inside the clipped area. Input outside the area will also be ignored.
+    *
+    * Note that the clip will only be applied to elements in the current Z-index.
     */
   final def clip[T](area: Rect)(
       body: (InputState, UiContext) ?=> T
@@ -22,7 +24,7 @@ trait Layouts:
       if (area.isMouseOver) inputState
       else inputState.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
     val result = body(using newInputState, newUiContext)
-    newUiContext.ops.mapInPlace(_.clip(area)).filterInPlace(!_.area.isEmpty)
+    newUiContext.ops.get(newUiContext.currentZ).foreach(_.mapInPlace(_.clip(area)).filterInPlace(!_.area.isEmpty))
     uiContext ++= newUiContext
     result
 
