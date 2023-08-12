@@ -11,19 +11,19 @@ import scala.collection.mutable
   */
 final class UiContext private (
     private[interim] var currentZ: Int,
-    private[interim] var hotItem: Option[ItemId],
+    private[interim] var hotItem: Option[(Int, ItemId)],
     private[interim] var activeItem: Option[ItemId],
     private[interim] var keyboardFocusItem: Option[ItemId],
     private[interim] val ops: mutable.TreeMap[Int, mutable.Queue[RenderOp]]
 ):
 
   private def registerItem(id: ItemId, area: Rect)(using inputState: InputState): UiContext.ItemStatus =
-    if (area.isMouseOver)
-      hotItem = Some(id)
+    if (area.isMouseOver && hotItem.forall((hotZ, _) => hotZ <= currentZ))
+      hotItem = Some(currentZ -> id)
       if ((activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
         activeItem = Some(id)
         keyboardFocusItem = Some(id)
-    UiContext.ItemStatus(hotItem == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
+    UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
 
   private[interim] def getOrderedOps(): List[RenderOp] =
     ops.values.toList.flatten
