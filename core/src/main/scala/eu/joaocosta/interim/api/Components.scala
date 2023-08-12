@@ -91,11 +91,11 @@ trait Components:
         val selectBoxArea = skin.selectBoxArea(area)
         val itemStatus    = UiContext.registerItem(id, area)
         val selectedValue = value.get.merge
-        if (itemStatus.keyboardFocus) value := Left(selectedValue)
+        if (itemStatus.selected) value := Left(selectedValue)
         val isOpen = value.get.isLeft
         skin.renderSelectBox(area, selectedValue, labels, itemStatus)
         if (isOpen)
-          if (!itemStatus.keyboardFocus) value := Right(selectedValue)
+          if (!itemStatus.selected) value := Right(selectedValue)
           labels.zipWithIndex.foreach: (label, idx) =>
             val selectOptionArea = skin.selectOptionArea(area, idx)
             val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
@@ -146,7 +146,7 @@ trait Components:
         val textInputArea = skin.textInputArea(area)
         val itemStatus    = UiContext.registerItem(id, textInputArea)
         skin.renderTextInput(area, value.get, itemStatus)
-        if (itemStatus.keyboardFocus)
+        if (itemStatus.selected)
           value.modify(summon[InputState].appendKeyboardInput)
         value.get
 
