@@ -19,7 +19,7 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
-    assertEquals(uiContext.hotItem, Some(1))
+    assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, None)
     assertEquals(uiContext.keyboardFocusItem, None)
 
@@ -30,7 +30,7 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
     assertEquals(itemStatus.keyboardFocus, true)
-    assertEquals(uiContext.hotItem, Some(1))
+    assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, Some(1))
     assertEquals(uiContext.keyboardFocusItem, Some(1))
 
@@ -44,7 +44,7 @@ class UiContextSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.keyboardFocus, false)
-    assertEquals(uiContext.hotItem, Some(2))
+    assertEquals(uiContext.hotItem, Some(0 -> 2))
     assertEquals(uiContext.activeItem, Some(1))
     assertEquals(uiContext.keyboardFocusItem, Some(1))
 
