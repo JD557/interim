@@ -11,9 +11,9 @@ import scala.collection.mutable
   */
 final class UiContext private (
     private[interim] var currentZ: Int,
-    private[interim] var hotItem: Option[(Int, ItemId)],
-    private[interim] var activeItem: Option[ItemId],
-    private[interim] var keyboardFocusItem: Option[ItemId],
+    private[interim] var hotItem: Option[(Int, ItemId)], // Item being hovered by the mouse
+    private[interim] var activeItem: Option[ItemId],     // Item being clicked by the mouse
+    private[interim] var selectedItem: Option[ItemId],   // Last item clicked
     private[interim] val ops: mutable.TreeMap[Int, mutable.Queue[RenderOp]]
 ):
 
@@ -24,8 +24,8 @@ final class UiContext private (
       hotItem = Some(currentZ -> id)
       if (!passive && (activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
         activeItem = Some(id)
-        keyboardFocusItem = Some(id)
-    UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), keyboardFocusItem == Some(id))
+        selectedItem = Some(id)
+    UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), selectedItem == Some(id))
 
   private[interim] def getOrderedOps(): List[RenderOp] =
     ops.values.toList.flatten
@@ -33,14 +33,14 @@ final class UiContext private (
   def this() = this(0, None, None, None, new mutable.TreeMap())
 
   override def clone(): UiContext =
-    new UiContext(currentZ, hotItem, activeItem, keyboardFocusItem, ops.clone().mapValuesInPlace((_, v) => v.clone()))
+    new UiContext(currentZ, hotItem, activeItem, selectedItem, ops.clone().mapValuesInPlace((_, v) => v.clone()))
 
-  def fork(): UiContext = new UiContext(currentZ, hotItem, activeItem, keyboardFocusItem, new mutable.TreeMap())
+  def fork(): UiContext = new UiContext(currentZ, hotItem, activeItem, selectedItem, new mutable.TreeMap())
 
   def ++=(that: UiContext): this.type =
     this.hotItem = that.hotItem
     this.activeItem = that.activeItem
-    this.keyboardFocusItem = that.keyboardFocusItem
+    this.selectedItem = that.selectedItem
     that.ops.foreach: (z, ops) =>
       if (this.ops.contains(z)) this.ops(z) ++= that.ops(z)
       else this.ops(z) = that.ops(z)
@@ -55,10 +55,12 @@ object UiContext:
   /** Status of an item.
     *
     *  @param hot if the mouse is on top of the item
-    *  @param active if the mouse clicked the item (and is still pressed down)
-    *  @param keyboardFocus if the keyboard events should be consumed by this item
+    *  @param active if the mouse clicked the item (and is still pressed down).
+    *                This value stays true for one extra frame, so that it's
+    *                possible to trigger an action on mouse up.
+    *  @param selected if this was the last element clicked
     */
-  final case class ItemStatus(hot: Boolean, active: Boolean, keyboardFocus: Boolean)
+  final case class ItemStatus(hot: Boolean, active: Boolean, selected: Boolean)
 
   /** Registers an item on the UI state, taking a certain area.
     *

@@ -23,7 +23,7 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     uiContext.ops.clear()
     uiContext.currentZ = 0
     uiContext.hotItem = None
-    if (inputState.mouseDown) uiContext.keyboardFocusItem = None
+    if (inputState.mouseDown) uiContext.selectedItem = None
     // run
     val res = run(using inputState, uiContext)
     // finish

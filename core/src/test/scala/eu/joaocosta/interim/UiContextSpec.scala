@@ -7,10 +7,10 @@ class UiContextSpec extends munit.FunSuite:
     val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, false)
     assertEquals(itemStatus.active, false)
-    assertEquals(itemStatus.keyboardFocus, false)
+    assertEquals(itemStatus.selected, false)
     assertEquals(uiContext.hotItem, None)
     assertEquals(uiContext.activeItem, None)
-    assertEquals(uiContext.keyboardFocusItem, None)
+    assertEquals(uiContext.selectedItem, None)
 
   test("registerItem should mark an item under the cursor as hot"):
     given uiContext: UiContext   = new UiContext()
@@ -18,10 +18,10 @@ class UiContextSpec extends munit.FunSuite:
     val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
-    assertEquals(itemStatus.keyboardFocus, false)
+    assertEquals(itemStatus.selected, false)
     assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, None)
-    assertEquals(uiContext.keyboardFocusItem, None)
+    assertEquals(uiContext.selectedItem, None)
 
   test("registerItem should mark a clicked item as active and focused"):
     given uiContext: UiContext   = new UiContext()
@@ -29,10 +29,10 @@ class UiContextSpec extends munit.FunSuite:
     val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
-    assertEquals(itemStatus.keyboardFocus, true)
+    assertEquals(itemStatus.selected, true)
     assertEquals(uiContext.hotItem, Some(0 -> 1))
     assertEquals(uiContext.activeItem, Some(1))
-    assertEquals(uiContext.keyboardFocusItem, Some(1))
+    assertEquals(uiContext.selectedItem, Some(1))
 
   test("registerItem should not override an active item with another one"):
     val uiContext   = new UiContext()
@@ -43,10 +43,10 @@ class UiContextSpec extends munit.FunSuite:
     val itemStatus = UiContext.registerItem(2, Rect(15, 15, 10, 10))(using uiContext, inputState2)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
-    assertEquals(itemStatus.keyboardFocus, false)
+    assertEquals(itemStatus.selected, false)
     assertEquals(uiContext.hotItem, Some(0 -> 2))
     assertEquals(uiContext.activeItem, Some(1))
-    assertEquals(uiContext.keyboardFocusItem, Some(1))
+    assertEquals(uiContext.selectedItem, Some(1))
 
   test("fork should create a new UiContext with no ops, and merge them back with ++="):
     val uiContext: UiContext = new UiContext()
