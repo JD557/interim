@@ -1,5 +1,6 @@
 package eu.joaocosta.interim.api
 
+import eu.joaocosta.interim.ItemId.*
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
@@ -69,6 +70,37 @@ trait Components:
           value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
         else (skin.renderButton(area, label, itemStatus))
+        value.get
+
+  /** Select box component. Returns the index value currently selected.
+    *
+    * The returned value is returned inside an Either.
+    *   - Left means the select box is open
+    *   - Right means the select box is closed
+    *
+    * @param labels text labels for each value
+    */
+  final def select(
+      id: ItemId,
+      area: Rect,
+      labels: Vector[String],
+      skin: SelectSkin = SelectSkin.default()
+  ): ComponentWithValue[Either[Int, Int]] =
+    new ComponentWithValue[Either[Int, Int]]:
+      def applyRef(value: Ref[Either[Int, Int]]): Component[Either[Int, Int]] =
+        val selectBoxArea = skin.selectBoxArea(area)
+        val itemStatus    = UiContext.registerItem(id, area)
+        val selectedValue = value.get.merge
+        if (itemStatus.keyboardFocus) value := Left(selectedValue)
+        val isOpen = value.get.isLeft
+        skin.renderSelectBox(area, selectedValue, labels, itemStatus)
+        if (isOpen)
+          if (!itemStatus.keyboardFocus) value := Right(selectedValue)
+          labels.zipWithIndex.foreach: (label, idx) =>
+            val selectOptionArea = skin.selectOptionArea(area, idx)
+            val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
+            skin.renderSelectOption(area, idx, labels, optionStatus)
+            if (optionStatus.active) value := Right(idx)
         value.get
 
   /** Slider component. Returns the current position of the slider, between min and max.

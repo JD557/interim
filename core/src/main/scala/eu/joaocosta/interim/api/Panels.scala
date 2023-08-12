@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.ItemId._
+import eu.joaocosta.interim.ItemId.*
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
