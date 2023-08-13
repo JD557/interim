@@ -33,7 +33,7 @@ import eu.joaocosta.interim.api.Ref
 
 val uiContext = new UiContext()
 
-val windowArea = Ref(Rect(x = 10, y = 10, w = 110, h = 50)) // Now a val instead of a var
+val windowArea = Ref(PanelState.open(Rect(x = 10, y = 10, w = 110, h = 50))) // Now a val instead of a var
 var counter    = 0
 
 def application(inputState: InputState) =
@@ -78,7 +78,7 @@ import eu.joaocosta.interim.api.Ref
 
 val uiContext = new UiContext()
 
-case class AppState(counter: Int = 0, windowArea: Rect = Rect(x = 10, y = 10, w = 110, h = 50))
+case class AppState(counter: Int = 0, windowArea: PanelState[Rect] = PanelState.open(Rect(x = 10, y = 10, w = 110, h = 50)))
 val initialState = AppState()
 
 def applicationRef(inputState: InputState, appState: AppState) =

@@ -21,9 +21,9 @@ For this, it's helpful to have a floating window abstraction, and that's exactly
 
 A window is a special component that:
   - Passes an area to a function, which is the window drawable region
-  - Returns it's value and a `Rect`. That `Rect` is the one that needs to be passed as the window area.
+  - Returns it's value (optional) and a `PanelState[Rect]`. That `PanelState[Rect]` is the one that needs to be passed as the window area.
 
-This might sound a little convoluted, but this is what allows windows to be dragged.
+This might sound a little convoluted, but this is what allows windows to be dragged and closed.
 
 ## Using window in the counter application
 
@@ -34,13 +34,13 @@ import eu.joaocosta.interim.*
 
 val uiContext = new UiContext()
 
-var windowArea = Rect(x = 10, y = 10, w = 110, h = 50)
+var windowArea = PanelState.open(Rect(x = 10, y = 10, w = 110, h = 50))
 var counter    = 0
 
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm._
   ui(inputState, uiContext):
-    windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
+    windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true, closable = false) { area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
         if (button(id = "minus", area = column(0), label = "-"))
           counter = counter - 1
