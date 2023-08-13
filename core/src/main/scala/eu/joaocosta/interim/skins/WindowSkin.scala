@@ -12,18 +12,23 @@ trait WindowSkin:
   def renderWindow(area: Rect, title: String)(using uiContext: UiContext): Unit
 
 object WindowSkin extends DefaultSkin:
+
   final case class Default(
       font: Font,
       textColor: Color,
       panelColor: Color,
       titleColor: Color
   ) extends WindowSkin:
+
     def titleArea(area: Rect): Rect =
       area.copy(h = font.fontSize * 2)
+
     def titleTextArea(area: Rect): Rect =
       area.copy(h = font.fontSize * 2).shrink(font.fontSize / 2)
+
     def panelArea(area: Rect): Rect =
       area.copy(y = area.y + font.fontSize * 2, h = area.h - font.fontSize * 2)
+
     def renderWindow(area: Rect, title: String)(using uiContext: UiContext): Unit =
       val titleArea = this.titleArea(area)
       val panelArea = this.panelArea(area)

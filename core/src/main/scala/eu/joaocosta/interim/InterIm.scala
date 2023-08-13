@@ -9,6 +9,7 @@ import eu.joaocosta.interim.TextLayout.*
   * import the DSL and explicitly use the InterIm prefix (e.g. `IterIm.text` instead of `text`)
   */
 object InterIm extends api.Primitives with api.Layouts with api.Components with api.Constants with api.Panels:
+
   /** Wraps the UI interactions. All API calls should happen inside the body (run parameter).
     *
     * This method takes an input state and a UI context and mutates the UI context accordingly.

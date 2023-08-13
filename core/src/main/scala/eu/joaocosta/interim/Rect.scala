@@ -1,6 +1,6 @@
 package eu.joaocosta.interim
 
-import scala.annotation.alpha
+import scala.annotation.targetName
 
 /** Rectangle abstraction, which represents an area with positive width and height.
   *
@@ -47,7 +47,7 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
     *
     * Gaps between the rectangles will also be considered as part of the final area.
     */
-  @alpha("merge")
+  @targetName("merge")
   def ++(that: Rect): Rect =
     val minX = math.min(this.x1, that.x1)
     val maxX = math.max(this.x2, that.x2)
@@ -57,7 +57,7 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
 
   /** Intersects this rectangle with another one.
     */
-  @alpha("intersect")
+  @targetName("intersect")
   def &(that: Rect): Rect =
     val maxX1 = math.max(this.x1, that.x1)
     val maxY1 = math.max(this.y1, that.y1)

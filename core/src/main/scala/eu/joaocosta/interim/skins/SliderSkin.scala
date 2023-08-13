@@ -11,6 +11,7 @@ trait SliderSkin:
   ): Unit
 
 object SliderSkin extends DefaultSkin:
+
   final case class Default(
       padding: Int,
       minSliderSize: Int,
@@ -19,12 +20,14 @@ object SliderSkin extends DefaultSkin:
       hotColor: Color,
       activeColor: Color
   ) extends SliderSkin:
+
     def sliderSize(area: Rect, min: Int, max: Int): Int =
       val steps = (max - min) + 1
       math.max(minSliderSize, math.max(area.w, area.h) / steps)
 
     def sliderArea(area: Rect): Rect =
       Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
+
     def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =

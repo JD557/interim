@@ -6,15 +6,18 @@ import eu.joaocosta.interim.api.Primitives.*
 trait HandleSkin:
   def moveHandleArea(area: Rect): Rect
   def closeHandleArea(area: Rect): Rect
+
   def renderMoveHandle(area: Rect, value: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
   def renderCloseHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
 object HandleSkin extends DefaultSkin:
+
   final case class Default(
       inactiveColor: Color,
       hotColor: Color,
       activeColor: Color
   ) extends HandleSkin:
+
     def moveHandleArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
       area.copy(w = smallSide, h = smallSide)

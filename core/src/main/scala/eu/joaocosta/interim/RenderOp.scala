@@ -21,6 +21,7 @@ sealed trait RenderOp {
 }
 
 object RenderOp:
+
   /** Operation to draw a rectangle on the screen.
     *
     *  @param area area to render

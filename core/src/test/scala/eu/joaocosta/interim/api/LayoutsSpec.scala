@@ -3,6 +3,7 @@ package eu.joaocosta.interim.api
 import eu.joaocosta.interim.{Color, InputState, Rect, RenderOp, UiContext}
 
 class LayoutsSpec extends munit.FunSuite:
+
   test("clip correctly clips render ops"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(0, 0, false, "")

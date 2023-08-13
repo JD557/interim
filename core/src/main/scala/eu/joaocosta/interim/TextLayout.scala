@@ -3,6 +3,7 @@ package eu.joaocosta.interim
 import scala.annotation.tailrec
 
 object TextLayout:
+
   enum HorizontalAlignment:
     case Left, Center, Right
 
@@ -88,5 +89,4 @@ object TextLayout:
             if (ops.isEmpty && nextLine == remaining) layout("", dy, textAcc) // Can't fit a single character, end here
             else
               layout(nextLine, dy + lineHeight, alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc)
-
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)

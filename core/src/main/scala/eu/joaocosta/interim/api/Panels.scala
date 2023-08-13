@@ -40,11 +40,10 @@ trait Panels:
   )(
       body: Rect => T
   ): Components.Component[(Option[T], PanelState[Rect])] =
-    val panelStateRef = area match {
+    val panelStateRef = area match
       case ref: Ref[PanelState[Rect]] => ref
       case v: PanelState[Rect]        => Ref(v)
       case v: Rect                    => Ref(PanelState.open(v))
-    }
     if (panelStateRef.get.isOpen)
       val windowArea = panelStateRef.get.value
       UiContext.registerItem(id, windowArea, passive = true)

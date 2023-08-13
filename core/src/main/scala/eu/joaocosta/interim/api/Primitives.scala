@@ -10,6 +10,7 @@ import eu.joaocosta.interim.{Color, Font, Rect, RenderOp, UiContext}
 object Primitives extends Primitives
 
 trait Primitives:
+
   /** Draws a rectangle filling a the specified area with a color.
     */
   final def rectangle(area: Rect, color: Color)(using uiContext: UiContext): Unit =

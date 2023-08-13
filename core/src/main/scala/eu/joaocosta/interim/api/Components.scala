@@ -13,14 +13,15 @@ trait Components:
 
   type Component[+T] = (inputState: InputState, uiContext: UiContext) ?=> T
 
-  trait ComponentWithValue[T] {
+  trait ComponentWithValue[T]:
     def applyRef(value: Ref[T]): Component[T]
+
     def applyValue(value: T): Component[T] =
       apply(Ref(value))
+
     inline def apply(value: T | Ref[T]): Component[T] = inline value match
       case x: T      => applyValue(x)
       case x: Ref[T] => applyRef(x)
-  }
 
   /** Button component. Returns true if it's being clicked, false otherwise.
     *

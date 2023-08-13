@@ -8,12 +8,14 @@ trait SelectSkin:
   def renderSelectBox(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
   ): Unit
+
   def selectOptionArea(area: Rect, value: Int): Rect
   def renderSelectOption(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
   ): Unit
 
 object SelectSkin extends DefaultSkin:
+
   final case class Default(
       border: Int,
       font: Font,
@@ -22,9 +24,11 @@ object SelectSkin extends DefaultSkin:
       activeColor: Color,
       textColor: Color
   ) extends SelectSkin:
+
     // Select box
     def selectBoxArea(area: Rect): Rect =
       area
+
     def renderSelectBox(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =
@@ -45,9 +49,11 @@ object SelectSkin extends DefaultSkin:
         TextLayout.HorizontalAlignment.Left,
         TextLayout.VerticalAlignment.Center
       )
+
     // Select option
     def selectOptionArea(area: Rect, value: Int): Rect =
       area.copy(y = area.y + area.h * (value + 1))
+
     def renderSelectOption(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =

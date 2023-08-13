@@ -3,6 +3,7 @@ package eu.joaocosta.interim
 import scala.annotation.tailrec
 
 class InputStateSpec extends munit.FunSuite:
+
   test("appendKeyboardInput should preserve the original string"):
     val result = InputState(0, 0, false, "").appendKeyboardInput("test")
     assertEquals(result, "test")
