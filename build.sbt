@@ -24,16 +24,11 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 
-def docSettings(projectName: String) = Seq(
+val siteSettings = Seq(
   Compile / doc / scalacOptions ++= (
-    Seq(
-      "-project",
-      projectName,
-      "-project-version",
-      version.value,
-      "-social-links:" +
-        "github::https://github.com/JD557/interim"
-    )
+    if (scalaBinaryVersion.value.startsWith("3"))
+      Seq("-siteroot", "docs")
+    else Seq()
   )
 )
 
@@ -44,10 +39,12 @@ lazy val core = (projectMatrix in file("core"))
     Compile / doc / scalacOptions ++=
       Seq(
         "-project",
-        "interim",
+        "InterIm",
         "-project-version",
         version.value,
-        "-social-links:github::https://github.com/JD557/interim"
+        "-social-links:github::https://github.com/JD557/interim",
+        "-siteroot",
+        "docs"
       )
   )
   .jvmPlatform(scalaVersions = Seq("3.3.0"))

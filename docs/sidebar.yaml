@@ -1,0 +1,8 @@
+index: index.html
+subsection:
+  - title: Feature Overview
+    page: overview.md
+  - title: Getting Started
+    page: getting-started.md
+  - title: Advanced Usage
+    page: advanced-usage.md

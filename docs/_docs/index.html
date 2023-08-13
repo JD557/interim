@@ -1,0 +1,30 @@
+---
+title: InterIm
+---
+
+<h1>InterIm</h1>
+
+<h2>What is InterIm?</h2>
+<p>
+  IterIm is a minimal Scala library for immediate mode GUIs.
+</p>
+
+<p>
+  The library itself doesn't perform any rendering or IO by itself, but it provides a simple interface so that it can be
+  easilly integrated on custom backends: The backend sends InterIm the current input and gets back a list of colored
+  rectangles and text regions to render.
+</p>
+
+<p>
+  The lack of a backend also ensures that the library can be used in JVM, Scala.js and Scala Native applications.
+</p>
+
+<h2>Development status</h2>
+<p>
+  InterIm is still in a <strong>0.x version</strong>. Quoting the semver specification:
+  <blockquote>
+    Major version zero (0.y.z) is for initial development. Anything MAY change at any time. The public API SHOULD NOT be considered stable.
+  </blockquote>
+
+  As such, while it's OK to use InterIm for small demos, it's not recommended to use it for commercial projects.
+</p>
