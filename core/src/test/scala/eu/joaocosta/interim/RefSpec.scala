@@ -1,4 +1,4 @@
-package eu.joaocosta.interim.api
+package eu.joaocosta.interim
 
 class RefSpec extends munit.FunSuite:
   test("A Ref value can be correctly set and retrieved with := and get"):
@@ -30,14 +30,12 @@ class RefSpec extends munit.FunSuite:
   }
 
   test("asRef allows to use a temporary Ref value"):
-    import Ref.asRef
     val result = 0.asRef { ref =>
       ref.modify(_ + 2)
     }
     assertEquals(result, 2)
 
   test("asRefs allows to build a case class from temporary Ref value"):
-    import Ref.asRefs
     case class Foo(x: Int, y: String)
     val result = Foo(1, "asd").asRefs { (x, y) =>
       x := 2

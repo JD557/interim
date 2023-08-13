@@ -8,20 +8,19 @@ import scala.annotation.targetName
   */
 type ItemId = (Int | String) | List[(Int | String)]
 
-object ItemId:
-  /** Helper method to convert an ItemId into a List
-    */
-  extension (itemId: ItemId)
-    def toIdList: List[(Int | String)] =
-      itemId match {
-        case int: Int                   => List(int)
-        case str: String                => List(str)
-        case list: List[(Int | String)] => list
-      }
+/** Helper method to convert an ItemId into a List
+  */
+extension (itemId: ItemId)
+  def toIdList: List[(Int | String)] =
+    itemId match {
+      case int: Int                   => List(int)
+      case str: String                => List(str)
+      case list: List[(Int | String)] => list
+    }
 
-  /** Operator to add a child to an item id. Useful for composite components.
-    */
-  extension (parentId: ItemId)
-    @targetName("addChild")
-    def |>(childId: ItemId): ItemId =
-      parentId.toIdList ++ childId.toIdList
+/** Operator to add a child to an item id. Useful for composite components.
+  */
+extension (parentId: ItemId)
+  @targetName("addChild")
+  def |>(childId: ItemId): ItemId =
+    parentId.toIdList ++ childId.toIdList
