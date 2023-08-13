@@ -8,7 +8,7 @@ import eu.joaocosta.interim.skins.*
   *
   * Panels are a mix of a component and a layout. They perform rendering operations, but also provide a draw area.
   *
-  * By convention, all panels are of the form `def panel(id, area, params..., skin)(body): (Value, Rect)`.
+  * By convention, all panels are of the form `def panel(id, area, params..., skin)(body): (Option[Value], PanelState[Rect])`.
   * The returned value is the value returned by the body. Panels also return a rect, which is the area
   * the panel must be called with in the next frame (e.g. for movable panels).
   *

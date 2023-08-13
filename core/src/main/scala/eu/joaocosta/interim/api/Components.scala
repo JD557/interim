@@ -46,9 +46,8 @@ trait Components:
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, value.get, itemStatus)
-        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
-          value.modify(!_).get
-        else value.get
+        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) value.modify(!_)
+        value.get
 
   /** Radio button component. Returns value currently selected.
     *
@@ -69,7 +68,7 @@ trait Components:
         if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
           value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
-        else (skin.renderButton(area, label, itemStatus))
+        else skin.renderButton(area, label, itemStatus)
         value.get
 
   /** Select box component. Returns the index value currently selected inside a PanelState.
