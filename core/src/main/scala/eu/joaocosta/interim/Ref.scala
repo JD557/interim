@@ -1,4 +1,4 @@
-package eu.joaocosta.interim.api
+package eu.joaocosta.interim
 
 import scala.annotation.targetName
 import scala.deriving.Mirror
@@ -53,16 +53,16 @@ object Ref:
       refTuple.map([T] => (x: T) => x.asInstanceOf[Ref[_]].value.asInstanceOf[UnRef[T]]).asInstanceOf
     mirror.fromTuple(updatedTuple)
 
-  /** Wraps this value into a Ref and passes it to a block, returning the final value of the ref.
-    *
-    * Useful to set temporary mutable variables.
-    */
-  extension [T](x: T) def asRef(block: Ref[T] => Unit): T = withRef(x)(block)
+/** Wraps this value into a Ref and passes it to a block, returning the final value of the ref.
+  *
+  * Useful to set temporary mutable variables.
+  */
+extension [T](x: T) def asRef(block: Ref[T] => Unit): T = Ref.withRef(x)(block)
 
-  /** Destructures this value into multiple Refs and passes it to a block, returning the final value of the ref.
-    *
-    * Useful to set temporary mutable variables.
-    */
-  extension [T <: Product](x: T)
-    def asRefs(using mirror: Mirror.ProductOf[T])(block: Tuple.Map[mirror.MirroredElemTypes, Ref] => Unit): T =
-      withRefs(x)(block)
+/** Destructures this value into multiple Refs and passes it to a block, returning the final value of the ref.
+  *
+  * Useful to set temporary mutable variables.
+  */
+extension [T <: Product](x: T)
+  def asRefs(using mirror: Mirror.ProductOf[T])(block: Tuple.Map[mirror.MirroredElemTypes, Ref] => Unit): T =
+    Ref.withRefs(x)(block)

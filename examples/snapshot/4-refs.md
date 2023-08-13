@@ -29,7 +29,6 @@ The example above could also be written as:
 
 ```scala
 import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Ref
 
 val uiContext = new UiContext()
 
@@ -37,7 +36,7 @@ val windowArea = Ref(PanelState.open(Rect(x = 10, y = 10, w = 110, h = 50))) // 
 var counter    = 0
 
 def application(inputState: InputState) =
-  import eu.joaocosta.interim.InterIm._
+  import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     // window takes area as a ref, so will mutate the window area variable
     window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
@@ -74,7 +73,6 @@ of `Ref`s that can be used inside the block. At the end of the block, a new obje
 
 ```scala reset
 import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Ref
 
 val uiContext = new UiContext()
 
@@ -82,8 +80,7 @@ case class AppState(counter: Int = 0, windowArea: PanelState[Rect] = PanelState.
 val initialState = AppState()
 
 def applicationRef(inputState: InputState, appState: AppState) =
-  import eu.joaocosta.interim.InterIm._
-  import eu.joaocosta.interim.api.Ref.asRefs
+  import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     appState.asRefs { (counter, windowArea) =>
       window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>

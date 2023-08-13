@@ -1,6 +1,7 @@
 package eu.joaocosta.interim
 
 class UiContextSpec extends munit.FunSuite:
+
   test("registerItem should not mark an item not under the cursor"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(0, 0, false, "")

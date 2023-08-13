@@ -1,6 +1,5 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.ItemId.*
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
@@ -14,14 +13,15 @@ trait Components:
 
   type Component[+T] = (inputState: InputState, uiContext: UiContext) ?=> T
 
-  trait ComponentWithValue[T] {
+  trait ComponentWithValue[T]:
     def applyRef(value: Ref[T]): Component[T]
+
     def applyValue(value: T): Component[T] =
       apply(Ref(value))
+
     inline def apply(value: T | Ref[T]): Component[T] = inline value match
       case x: T      => applyValue(x)
       case x: Ref[T] => applyRef(x)
-  }
 
   /** Button component. Returns true if it's being clicked, false otherwise.
     *
@@ -46,9 +46,8 @@ trait Components:
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, value.get, itemStatus)
-        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
-          value.modify(!_).get
-        else value.get
+        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) value.modify(!_)
+        value.get
 
   /** Radio button component. Returns value currently selected.
     *
@@ -69,7 +68,7 @@ trait Components:
         if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
           value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
-        else (skin.renderButton(area, label, itemStatus))
+        else skin.renderButton(area, label, itemStatus)
         value.get
 
   /** Select box component. Returns the index value currently selected inside a PanelState.

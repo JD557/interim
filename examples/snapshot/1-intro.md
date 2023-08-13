@@ -52,7 +52,7 @@ Now, let's write our interface. We are going to need the following components:
 
 ```scala
 def application(inputState: InputState) =
-  import eu.joaocosta.interim.InterIm._
+  import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
       counter = counter - 1
@@ -73,7 +73,7 @@ Let's go line by line:
 First, our application will need to somehow receive input (e.g. mouse clicks), so we need to provide the `InputState`
 from our backend.
 
-Then, we import `import eu.joaocosta.interim.InterIm._`. This enables the InterIm DSL, which give us access to our
+Then, we import `import eu.joaocosta.interim.InterIm.*`. This enables the InterIm DSL, which give us access to our
 component functions.
 
 Next, we start our UI with `ui(inputState, uiContext)`. All DSL operation must happen inside this block which,
@@ -125,7 +125,7 @@ For example we could rewrite our application as:
 
 ```scala
 def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
-  import eu.joaocosta.interim.InterIm._
+  import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     val (decrementCounter, _, incrementCounter) = (
       button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"),
@@ -151,7 +151,7 @@ One possible solution to this is to use local mutability:
 
 ```scala
 def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
-  import eu.joaocosta.interim.InterIm._
+  import eu.joaocosta.interim.InterIm.*
   var _counter = counter
   ui(inputState, uiContext):
     if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))

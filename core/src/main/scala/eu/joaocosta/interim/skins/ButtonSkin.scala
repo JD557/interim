@@ -11,6 +11,7 @@ trait ButtonSkin:
   ): Unit
 
 object ButtonSkin extends DefaultSkin:
+
   final case class Default(
       shadowDelta: Int,
       clickDelta: Int,
@@ -21,8 +22,10 @@ object ButtonSkin extends DefaultSkin:
       hotColor: Color,
       activeColor: Color
   ) extends ButtonSkin:
+
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w - math.max(shadowDelta, clickDelta), h = area.h - math.max(shadowDelta, clickDelta))
+
     def renderButton(area: Rect, label: String, itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =

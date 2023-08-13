@@ -8,6 +8,7 @@ trait CheckboxSkin:
   def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
 object CheckboxSkin extends DefaultSkin:
+
   final case class Default(
       padding: Int,
       inactiveColor: Color,
@@ -15,9 +16,11 @@ object CheckboxSkin extends DefaultSkin:
       activeColor: Color,
       checkColor: Color
   ) extends CheckboxSkin:
+
     def checkboxArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)
       area.copy(w = smallSide, h = smallSide)
+
     def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val checkboxArea = this.checkboxArea(area)
       itemStatus match

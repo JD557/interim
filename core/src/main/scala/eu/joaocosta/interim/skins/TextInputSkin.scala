@@ -8,6 +8,7 @@ trait TextInputSkin:
   def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
 object TextInputSkin extends DefaultSkin:
+
   final case class Default(
       border: Int,
       font: Font,
@@ -17,8 +18,10 @@ object TextInputSkin extends DefaultSkin:
       textAreaColor: Color,
       textColor: Color
   ) extends TextInputSkin:
+
     def textInputArea(area: Rect): Rect =
       area.shrink(border)
+
     def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val textInputArea = this.textInputArea(area)
       itemStatus match

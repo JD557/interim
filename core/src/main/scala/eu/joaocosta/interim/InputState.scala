@@ -12,6 +12,7 @@ import scala.annotation.tailrec
   *   A `\u0008` character is interpreted as a backspace.
   */
 final case class InputState(mouseX: Int, mouseY: Int, mouseDown: Boolean, keyboardInput: String):
+
   /** Appends the current keyboard input to an already existing string.
     * A `\u0008` character in the input is interpreted as a backspace.
     */
