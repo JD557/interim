@@ -36,7 +36,6 @@ This one is more of a show off of what you can do.
 
 ```scala
 import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Ref.asRefs
 
 val uiContext = new UiContext()
 

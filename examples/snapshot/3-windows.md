@@ -38,7 +38,7 @@ var windowArea = PanelState.open(Rect(x = 10, y = 10, w = 110, h = 50))
 var counter    = 0
 
 def application(inputState: InputState) =
-  import eu.joaocosta.interim.InterIm._
+  import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true, closable = false) { area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
