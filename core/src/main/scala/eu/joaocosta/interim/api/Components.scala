@@ -154,9 +154,9 @@ trait Components:
   final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
       def applyRef(value: Ref[Rect]): Component[Rect] =
-        val handleArea = skin.handleArea(area)
+        val handleArea = skin.moveHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
-        skin.renderHandle(area, value.get, itemStatus)
+        skin.renderMoveHandle(area, value.get, itemStatus)
         if (itemStatus.active)
           val handleCenterX = handleArea.x + handleArea.w / 2
           val handleCenterY = handleArea.y + handleArea.h / 2
@@ -165,4 +165,23 @@ trait Components:
           val deltaX        = mouseX - handleCenterX
           val deltaY        = mouseY - handleCenterY
           value.modify(_.move(deltaX, deltaY))
+        value.get
+
+  /** Close handle. Closes the panel when clicked.
+    *
+    * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
+    * with closable = true.
+    */
+  final def closeHandle[T](
+      id: ItemId,
+      area: Rect,
+      skin: HandleSkin = HandleSkin.default()
+  ): ComponentWithValue[PanelState[T]] =
+    new ComponentWithValue[PanelState[T]]:
+      def applyRef(value: Ref[PanelState[T]]): Component[PanelState[T]] =
+        val handleArea = skin.closeHandleArea(area)
+        val itemStatus = UiContext.registerItem(id, handleArea)
+        skin.renderCloseHandle(area, itemStatus)
+        if (itemStatus.active)
+          value.modify(_.close)
         value.get

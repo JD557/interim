@@ -26,30 +26,44 @@ trait Panels:
   /**  Window with a title.
     *
     * @param title of this window
+    * @param closable if true, the window will include a closable handle in the title bar
     * @param movable if true, the window will include a move handle in the title bar
     */
   final def window[T](
       id: ItemId,
-      area: Rect | Ref[Rect],
+      area: Rect | PanelState[Rect] | Ref[PanelState[Rect]],
       title: String,
+      closable: Boolean = false,
       movable: Boolean = false,
       skin: WindowSkin = WindowSkin.default(),
       handleSkin: HandleSkin = HandleSkin.default()
   )(
       body: Rect => T
-  ): Components.Component[(T, Rect)] =
-    val areaRef = area match {
-      case ref: Ref[Rect] => ref
-      case v: Rect        => Ref(v)
+  ): Components.Component[(Option[T], PanelState[Rect])] =
+    val panelStateRef = area match {
+      case ref: Ref[PanelState[Rect]] => ref
+      case v: PanelState[Rect]        => Ref(v)
+      case v: Rect                    => Ref(PanelState.open(v))
     }
-    UiContext.registerItem(id, areaRef.get, passive = true)
-    skin.renderWindow(areaRef.get, title)
-    val res = body(skin.panelArea(areaRef.get))
-    if (movable)
-      Components
-        .moveHandle(
-          id |> "internal_move_handle",
-          skin.titleTextArea(areaRef.get),
-          handleSkin
-        )(areaRef)
-    (res, areaRef.get)
+    if (panelStateRef.get.isOpen)
+      val windowArea = panelStateRef.get.value
+      UiContext.registerItem(id, windowArea, passive = true)
+      skin.renderWindow(windowArea, title)
+      val res = body(skin.panelArea(windowArea))
+      if (closable)
+        Components
+          .closeHandle(
+            id |> "internal_close_handle",
+            skin.titleTextArea(windowArea),
+            handleSkin
+          )(panelStateRef)
+      if (movable)
+        val newArea = Components
+          .moveHandle(
+            id |> "internal_move_handle",
+            skin.titleTextArea(windowArea),
+            handleSkin
+          )(windowArea)
+        panelStateRef.modify(_.copy(value = newArea))
+      (Some(res), panelStateRef.get)
+    else (None, panelStateRef.get)
