@@ -72,11 +72,7 @@ trait Components:
         else (skin.renderButton(area, label, itemStatus))
         value.get
 
-  /** Select box component. Returns the index value currently selected.
-    *
-    * The returned value is returned inside an Either.
-    *   - Left means the select box is open
-    *   - Right means the select box is closed
+  /** Select box component. Returns the index value currently selected inside a PanelState.
     *
     * @param labels text labels for each value
     */
@@ -85,22 +81,20 @@ trait Components:
       area: Rect,
       labels: Vector[String],
       skin: SelectSkin = SelectSkin.default()
-  ): ComponentWithValue[Either[Int, Int]] =
-    new ComponentWithValue[Either[Int, Int]]:
-      def applyRef(value: Ref[Either[Int, Int]]): Component[Either[Int, Int]] =
+  ): ComponentWithValue[PanelState[Int]] =
+    new ComponentWithValue[PanelState[Int]]:
+      def applyRef(value: Ref[PanelState[Int]]): Component[PanelState[Int]] =
         val selectBoxArea = skin.selectBoxArea(area)
         val itemStatus    = UiContext.registerItem(id, area)
-        val selectedValue = value.get.merge
-        if (itemStatus.selected) value := Left(selectedValue)
-        val isOpen = value.get.isLeft
-        skin.renderSelectBox(area, selectedValue, labels, itemStatus)
-        if (isOpen)
-          if (!itemStatus.selected) value := Right(selectedValue)
+        if (itemStatus.selected) value.modify(_.open)
+        skin.renderSelectBox(area, value.get.value, labels, itemStatus)
+        if (value.get.isOpen)
+          if (!itemStatus.selected) value.modify(_.close)
           labels.zipWithIndex.foreach: (label, idx) =>
             val selectOptionArea = skin.selectOptionArea(area, idx)
             val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
             skin.renderSelectOption(area, idx, labels, optionStatus)
-            if (optionStatus.active) value := Right(idx)
+            if (optionStatus.active) value := PanelState.closed(idx)
         value.get
 
   /** Slider component. Returns the current position of the slider, between min and max.
