@@ -97,7 +97,7 @@ Now that our application is defined, we can call it from our backend:
 In pseudo code, this looks like the following:
 
 ```
-val uiContext = new UiContext
+val uiContext = new UiContext()
 
 def application(inputState: InputState) = ??? // Our application code
 

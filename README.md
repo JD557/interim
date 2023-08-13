@@ -26,10 +26,11 @@ To know more about the library and how to get started check the [examples](https
 - Text
 - Buttons
 - Checkboxes
-- Radio Buttons
+- Radio buttons
+- Select boxes
 - Sliders
-- Text Input
-- Movable components (including windows)
+- Text input
+- Movable/Closable windows
 
 ### Layouts
 
