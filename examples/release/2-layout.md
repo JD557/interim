@@ -44,12 +44,12 @@ Our application now looks like:
 ```scala
 import eu.joaocosta.interim.*
 
-val uiState = new UiState()
+val uiContext = new UiContext()
 var counter = 0
 
 def application(inputState: InputState) =
-  import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  import eu.joaocosta.interim.InterIm.*
+  ui(inputState, uiContext):
     columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10) { column =>
       if (button(id = "minus", area = column(0), label = "-"))
         counter = counter - 1
@@ -57,7 +57,7 @@ def application(inputState: InputState) =
         area = column(1),
         color = Color(0, 0, 0),
         text = counter.toString,
-        fontSize = 8,
+        font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
@@ -85,8 +85,8 @@ For example, this is how our application would look like with a dynamic layout:
 
 ```scala
 def dynamicApp(inputState: InputState) =
-  import eu.joaocosta.interim.InterIm._
-  ui(inputState, uiState):
+  import eu.joaocosta.interim.InterIm.*
+  ui(inputState, uiContext):
     dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10) { column =>
       if (button(id = "minus", area = column(30), label = "-")) // 30px from the left
         counter = counter - 1
@@ -96,7 +96,7 @@ def dynamicApp(inputState: InputState) =
         area = column(maxSize), // Fill the remaining area
         color = Color(0, 0, 0),
         text = counter.toString,
-        fontSize = 8,
+        font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
