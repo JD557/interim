@@ -17,5 +17,14 @@ object Font:
     */
   def apply(name: String, fontSize: Int): Font = Font(name, fontSize, _ => fontSize)
 
+  /** A description of a font.
+    *
+    * All chars are assumed to have the same width.
+    * @param name font name
+    * @param fontSize font height in pixels
+    * @param charWidth character width in pixels
+    */
+  def apply(name: String, fontSize: Int, charWidth: Int): Font = Font(name, fontSize, _ => charWidth)
+
   /** The default font */
   val default = Font("default", 8)
