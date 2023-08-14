@@ -1,6 +1,6 @@
 //> using scala "3.3.0"
 //> using lib "eu.joaocosta::minart::0.5.2"
-//> using lib "eu.joaocosta::interim::0.1.3"
+//> using lib "eu.joaocosta::interim::0.1.4"
 
 /** This file contains a simple graphical backend written in Minart.
   *
@@ -17,13 +17,32 @@ import eu.joaocosta.interim.*
 
 object MinartBackend:
 
+  trait MinartFont:
+    def charWidth(char: Char): Int
+    def coloredChar(char: Char, color: MinartColor): SurfaceView
+
+  case class BitmapFont(file: String, width: Int, height: Int, fontFirstChar: Char = '\u0000') extends MinartFont:
+    private val spriteSheet        = SpriteSheet(Image.loadBmpImage(Resource(file)).get, width, height)
+    def charWidth(char: Char): Int = width
+    def coloredChar(char: Char, color: MinartColor): SurfaceView =
+      spriteSheet.getSprite(char.toInt - fontFirstChar.toInt).map {
+        case MinartColor(255, 255, 255) => color
+        case c                          => MinartColor(255, 0, 255)
+      }
+
+  case class BitmapFontPack(fonts: List[BitmapFont]):
+    val sortedFonts = fonts.sortBy(_.height)
+    def withSize(fontSize: Int): MinartFont =
+      val baseFont = sortedFonts.filter(_.height <= fontSize).lastOption.getOrElse(sortedFonts.head)
+      if (baseFont.height == fontSize) baseFont
+      else
+        val scale = fontSize / baseFont.height.toDouble
+        new MinartFont:
+          def charWidth(char: Char): Int                               = (baseFont.width * scale).toInt
+          def coloredChar(char: Char, color: MinartColor): SurfaceView = baseFont.coloredChar(char, color).scale(scale)
+
   // Gloop font by Polyducks: https://twitter.com/PolyDucks
-  private val font =
-    SpriteSheet(Image.loadBmpImage(Resource("assets/gloop.bmp")).get, 8, 8)
-  private def coloredChar(char: Char, color: MinartColor): SurfaceView = font.getSprite(char.toInt).map {
-    case MinartColor(255, 255, 255) => color
-    case c                          => MinartColor(255, 0, 255)
-  }
+  private val gloop = BitmapFontPack(List(BitmapFont("assets/gloop.bmp", 8, 8)))
 
   private def processKeyboard(keyboardInput: KeyboardInput): String =
     import KeyboardInput.Key._
@@ -51,33 +70,43 @@ object MinartBackend:
       }
       .mkString
 
+  private def getInputState(canvas: Canvas): InputState = InputState(
+    canvas.getPointerInput().position.map(_.x).getOrElse(0),
+    canvas.getPointerInput().position.map(_.y).getOrElse(0),
+    canvas.getPointerInput().isPressed,
+    processKeyboard(canvas.getKeyboardInput())
+  )
+
+  private def renderUi(canvas: Canvas, renderOps: List[RenderOp]): Unit =
+    renderOps.foreach {
+      case RenderOp.DrawRect(Rect(x, y, w, h), color) =>
+        canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
+      case op: RenderOp.DrawText =>
+        val font = gloop.withSize(op.font.fontSize)
+        op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
+          val charSprite = font.coloredChar(char, MinartColor(color.r, color.g, color.b))
+          canvas
+            .blit(charSprite, Some(MinartColor(255, 0, 255)))(x, y)
+        }
+      case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
+        canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
+    }
+
+  private val canvasSettings =
+    Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120))
+
   // Example of a loop with global mutable state
   def run(body: InputState => (List[RenderOp], _)): Future[Unit] =
     AppLoop
       .statelessRenderLoop { (canvas: Canvas) =>
-        val inputState = InputState(
-          canvas.getPointerInput().position.map(_.x).getOrElse(0),
-          canvas.getPointerInput().position.map(_.y).getOrElse(0),
-          canvas.getPointerInput().isPressed,
-          processKeyboard(canvas.getKeyboardInput())
-        )
+        val inputState = getInputState(canvas)
         canvas.clear()
         val ops = body(inputState)._1
-        ops.foreach {
-          case RenderOp.DrawRect(Rect(x, y, w, h), color) =>
-            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
-          case op: RenderOp.DrawText =>
-            op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
-              canvas
-                .blit(coloredChar(char, MinartColor(color.r, color.g, color.b)), Some(MinartColor(255, 0, 255)))(x, y)
-            }
-          case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
-            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
-        }
+        renderUi(canvas, ops)
         canvas.redraw()
       }
       .configure(
-        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
+        canvasSettings,
         LoopFrequency.hz60
       )
       .run()
@@ -86,30 +115,15 @@ object MinartBackend:
   def run[S](initialState: S)(body: (InputState, S) => (List[RenderOp], S)): Future[S] =
     AppLoop
       .statefulRenderLoop { (state: S) => (canvas: Canvas) =>
-        val inputState = InputState(
-          canvas.getPointerInput().position.map(_.x).getOrElse(0),
-          canvas.getPointerInput().position.map(_.y).getOrElse(0),
-          canvas.getPointerInput().isPressed,
-          processKeyboard(canvas.getKeyboardInput())
-        )
+        val inputState = getInputState(canvas)
         canvas.clear()
         val (ops, newState) = body(inputState, state)
-        ops.foreach {
-          case RenderOp.DrawRect(Rect(x, y, w, h), color) =>
-            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
-          case op: RenderOp.DrawText =>
-            op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
-              canvas
-                .blit(coloredChar(char, MinartColor(color.r, color.g, color.b)), Some(MinartColor(255, 0, 255)))(x, y)
-            }
-          case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
-            canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
-        }
+        renderUi(canvas, ops)
         canvas.redraw()
         newState
       }
       .configure(
-        Canvas.Settings(width = 640, height = 480, title = "Immediate GUI", clearColor = MinartColor(80, 110, 120)),
+        canvasSettings,
         LoopFrequency.hz60,
         initialState
       )
