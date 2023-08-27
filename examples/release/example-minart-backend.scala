@@ -1,5 +1,5 @@
 //> using scala "3.3.0"
-//> using lib "eu.joaocosta::minart::0.5.2"
+//> using lib "eu.joaocosta::minart::0.5.3"
 //> using lib "eu.joaocosta::interim::0.1.4"
 
 /** This file contains a simple graphical backend written in Minart.
@@ -86,7 +86,7 @@ object MinartBackend:
         op.asDrawChars().foreach { case RenderOp.DrawChar(Rect(x, y, _, _), color, char) =>
           val charSprite = font.coloredChar(char, MinartColor(color.r, color.g, color.b))
           canvas
-            .blit(charSprite, Some(MinartColor(255, 0, 255)))(x, y)
+            .blit(charSprite, BlendMode.ColorMask(MinartColor(255, 0, 255)))(x, y)
         }
       case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
         canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
