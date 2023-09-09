@@ -2,7 +2,7 @@ import ReleaseTransformations._
 
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / publishTo    := sonatypePublishToBundle.value
-ThisBuild / scalaVersion := "3.3.0"
+ThisBuild / scalaVersion := "3.3.1"
 ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage     := Some(url("https://github.com/JD557/interim"))
 ThisBuild / scmInfo := Some(
@@ -47,9 +47,9 @@ lazy val core = (projectMatrix in file("core"))
         "docs"
       )
   )
-  .jvmPlatform(scalaVersions = Seq("3.3.0"))
-  .jsPlatform(scalaVersions = Seq("3.3.0"))
-  .nativePlatform(scalaVersions = Seq("3.3.0"))
+  .jvmPlatform(scalaVersions = Seq("3.3.1"))
+  .jsPlatform(scalaVersions = Seq("3.3.1"))
+  .nativePlatform(scalaVersions = Seq("3.3.1"))
 
 releaseCrossBuild    := true
 releaseTagComment    := s"Release ${(ThisBuild / version).value}"
