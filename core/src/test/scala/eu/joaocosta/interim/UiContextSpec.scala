@@ -87,3 +87,15 @@ class UiContextSpec extends munit.FunSuite:
         RenderOp.DrawRect(Rect(0, 0, 1, 1), Color(4, 4, 4))
       )
     )
+
+  test("pushInputState should update the historical state"):
+    val uiContext: UiContext = new UiContext()
+    val inputState1          = uiContext.pushInputState(InputState(5, 5, false, ""))
+    assertEquals(inputState1.deltaX, 0)
+    assertEquals(inputState1.deltaY, 0)
+    val inputState2 = uiContext.pushInputState(InputState(6, 7, false, ""))
+    assertEquals(inputState2.deltaX, 1)
+    assertEquals(inputState2.deltaY, 2)
+    val inputState3 = uiContext.pushInputState(InputState(Int.MinValue, 6, false, ""))
+    assertEquals(inputState3.deltaX, 0)
+    assertEquals(inputState3.deltaY, -1)

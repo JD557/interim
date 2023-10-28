@@ -71,8 +71,8 @@ object MinartBackend:
       .mkString
 
   private def getInputState(canvas: Canvas): InputState = InputState(
-    canvas.getPointerInput().position.map(_.x).getOrElse(0),
-    canvas.getPointerInput().position.map(_.y).getOrElse(0),
+    canvas.getPointerInput().position.map(_.x).getOrElse(Int.MinValue),
+    canvas.getPointerInput().position.map(_.y).getOrElse(Int.MinValue),
     canvas.getPointerInput().isPressed,
     processKeyboard(canvas.getKeyboardInput())
   )

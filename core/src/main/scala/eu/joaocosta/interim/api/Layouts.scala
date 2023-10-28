@@ -19,11 +19,9 @@ trait Layouts:
   final def clip[T](area: Rect)(
       body: (InputState, UiContext) ?=> T
   )(using inputState: InputState, uiContext: UiContext): T =
-    val newUiContext = uiContext.fork()
-    val newInputState =
-      if (area.isMouseOver) inputState
-      else inputState.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
-    val result = body(using newInputState, newUiContext)
+    val newUiContext  = uiContext.fork()
+    val newInputState = inputState.clip(area)
+    val result        = body(using newInputState, newUiContext)
     newUiContext.ops.get(newUiContext.currentZ).foreach(_.mapInPlace(_.clip(area)).filterInPlace(!_.area.isEmpty))
     uiContext ++= newUiContext
     result

@@ -11,7 +11,7 @@ object Components extends Components
 
 trait Components:
 
-  type Component[+T] = (inputState: InputState, uiContext: UiContext) ?=> T
+  type Component[+T] = (inputState: InputState.Historical, uiContext: UiContext) ?=> T
 
   trait ComponentWithValue[T]:
     def applyRef(value: Ref[T]): Component[T]
@@ -157,12 +157,8 @@ trait Components:
         val itemStatus = UiContext.registerItem(id, handleArea)
         skin.renderMoveHandle(area, value.get, itemStatus)
         if (itemStatus.active)
-          val handleCenterX = handleArea.x + handleArea.w / 2
-          val handleCenterY = handleArea.y + handleArea.h / 2
-          val mouseX        = summon[InputState].mouseX
-          val mouseY        = summon[InputState].mouseY
-          val deltaX        = mouseX - handleCenterX
-          val deltaY        = mouseY - handleCenterY
+          val deltaX = summon[InputState.Historical].deltaX
+          val deltaY = summon[InputState.Historical].deltaY
           value.modify(_.move(deltaX, deltaY))
         value.get
 
