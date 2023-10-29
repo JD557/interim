@@ -41,11 +41,12 @@ trait Layouts:
   final def rows[T](area: Rect, numRows: Int, padding: Int)(body: Vector[Rect] => T): T =
     if (numRows <= 0) body(Vector.empty)
     else
-      val rowSize = (area.h - (numRows - 1) * padding) / numRows
+      val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
+      val intRowSize = rowSize.toInt
       val vec = for
         row <- (0 until numRows)
-        dy = row * (rowSize + padding)
-      yield Rect(area.x, area.y + dy, area.w, rowSize)
+        dy = (row * (rowSize + padding)).toInt
+      yield Rect(area.x, area.y + dy, area.w, intRowSize)
       body(vec.toVector)
 
   /** Lays out the components in a sequence of columns where all elements have the same size, separated by a padding.
@@ -55,11 +56,12 @@ trait Layouts:
   final def columns[T](area: Rect, numColumns: Int, padding: Int)(body: Vector[Rect] => T): T =
     if (numColumns <= 0) body(Vector.empty)
     else
-      val columnSize = (area.w - (numColumns - 1) * padding) / numColumns
+      val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
+      val intColumnSize = columnSize.toInt
       val vec = for
         column <- (0 until numColumns)
-        dx = column * (columnSize + padding)
-      yield Rect(area.x + dx, area.y, columnSize, area.h)
+        dx = (column * (columnSize + padding)).toInt
+      yield Rect(area.x + dx, area.y, intColumnSize, area.h)
       body(vec.toVector)
 
   /** Lays out the components in a sequence of rows of different sizes, separated by a padding.
