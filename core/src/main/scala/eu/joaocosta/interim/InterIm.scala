@@ -18,16 +18,17 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     * The method returns a list of operations to render and the result of the body.
     */
   def ui[T](inputState: InputState, uiContext: UiContext)(
-      run: (inputState: InputState, uiContext: UiContext) ?=> T
+      run: (historicalInputState: InputState.Historical, uiContext: UiContext) ?=> T
   ): (List[RenderOp], T) =
     // prepare
     uiContext.ops.clear()
     uiContext.currentZ = 0
     uiContext.hotItem = None
+    val historicalInputState = uiContext.pushInputState(inputState)
     if (inputState.mouseDown) uiContext.selectedItem = None
     // run
-    val res = run(using inputState, uiContext)
+    val res = run(using historicalInputState, uiContext)
     // finish
-    if (!inputState.mouseDown) uiContext.activeItem = None
+    if (!historicalInputState.mouseDown) uiContext.activeItem = None
     // return
     (uiContext.getOrderedOps(), res)

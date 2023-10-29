@@ -11,6 +11,7 @@ import scala.collection.mutable
   */
 final class UiContext private (
     private[interim] var currentZ: Int,
+    private[interim] var previousInputState: Option[InputState],
     private[interim] var hotItem: Option[(Int, ItemId)], // Item being hovered by the mouse
     private[interim] var activeItem: Option[ItemId],     // Item being clicked by the mouse
     private[interim] var selectedItem: Option[ItemId],   // Last item clicked
@@ -30,14 +31,35 @@ final class UiContext private (
   private[interim] def getOrderedOps(): List[RenderOp] =
     ops.values.toList.flatten
 
-  def this() = this(0, None, None, None, new mutable.TreeMap())
+  private[interim] def pushInputState(inputState: InputState): InputState.Historical =
+    val history = InputState.Historical(
+      previousMouseX = previousInputState.map(_.mouseX).getOrElse(Int.MinValue),
+      previousMouseY = previousInputState.map(_.mouseY).getOrElse(Int.MinValue),
+      mouseX = inputState.mouseX,
+      mouseY = inputState.mouseY,
+      mouseDown = inputState.mouseDown,
+      keyboardInput = inputState.keyboardInput
+    )
+    previousInputState = Some(inputState)
+    history
+
+  def this() = this(0, None, None, None, None, new mutable.TreeMap())
 
   override def clone(): UiContext =
-    new UiContext(currentZ, hotItem, activeItem, selectedItem, ops.clone().mapValuesInPlace((_, v) => v.clone()))
+    new UiContext(
+      currentZ,
+      previousInputState,
+      hotItem,
+      activeItem,
+      selectedItem,
+      ops.clone().mapValuesInPlace((_, v) => v.clone())
+    )
 
-  def fork(): UiContext = new UiContext(currentZ, hotItem, activeItem, selectedItem, new mutable.TreeMap())
+  def fork(): UiContext =
+    new UiContext(currentZ, previousInputState, hotItem, activeItem, selectedItem, new mutable.TreeMap())
 
   def ++=(that: UiContext): this.type =
+    // previousInputState stays the same
     this.hotItem = that.hotItem
     this.activeItem = that.activeItem
     this.selectedItem = that.selectedItem
