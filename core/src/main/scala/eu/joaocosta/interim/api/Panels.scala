@@ -27,6 +27,7 @@ trait Panels:
     * @param title of this window
     * @param closable if true, the window will include a closable handle in the title bar
     * @param movable if true, the window will include a move handle in the title bar
+    * @param resizable if true, the window will include a resize handle in the bottom corner
     */
   final def window[T](
       id: ItemId,
@@ -56,14 +57,6 @@ trait Panels:
             skin.titleTextArea(windowArea),
             handleSkin
           )(panelStateRef)
-      if (movable)
-        val newArea = Components
-          .moveHandle(
-            id |> "internal_move_handle",
-            skin.titleTextArea(windowArea),
-            handleSkin
-          )(windowArea)
-        panelStateRef.modify(_.copy(value = newArea))
       if (resizable)
         val newArea = Components
           .resizeHandle(
@@ -72,5 +65,13 @@ trait Panels:
             handleSkin
           )(windowArea)
         panelStateRef.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
+      if (movable)
+        val newArea = Components
+          .moveHandle(
+            id |> "internal_move_handle",
+            skin.titleTextArea(windowArea),
+            handleSkin
+          )(windowArea)
+        panelStateRef.modify(_.copy(value = newArea))
       (Some(res), panelStateRef.get)
     else (None, panelStateRef.get)
