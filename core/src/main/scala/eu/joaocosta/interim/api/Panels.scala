@@ -1,6 +1,5 @@
 package eu.joaocosta.interim.api
 
-//import eu.joaocosta.interim.ItemId.*
 import eu.joaocosta.interim.*
 import eu.joaocosta.interim.skins.*
 
@@ -35,6 +34,7 @@ trait Panels:
       title: String,
       closable: Boolean = false,
       movable: Boolean = false,
+      resizable: Boolean = false,
       skin: WindowSkin = WindowSkin.default(),
       handleSkin: HandleSkin = HandleSkin.default()
   )(
@@ -45,7 +45,7 @@ trait Panels:
       case v: PanelState[Rect]        => Ref(v)
       case v: Rect                    => Ref(PanelState.open(v))
     if (panelStateRef.get.isOpen)
-      val windowArea = panelStateRef.get.value
+      def windowArea = panelStateRef.get.value
       UiContext.registerItem(id, windowArea, passive = true)
       skin.renderWindow(windowArea, title)
       val res = body(skin.panelArea(windowArea))
@@ -64,5 +64,13 @@ trait Panels:
             handleSkin
           )(windowArea)
         panelStateRef.modify(_.copy(value = newArea))
+      if (resizable)
+        val newArea = Components
+          .resizeHandle(
+            id |> "internal_resize_handle",
+            skin.resizeArea(windowArea),
+            handleSkin
+          )(windowArea)
+        panelStateRef.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
       (Some(res), panelStateRef.get)
     else (None, panelStateRef.get)

@@ -145,8 +145,6 @@ trait Components:
 
   /** Draggable handle. Returns the moved area.
     *
-    * It's important that this element moves along with the moved area.
-    *
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
@@ -155,11 +153,28 @@ trait Components:
       def applyRef(value: Ref[Rect]): Component[Rect] =
         val handleArea = skin.moveHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
-        skin.renderMoveHandle(area, value.get, itemStatus)
+        skin.renderMoveHandle(area, itemStatus)
         if (itemStatus.active)
           val deltaX = summon[InputState.Historical].deltaX
           val deltaY = summon[InputState.Historical].deltaY
           value.modify(_.move(deltaX, deltaY))
+        value.get
+
+  /** Draggable handle. Returns the resized area.
+    *
+    * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
+    * with movable = true.
+    */
+  final def resizeHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
+    new ComponentWithValue[Rect]:
+      def applyRef(value: Ref[Rect]): Component[Rect] =
+        val handleArea = skin.resizeHandleArea(area)
+        val itemStatus = UiContext.registerItem(id, handleArea)
+        skin.renderResizeHandle(area, itemStatus)
+        if (itemStatus.active)
+          val deltaX = summon[InputState.Historical].deltaX
+          val deltaY = summon[InputState.Historical].deltaY
+          value.modify(_.resize(deltaX, deltaY))
         value.get
 
   /** Close handle. Closes the panel when clicked.

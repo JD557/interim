@@ -78,7 +78,7 @@ def application(inputState: InputState, appState: AppState) =
   ui(inputState, uiContext):
     appState.asRefs: (colorPickerArea, colorSearchArea, colorRange, resultDelta, color, query) =>
       onTop:
-        window(id = "color picker", area = colorPickerArea, title = "Color Picker", closable = true, movable = true): area =>
+        window(id = "color picker", area = colorPickerArea, title = "Color Picker", closable = true, movable = true, resizable = true): area =>
           rows(area = area.shrink(5), numRows = 6, padding = 10): row =>
             rectangle(row(0), color.get)
             select(id = "range", row(1), Vector("0-255","0-100", "0x00-0xff"))(colorRange).value match

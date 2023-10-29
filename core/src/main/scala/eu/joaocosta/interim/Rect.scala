@@ -28,6 +28,11 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
   def move(dx: Int, dy: Int): Rect =
     copy(x = x + dx, y = y + dy)
 
+  /** Resizes this rectangle by increasing the width and height.
+    */
+  def resize(dw: Int, dh: Int): Rect =
+    copy(w = w + dw, h = h + dh)
+
   /** Shrinks this area by removing `size` pixels from each side.
     */
   def shrink(size: Int): Rect =
