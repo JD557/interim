@@ -121,3 +121,16 @@ trait Layouts:
         currentW -= absWidth + padding
         area.copy(x = areaX, w = absWidth)
     body(generateRect)
+
+  /** Handle mouse events inside a specified area.
+    *
+    * The body receives an optional MouseInput with the coordinates adjusted to be relative
+    * to the enclosing area.
+    * If the mouse is outside of the area, the body receives None.
+    */
+  final def mouseArea[T](area: Rect)(body: Option[InputState.MouseInput] => T)(using inputState: InputState): T =
+    body(
+      Option.when(area.isMouseOver)(
+        inputState.mouseInput.copy(x = inputState.mouseInput.x - area.x, y = inputState.mouseInput.y - area.y)
+      )
+    )
