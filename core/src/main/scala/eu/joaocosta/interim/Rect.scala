@@ -21,7 +21,7 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
   /** Checks if the mouse is over this area.
     */
   def isMouseOver(using inputState: InputState): Boolean =
-    !(inputState.mouseX < x || inputState.mouseY < y || inputState.mouseX >= x + w || inputState.mouseY >= y + h)
+    !(inputState.mouseInput.x < x || inputState.mouseInput.y < y || inputState.mouseInput.x >= x + w || inputState.mouseInput.y >= y + h)
 
   /** Translates the area to another position.
     */

@@ -25,10 +25,10 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
     uiContext.currentZ = 0
     uiContext.hotItem = None
     val historicalInputState = uiContext.pushInputState(inputState)
-    if (inputState.mouseDown) uiContext.selectedItem = None
+    if (inputState.mouseInput.isPressed) uiContext.selectedItem = None
     // run
     val res = run(using historicalInputState, uiContext)
     // finish
-    if (!historicalInputState.mouseDown) uiContext.activeItem = None
+    if (!historicalInputState.mouseInput.isPressed) uiContext.activeItem = None
     // return
     (uiContext.getOrderedOps(), res)

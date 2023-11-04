@@ -36,7 +36,7 @@ trait Components:
     val buttonArea = skin.buttonArea(area)
     val itemStatus = UiContext.registerItem(id, buttonArea)
     skin.renderButton(area, label, itemStatus)
-    itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false
+    itemStatus.hot && itemStatus.active && summon[InputState].mouseInput.isPressed == false
 
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */
@@ -46,7 +46,7 @@ trait Components:
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, value.get, itemStatus)
-        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false) value.modify(!_)
+        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseInput.isPressed == false) value.modify(!_)
         value.get
 
   /** Radio button component. Returns value currently selected.
@@ -65,7 +65,7 @@ trait Components:
       def applyRef(value: Ref[T]): Component[T] =
         val buttonArea = skin.buttonArea(area)
         val itemStatus = UiContext.registerItem(id, buttonArea)
-        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseDown == false)
+        if (itemStatus.hot && itemStatus.active && summon[InputState].mouseInput.isPressed == false)
           value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
         else skin.renderButton(area, label, itemStatus)
@@ -118,11 +118,11 @@ trait Components:
         skin.renderSlider(area, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
           if (area.w > area.h)
-            val mousePos = summon[InputState].mouseX - sliderArea.x - sliderSize / 2
+            val mousePos = summon[InputState].mouseInput.x - sliderArea.x - sliderSize / 2
             val maxPos   = sliderArea.w - sliderSize
             value := math.max(min, math.min(min + (mousePos * range) / maxPos, max))
           else
-            val mousePos = summon[InputState].mouseY - sliderArea.y - sliderSize / 2
+            val mousePos = summon[InputState].mouseInput.y - sliderArea.y - sliderSize / 2
             val maxPos   = sliderArea.h - sliderSize
             value := math.max(min, math.min((mousePos * range) / maxPos, max))
         value.get
