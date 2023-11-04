@@ -23,7 +23,7 @@ final class UiContext private (
   ): UiContext.ItemStatus =
     if (area.isMouseOver && hotItem.forall((hotZ, _) => hotZ <= currentZ))
       hotItem = Some(currentZ -> id)
-      if (!passive && (activeItem == None || activeItem == Some(id)) && inputState.mouseDown)
+      if (!passive && (activeItem == None || activeItem == Some(id)) && inputState.mouseInput.isPressed)
         activeItem = Some(id)
         selectedItem = Some(id)
     UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), selectedItem == Some(id))
@@ -33,11 +33,10 @@ final class UiContext private (
 
   private[interim] def pushInputState(inputState: InputState): InputState.Historical =
     val history = InputState.Historical(
-      previousMouseX = previousInputState.map(_.mouseX).getOrElse(Int.MinValue),
-      previousMouseY = previousInputState.map(_.mouseY).getOrElse(Int.MinValue),
-      mouseX = inputState.mouseX,
-      mouseY = inputState.mouseY,
-      mouseDown = inputState.mouseDown,
+      previousMouseInput = previousInputState
+        .map(_.mouseInput)
+        .getOrElse(InputState.MouseInput(Int.MinValue, Int.MinValue, false)),
+      mouseInput = inputState.mouseInput,
       keyboardInput = inputState.keyboardInput
     )
     previousInputState = Some(inputState)

@@ -5,14 +5,8 @@ import scala.annotation.tailrec
 /** Input State to be used by the components. */
 sealed trait InputState:
 
-  /** Mouse X position, from the left */
-  def mouseX: Int
-
-  /** Mouse Y position, from the top */
-  def mouseY: Int
-
-  /** @param mouseDown whether the mouse is pressed */
-  def mouseDown: Boolean
+  /** Current Mouse state */
+  def mouseInput: InputState.MouseInput
 
   /** String generated from the keyboard inputs since the last frame. Usually this will be a single character.
     * A `\u0008` character is interpreted as a backspace.
@@ -45,32 +39,39 @@ sealed trait InputState:
   def clip(area: Rect): InputState
 
 object InputState:
-  /** Creates a new Input State
+
+  /** Creates a new InputState.
     *
     * @param mouseX mouse X position, from the left
     * @param mouseY mouse Y position, from the top
-    * @param mouseDown whether the body is pressed
+    * @param mousePressed whether the mouse is pressed
     * @param keyboardInput
     *   String generated from the keyboard inputs since the last frame. Usually this will be a single character.
     *   A `\u0008` character is interpreted as a backspace.
     */
   def apply(mouseX: Int, mouseY: Int, mouseDown: Boolean, keyboardInput: String): InputState =
-    InputState.Current(mouseX, mouseY, mouseDown, keyboardInput: String)
+    InputState.Current(InputState.MouseInput(mouseX, mouseY, mouseDown), keyboardInput)
+
+  /** Mouse position and button state.
+    *
+    * @param x mouse X position, from the left
+    * @param y mouse Y position, from the top
+    * @param isPressed whether the mouse is pressed
+    */
+  final case class MouseInput(x: Int, y: Int, isPressed: Boolean)
 
   /** Input state at the current point in time
     *
-    * @param mouseX mouse X position, from the left
-    * @param mouseY mouse Y position, from the top
-    * @param mouseDown whether the body is pressed
+    * @param mouseInput the current mouse state
     * @param keyboardInput
     *   String generated from the keyboard inputs since the last frame. Usually this will be a single character.
     *   A `\u0008` character is interpreted as a backspace.
     */
-  final case class Current(mouseX: Int, mouseY: Int, mouseDown: Boolean, keyboardInput: String) extends InputState:
+  final case class Current(mouseInput: InputState.MouseInput, keyboardInput: String) extends InputState:
 
     def clip(area: Rect): InputState.Current =
       if (area.isMouseOver(using this)) this
-      else this.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
+      else this.copy(mouseInput = mouseInput.copy(x = Int.MinValue, y = Int.MinValue))
 
   /** Input state at the current point in time and in the previous frame
     *
@@ -78,30 +79,27 @@ object InputState:
     * @param previousMouseY previous mouse Y position, from the top
     * @param mouseX mouse X position, from the left
     * @param mouseY mouse Y position, from the top
-    * @param mouseDown whether the body is pressed
+    * @param mouseDown whether the mouse is pressed
     * @param keyboardInput
     *   String generated from the keyboard inputs since the last frame. Usually this will be a single character.
     *   A `\u0008` character is interpreted as a backspace.
     */
   final case class Historical(
-      previousMouseX: Int,
-      previousMouseY: Int,
-      mouseX: Int,
-      mouseY: Int,
-      mouseDown: Boolean,
+      previousMouseInput: MouseInput,
+      mouseInput: MouseInput,
       keyboardInput: String
   ) extends InputState:
 
     /** How much the mouse moved in the X axis */
     lazy val deltaX: Int =
-      if (previousMouseX == Int.MinValue || mouseX == Int.MinValue) 0
-      else mouseX - previousMouseX
+      if (previousMouseInput.x == Int.MinValue || mouseInput.x == Int.MinValue) 0
+      else mouseInput.x - previousMouseInput.x
 
     /** How much the mouse moved in the Y axis */
     lazy val deltaY: Int =
-      if (previousMouseY == Int.MinValue || mouseY == Int.MinValue) 0
-      else mouseY - previousMouseY
+      if (previousMouseInput.y == Int.MinValue || mouseInput.y == Int.MinValue) 0
+      else mouseInput.y - previousMouseInput.y
 
     def clip(area: Rect): InputState.Historical =
       if (area.isMouseOver(using this)) this
-      else this.copy(mouseX = Int.MinValue, mouseY = Int.MinValue)
+      else this.copy(mouseInput = mouseInput.copy(x = Int.MinValue, y = Int.MinValue))
