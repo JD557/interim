@@ -88,7 +88,9 @@ object MinartBackend:
           canvas
             .blit(charSprite, BlendMode.ColorMask(MinartColor(255, 0, 255)))(x, y)
         }
-      case RenderOp.Custom(Rect(x, y, w, h), color, _) =>
+      case RenderOp.Custom(Rect(x, y, w, h), color, surface: Surface) =>
+        canvas.blit(surface)(x, y, 0, 0, w, h)
+      case RenderOp.Custom(Rect(x, y, w, h), color, data) =>
         canvas.fillRegion(x, y, w, h, MinartColor(color.r, color.g, color.b))
     }
 
