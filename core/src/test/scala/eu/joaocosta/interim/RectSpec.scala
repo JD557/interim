@@ -2,6 +2,15 @@ package eu.joaocosta.interim
 
 class RectSpec extends munit.FunSuite:
 
+  test("compute helper positions"):
+    val rect = Rect(10, 15, 10, 20)
+    assertEquals(rect.x1, 10)
+    assertEquals(rect.x2, 20)
+    assertEquals(rect.y1, 15)
+    assertEquals(rect.y2, 35)
+    assertEquals(rect.centerX, 15)
+    assertEquals(rect.centerY, 25)
+
   test("isMouseOver detects collisions with the mouse"):
     val rect = Rect(10, 10, 10, 10)
     assertEquals(rect.isMouseOver(using InputState(0, 0, false, "")), false)
