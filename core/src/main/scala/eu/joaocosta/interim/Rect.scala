@@ -9,10 +9,12 @@ import scala.annotation.targetName
   * Alternatively, (x1, y1) is the top left coordinate and (x2, y2) is the bottom right one.
   */
 final case class Rect(x: Int, y: Int, w: Int, h: Int):
-  def x1 = x
-  def y1 = y
-  def x2 = x + w
-  def y2 = y + h
+  def x1      = x
+  def y1      = y
+  def x2      = x + w
+  def y2      = y + h
+  def centerX = x + w / 2
+  def centerY = y + h / 2
 
   /** Returns true if the rectangle has no area
     */
@@ -32,6 +34,10 @@ final case class Rect(x: Int, y: Int, w: Int, h: Int):
     */
   def resize(dw: Int, dh: Int): Rect =
     copy(w = w + dw, h = h + dh)
+
+  /** Centers this rectangle at the defined position. */
+  def centerAt(x: Int, y: Int): Rect =
+    copy(x = x - w / 2, y = y - h / 2)
 
   /** Shrinks this area by removing `size` pixels from each side.
     */
