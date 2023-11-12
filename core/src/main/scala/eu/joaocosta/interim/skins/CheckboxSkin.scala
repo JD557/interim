@@ -24,11 +24,11 @@ object CheckboxSkin extends DefaultSkin:
     def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val checkboxArea = this.checkboxArea(area)
       itemStatus match
-        case UiContext.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _, _) =>
           rectangle(checkboxArea, inactiveColor)
-        case UiContext.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _, _) =>
           rectangle(checkboxArea, hotColor)
-        case UiContext.ItemStatus(_, true, _) =>
+        case UiContext.ItemStatus(_, true, _, _) =>
           rectangle(checkboxArea, activeColor)
       if (value)
         rectangle(

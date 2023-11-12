@@ -90,6 +90,9 @@ object InputState:
       keyboardInput: String
   ) extends InputState:
 
+    /** If true, then the mouse was released on this frame, performing a click */
+    lazy val mouseClicked: Boolean = mouseInput.isPressed == false && previousMouseInput.isPressed == true
+
     /** How much the mouse moved in the X axis */
     lazy val deltaX: Int =
       if (previousMouseInput.x == Int.MinValue || mouseInput.x == Int.MinValue) 0
