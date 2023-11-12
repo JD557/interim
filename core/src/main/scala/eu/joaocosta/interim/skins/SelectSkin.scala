@@ -35,11 +35,11 @@ object SelectSkin extends DefaultSkin:
       val selectBoxArea = this.selectBoxArea(area)
       val selectedLabel = labels.applyOrElse(value, _ => "")
       itemStatus match
-        case UiContext.ItemStatus(_, _, true) | UiContext.ItemStatus(_, true, _) =>
+        case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
           rectangle(selectBoxArea, activeColor)
-        case UiContext.ItemStatus(true, _, _) =>
+        case UiContext.ItemStatus(true, _, _, _) =>
           rectangle(selectBoxArea, hotColor)
-        case UiContext.ItemStatus(_, _, _) =>
+        case UiContext.ItemStatus(_, _, _, _) =>
           rectangle(selectBoxArea, inactiveColor)
       text(
         selectBoxArea.shrink(border),
@@ -61,11 +61,11 @@ object SelectSkin extends DefaultSkin:
       val optionLabel      = labels.applyOrElse(value, _ => "")
       onTop:
         itemStatus match
-          case UiContext.ItemStatus(_, _, true) | UiContext.ItemStatus(_, true, _) =>
+          case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
             rectangle(selectOptionArea, activeColor)
-          case UiContext.ItemStatus(true, _, _) =>
+          case UiContext.ItemStatus(true, _, _, _) =>
             rectangle(selectOptionArea, hotColor)
-          case UiContext.ItemStatus(_, _, _) =>
+          case _ =>
             rectangle(selectOptionArea, inactiveColor)
         text(
           selectOptionArea.shrink(border),

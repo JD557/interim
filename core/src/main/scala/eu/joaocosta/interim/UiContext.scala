@@ -26,7 +26,11 @@ final class UiContext private (
       if (!passive && (activeItem == None || activeItem == Some(id)) && inputState.mouseInput.isPressed)
         activeItem = Some(id)
         selectedItem = Some(id)
-    UiContext.ItemStatus(hotItem.map(_._2) == Some(id), activeItem == Some(id), selectedItem == Some(id))
+    val hot      = hotItem.map(_._2) == Some(id)
+    val active   = activeItem == Some(id)
+    val selected = selectedItem == Some(id)
+    val clicked  = hot && active && inputState.mouseInput.isPressed == false
+    UiContext.ItemStatus(hot, active, selected, clicked)
 
   private[interim] def getOrderedOps(): List[RenderOp] =
     ops.values.toList.flatten
@@ -78,10 +82,11 @@ object UiContext:
     *  @param hot if the mouse is on top of the item
     *  @param active if the mouse clicked the item (and is still pressed down).
     *                This value stays true for one extra frame, so that it's
-    *                possible to trigger an action on mouse up.
+    *                possible to trigger an action on mouse up (see `clicked`).
     *  @param selected if this was the last element clicked
+    *  @param clicked if the mouse clicked this element and was just released.
     */
-  final case class ItemStatus(hot: Boolean, active: Boolean, selected: Boolean)
+  final case class ItemStatus(hot: Boolean, active: Boolean, selected: Boolean, clicked: Boolean)
 
   /** Registers an item on the UI state, taking a certain area.
     *

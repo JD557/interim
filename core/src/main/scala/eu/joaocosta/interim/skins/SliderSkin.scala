@@ -44,9 +44,9 @@ object SliderSkin extends DefaultSkin:
           Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
       rectangle(area, scrollbarColor) // Scrollbar
       itemStatus match
-        case UiContext.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _, _) =>
           rectangle(sliderRect, inactiveColor)
-        case UiContext.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _, _) =>
           rectangle(sliderRect, hotColor)
         case _ =>
           rectangle(sliderRect, activeColor)

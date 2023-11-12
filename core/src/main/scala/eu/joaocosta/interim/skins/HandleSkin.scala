@@ -27,9 +27,9 @@ object HandleSkin extends DefaultSkin:
     def renderMoveHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.moveHandleArea(area)
       val color = itemStatus match
-        case UiContext.ItemStatus(false, false, _) => inactiveColor
-        case UiContext.ItemStatus(true, false, _)  => hotColor
-        case UiContext.ItemStatus(_, true, _)      => activeColor
+        case UiContext.ItemStatus(false, false, _, _) => inactiveColor
+        case UiContext.ItemStatus(true, false, _, _)  => hotColor
+        case UiContext.ItemStatus(_, true, _, _)      => activeColor
       val lineHeight = handleArea.h / 3
       rectangle(handleArea.copy(h = lineHeight), color)
       rectangle(handleArea.copy(y = handleArea.y + 2 * lineHeight, h = lineHeight), color)
@@ -41,9 +41,9 @@ object HandleSkin extends DefaultSkin:
     def renderCloseHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.closeHandleArea(area)
       val color = itemStatus match
-        case UiContext.ItemStatus(false, false, _) => inactiveColor
-        case UiContext.ItemStatus(true, false, _)  => hotColor
-        case UiContext.ItemStatus(_, true, _)      => activeColor
+        case UiContext.ItemStatus(false, false, _, _) => inactiveColor
+        case UiContext.ItemStatus(true, false, _, _)  => hotColor
+        case UiContext.ItemStatus(_, true, _, _)      => activeColor
       rectangle(handleArea, color)
 
     def resizeHandleArea(area: Rect): Rect =
@@ -53,9 +53,9 @@ object HandleSkin extends DefaultSkin:
     def renderResizeHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.resizeHandleArea(area)
       val color = itemStatus match
-        case UiContext.ItemStatus(false, false, _) => inactiveColor
-        case UiContext.ItemStatus(true, false, _)  => hotColor
-        case UiContext.ItemStatus(_, true, _)      => activeColor
+        case UiContext.ItemStatus(false, false, _, _) => inactiveColor
+        case UiContext.ItemStatus(true, false, _, _)  => hotColor
+        case UiContext.ItemStatus(_, true, _, _)      => activeColor
       val lineSize = handleArea.h / 3
       rectangle(handleArea.move(dx = handleArea.w - lineSize, dy = 0).copy(w = lineSize), color)
       rectangle(handleArea.move(dx = 0, dy = handleArea.h - lineSize).copy(h = lineSize), color)

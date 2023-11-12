@@ -25,11 +25,11 @@ object TextInputSkin extends DefaultSkin:
     def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val textInputArea = this.textInputArea(area)
       itemStatus match
-        case UiContext.ItemStatus(_, _, true) | UiContext.ItemStatus(_, true, _) =>
+        case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
           rectangle(area, activeColor)
-        case UiContext.ItemStatus(true, _, _) =>
+        case UiContext.ItemStatus(true, _, _, _) =>
           rectangle(area, hotColor)
-        case UiContext.ItemStatus(_, _, _) =>
+        case _ =>
           rectangle(area, inactiveColor)
       rectangle(textInputArea, textAreaColor)
       text(

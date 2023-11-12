@@ -36,16 +36,16 @@ object ButtonSkin extends DefaultSkin:
         shadowColor
       )
       itemStatus match
-        case UiContext.ItemStatus(false, false, _) =>
+        case UiContext.ItemStatus(false, false, _, _) =>
           rectangle(buttonArea, inactiveColor)
-        case UiContext.ItemStatus(true, false, _) =>
+        case UiContext.ItemStatus(true, false, _, _) =>
           rectangle(buttonArea, hotColor)
-        case UiContext.ItemStatus(false, true, _) =>
+        case UiContext.ItemStatus(false, true, _, _) =>
           rectangle(buttonArea, activeColor)
-        case UiContext.ItemStatus(true, true, _) =>
+        case UiContext.ItemStatus(true, true, _, _) =>
           rectangle(clickedArea, activeColor)
       itemStatus match
-        case UiContext.ItemStatus(true, true, _) =>
+        case UiContext.ItemStatus(true, true, _, _) =>
           text(clickedArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
         case _ =>
           text(buttonArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
