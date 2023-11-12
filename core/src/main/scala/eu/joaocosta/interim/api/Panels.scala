@@ -73,5 +73,5 @@ trait Panels:
             handleSkin
           )(windowArea)
         panelStateRef.modify(_.copy(value = newArea))
-      (Some(res), panelStateRef.get)
+      (Option.when(panelStateRef.get.isOpen)(res), panelStateRef.get)
     else (None, panelStateRef.get)
