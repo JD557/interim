@@ -191,6 +191,6 @@ trait Components:
         val handleArea = skin.closeHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
         skin.renderCloseHandle(area, itemStatus)
-        if (itemStatus.active)
+        if (itemStatus.clicked)
           value.modify(_.close)
         value.get
