@@ -19,11 +19,18 @@ final case class Ref[T](private var value: T):
     value = newValue
     this
 
-  /** Modifies the value pf this Ref.
+  /** Modifies the value of this Ref.
     * Shorthand for `ref := f(ref.value)`
     */
   def modify(f: T => T): this.type =
     value = f(value)
+    this
+
+  /** Modifies the value of this Ref if the condition is true.
+    * Shorthand for `if (cond) ref := f(ref.value) else ref`
+    */
+  def modifyIf(cond: Boolean)(f: T => T): this.type =
+    if (cond) value = f(value)
     this
 
 object Ref:
