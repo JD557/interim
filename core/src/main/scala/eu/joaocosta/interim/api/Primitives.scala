@@ -11,10 +11,22 @@ object Primitives extends Primitives
 
 trait Primitives:
 
-  /** Draws a rectangle filling a the specified area with a color.
+  /** Draws a rectangle filling the specified area with a color.
     */
   final def rectangle(area: Rect, color: Color)(using uiContext: UiContext): Unit =
     uiContext.pushRenderOp(RenderOp.DrawRect(area, color))
+
+  /** Draws the outline a rectangle inside the specified area with a color.
+    */
+  final def rectangleOutline(area: Rect, color: Color, strokeSize: Int)(using uiContext: UiContext): Unit =
+    val top    = area.copy(h = strokeSize)
+    val bottom = top.move(dx = 0, dy = area.h - strokeSize)
+    val left   = area.copy(w = strokeSize)
+    val right  = left.move(dx = area.w - strokeSize, dy = 0)
+    rectangle(top, color)
+    rectangle(bottom, color)
+    rectangle(left, color)
+    rectangle(right, color)
 
   /** Draws a block of text in the specified area with a color.
     *

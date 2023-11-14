@@ -30,11 +30,7 @@ object CheckboxSkin extends DefaultSkin:
           rectangle(checkboxArea, hotColor)
         case UiContext.ItemStatus(_, true, _, _) =>
           rectangle(checkboxArea, activeColor)
-      if (value)
-        rectangle(
-          checkboxArea.shrink(padding),
-          checkColor
-        )
+      if (value) rectangle(checkboxArea.shrink(padding), checkColor)
 
   val lightDefault: Default = Default(
     padding = 2,
