@@ -14,6 +14,14 @@ class RefSpec extends munit.FunSuite:
     assertEquals(x.modify(_ + 1).get, 2)
     assertEquals(x.get, 2)
 
+  test("Ref values can be modified with modifyIf"):
+    val x = Ref(1)
+
+    assertEquals(x.modifyIf(false)(_ + 1).get, 1)
+    assertEquals(x.get, 1)
+    assertEquals(x.modifyIf(true)(_ + 1).get, 2)
+    assertEquals(x.get, 2)
+
   test("withRef allows to use a temporary Ref value"):
     val result = Ref.withRef(0): ref =>
       ref.modify(_ + 2)
