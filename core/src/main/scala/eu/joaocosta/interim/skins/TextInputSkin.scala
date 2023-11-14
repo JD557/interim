@@ -26,11 +26,11 @@ object TextInputSkin extends DefaultSkin:
       val textInputArea = this.textInputArea(area)
       itemStatus match
         case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-          rectangle(area, activeColor)
+          rectangleOutline(area, activeColor, border)
         case UiContext.ItemStatus(true, _, _, _) =>
-          rectangle(area, hotColor)
+          rectangleOutline(area, hotColor, border)
         case _ =>
-          rectangle(area, inactiveColor)
+          rectangleOutline(area, inactiveColor, border)
       rectangle(textInputArea, textAreaColor)
       text(
         textInputArea.shrink(border),
