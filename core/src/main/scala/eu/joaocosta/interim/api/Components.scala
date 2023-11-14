@@ -14,7 +14,11 @@ trait Components:
   type Component[+T] = (inputState: InputState.Historical, uiContext: UiContext) ?=> T
 
   trait ComponentWithValue[T]:
-    def applyRef(value: Ref[T]): Component[T]
+    def render(value: Ref[T]): Component[Unit]
+
+    def applyRef(value: Ref[T]): Component[T] =
+      render(value)
+      value.get
 
     def applyValue(value: T): Component[T] =
       apply(Ref(value))
@@ -42,12 +46,11 @@ trait Components:
     */
   final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.default()): ComponentWithValue[Boolean] =
     new ComponentWithValue[Boolean]:
-      def applyRef(value: Ref[Boolean]): Component[Boolean] =
+      def render(value: Ref[Boolean]): Component[Unit] =
         val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
         skin.renderCheckbox(area, value.get, itemStatus)
-        if (itemStatus.clicked) value.modify(!_)
-        value.get
+        value.modifyIf(itemStatus.clicked)(!_)
 
   /** Radio button component. Returns value currently selected.
     *
@@ -62,13 +65,12 @@ trait Components:
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithValue[T] =
     new ComponentWithValue[T]:
-      def applyRef(value: Ref[T]): Component[T] =
+      def render(value: Ref[T]): Component[Unit] =
         val buttonArea = skin.buttonArea(area)
         val itemStatus = UiContext.registerItem(id, buttonArea)
         if (itemStatus.clicked) value := buttonValue
         if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
         else skin.renderButton(area, label, itemStatus)
-        value.get
 
   /** Select box component. Returns the index value currently selected inside a PanelState.
     *
@@ -81,19 +83,18 @@ trait Components:
       skin: SelectSkin = SelectSkin.default()
   ): ComponentWithValue[PanelState[Int]] =
     new ComponentWithValue[PanelState[Int]]:
-      def applyRef(value: Ref[PanelState[Int]]): Component[PanelState[Int]] =
+      def render(value: Ref[PanelState[Int]]): Component[Unit] =
         val selectBoxArea = skin.selectBoxArea(area)
         val itemStatus    = UiContext.registerItem(id, area)
-        if (itemStatus.selected) value.modify(_.open)
+        value.modifyIf(itemStatus.selected)(_.open)
         skin.renderSelectBox(area, value.get.value, labels, itemStatus)
         if (value.get.isOpen)
-          if (!itemStatus.selected) value.modify(_.close)
+          value.modifyIf(!itemStatus.selected)(_.close)
           labels.zipWithIndex.foreach: (label, idx) =>
             val selectOptionArea = skin.selectOptionArea(area, idx)
             val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
             skin.renderSelectOption(area, idx, labels, optionStatus)
             if (optionStatus.active) value := PanelState.closed(idx)
-        value.get
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *
@@ -108,7 +109,7 @@ trait Components:
       skin: SliderSkin = SliderSkin.default()
   ): ComponentWithValue[Int] =
     new ComponentWithValue[Int]:
-      def applyRef(value: Ref[Int]): Component[Int] =
+      def render(value: Ref[Int]): Component[Unit] =
         val sliderArea   = skin.sliderArea(area)
         val sliderSize   = skin.sliderSize(area, min, max)
         val range        = max - min
@@ -124,7 +125,6 @@ trait Components:
             val mousePos = summon[InputState].mouseInput.y - sliderArea.y - sliderSize / 2
             val maxPos   = sliderArea.h - sliderSize
             value := math.max(min, math.min((mousePos * range) / maxPos, max))
-        value.get
 
   /** Text input component. Returns the current string inputed.
     */
@@ -134,13 +134,11 @@ trait Components:
       skin: TextInputSkin = TextInputSkin.default()
   ): ComponentWithValue[String] =
     new ComponentWithValue[String]:
-      def applyRef(value: Ref[String]): Component[String] =
+      def render(value: Ref[String]): Component[Unit] =
         val textInputArea = skin.textInputArea(area)
         val itemStatus    = UiContext.registerItem(id, textInputArea)
         skin.renderTextInput(area, value.get, itemStatus)
-        if (itemStatus.selected)
-          value.modify(summon[InputState].appendKeyboardInput)
-        value.get
+        value.modifyIf(itemStatus.selected)(summon[InputState].appendKeyboardInput)
 
   /** Draggable handle. Returns the moved area.
     *
@@ -149,15 +147,13 @@ trait Components:
     */
   final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
-      def applyRef(value: Ref[Rect]): Component[Rect] =
+      def render(value: Ref[Rect]): Component[Unit] =
         val handleArea = skin.moveHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
+        val deltaX     = summon[InputState.Historical].deltaX
+        val deltaY     = summon[InputState.Historical].deltaY
         skin.renderMoveHandle(area, itemStatus)
-        if (itemStatus.active)
-          val deltaX = summon[InputState.Historical].deltaX
-          val deltaY = summon[InputState.Historical].deltaY
-          value.modify(_.move(deltaX, deltaY))
-        value.get
+        value.modifyIf(itemStatus.active)(_.move(deltaX, deltaY))
 
   /** Draggable handle. Returns the resized area.
     *
@@ -166,15 +162,13 @@ trait Components:
     */
   final def resizeHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
-      def applyRef(value: Ref[Rect]): Component[Rect] =
+      def render(value: Ref[Rect]): Component[Unit] =
         val handleArea = skin.resizeHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
+        val deltaX     = summon[InputState.Historical].deltaX
+        val deltaY     = summon[InputState.Historical].deltaY
         skin.renderResizeHandle(area, itemStatus)
-        if (itemStatus.active)
-          val deltaX = summon[InputState.Historical].deltaX
-          val deltaY = summon[InputState.Historical].deltaY
-          value.modify(_.resize(deltaX, deltaY))
-        value.get
+        value.modifyIf(itemStatus.active)(_.resize(deltaX, deltaY))
 
   /** Close handle. Closes the panel when clicked.
     *
@@ -187,10 +181,8 @@ trait Components:
       skin: HandleSkin = HandleSkin.default()
   ): ComponentWithValue[PanelState[T]] =
     new ComponentWithValue[PanelState[T]]:
-      def applyRef(value: Ref[PanelState[T]]): Component[PanelState[T]] =
+      def render(value: Ref[PanelState[T]]): Component[Unit] =
         val handleArea = skin.closeHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
         skin.renderCloseHandle(area, itemStatus)
-        if (itemStatus.clicked)
-          value.modify(_.close)
-        value.get
+        value.modifyIf(itemStatus.clicked)(_.close)
