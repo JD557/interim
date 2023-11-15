@@ -39,7 +39,7 @@ final class UiContext private (
     val history = InputState.Historical(
       previousMouseInput = previousInputState
         .map(_.mouseInput)
-        .getOrElse(InputState.MouseInput(Int.MinValue, Int.MinValue, false)),
+        .getOrElse(InputState.MouseInput(None, false)),
       mouseInput = inputState.mouseInput,
       keyboardInput = inputState.keyboardInput
     )
