@@ -35,10 +35,21 @@ sealed trait InputState:
         .filterNot(Character.isISOControl)
         .mkString
 
-  /** Clips the mouse position to a rectagle. If the mouse is outside of the region, it will be moved to (Int.MinValue, Int.MinValue) */
+  /** Clips the mouse position to a rectagle. If the mouse is outside of the region, the position is set to None */
   def clip(area: Rect): InputState
 
 object InputState:
+
+  /** Creates a new InputState.
+    *
+    * @param mousePosition optional mouse (x, y) position, from the top-left
+    * @param mousePressed whether the mouse is pressed
+    * @param keyboardInput
+    *   String generated from the keyboard inputs since the last frame. Usually this will be a single character.
+    *   A `\u0008` character is interpreted as a backspace.
+    */
+  def apply(mousePosition: Option[(Int, Int)], mouseDown: Boolean, keyboardInput: String): InputState =
+    InputState.Current(InputState.MouseInput(mousePosition, mouseDown), keyboardInput)
 
   /** Creates a new InputState.
     *
@@ -50,15 +61,36 @@ object InputState:
     *   A `\u0008` character is interpreted as a backspace.
     */
   def apply(mouseX: Int, mouseY: Int, mouseDown: Boolean, keyboardInput: String): InputState =
-    InputState.Current(InputState.MouseInput(mouseX, mouseY, mouseDown), keyboardInput)
+    InputState.Current(InputState.MouseInput(Some((mouseX, mouseY)), mouseDown), keyboardInput)
+
+  /** Creates a new InputState with an unknown mouse position.
+    *
+    * @param mousePressed whether the mouse is pressed
+    * @param keyboardInput
+    *   String generated from the keyboard inputs since the last frame. Usually this will be a single character.
+    *   A `\u0008` character is interpreted as a backspace.
+    */
+  def apply(mouseDown: Boolean, keyboardInput: String): InputState =
+    InputState.Current(InputState.MouseInput(None, mouseDown), keyboardInput)
 
   /** Mouse position and button state.
     *
-    * @param x mouse X position, from the left
-    * @param y mouse Y position, from the top
+    * @param position mouse position in a (x, y) tuple. None if the mouse is off-screen.
     * @param isPressed whether the mouse is pressed
     */
-  final case class MouseInput(x: Int, y: Int, isPressed: Boolean)
+  final case class MouseInput(position: Option[(Int, Int)], isPressed: Boolean):
+    def x = position.map(_._1)
+    def y = position.map(_._2)
+
+  object MouseInput:
+    /** Mouse position and button state.
+      *
+      * @param x mouse position from the left side
+      * @param y mouse position from the top
+      * @param isPressed whether the mouse is pressed
+      */
+    def apply(x: Int, y: Int, isPressed: Boolean): MouseInput =
+      MouseInput(position = Some((x, y)), isPressed = isPressed)
 
   /** Input state at the current point in time
     *
@@ -71,7 +103,7 @@ object InputState:
 
     def clip(area: Rect): InputState.Current =
       if (area.isMouseOver(using this)) this
-      else this.copy(mouseInput = mouseInput.copy(x = Int.MinValue, y = Int.MinValue))
+      else this.copy(mouseInput = mouseInput.copy(position = None))
 
   /** Input state at the current point in time and in the previous frame
     *
@@ -95,14 +127,12 @@ object InputState:
 
     /** How much the mouse moved in the X axis */
     lazy val deltaX: Int =
-      if (previousMouseInput.x == Int.MinValue || mouseInput.x == Int.MinValue) 0
-      else mouseInput.x - previousMouseInput.x
+      mouseInput.x.zip(previousMouseInput.x).fold(0)((curr, prev) => curr - prev)
 
     /** How much the mouse moved in the Y axis */
     lazy val deltaY: Int =
-      if (previousMouseInput.y == Int.MinValue || mouseInput.y == Int.MinValue) 0
-      else mouseInput.y - previousMouseInput.y
+      mouseInput.y.zip(previousMouseInput.y).fold(0)((curr, prev) => curr - prev)
 
     def clip(area: Rect): InputState.Historical =
       if (area.isMouseOver(using this)) this
-      else this.copy(mouseInput = mouseInput.copy(x = Int.MinValue, y = Int.MinValue))
+      else this.copy(mouseInput = mouseInput.copy(position = None))

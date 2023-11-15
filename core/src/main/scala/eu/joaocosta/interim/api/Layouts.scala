@@ -131,6 +131,6 @@ trait Layouts:
   final def mouseArea[T](area: Rect)(body: Option[InputState.MouseInput] => T)(using inputState: InputState): T =
     body(
       Option.when(area.isMouseOver)(
-        inputState.mouseInput.copy(x = inputState.mouseInput.x - area.x, y = inputState.mouseInput.y - area.y)
+        inputState.mouseInput.copy(position = inputState.mouseInput.position.map((x, y) => (x - area.x, y - area.y)))
       )
     )

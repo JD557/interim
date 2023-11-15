@@ -111,6 +111,6 @@ class UiContextSpec extends munit.FunSuite:
     val inputState2 = uiContext.pushInputState(InputState(6, 7, false, ""))
     assertEquals(inputState2.deltaX, 1)
     assertEquals(inputState2.deltaY, 2)
-    val inputState3 = uiContext.pushInputState(InputState(Int.MinValue, 6, false, ""))
+    val inputState3 = uiContext.pushInputState(InputState(false, ""))
     assertEquals(inputState3.deltaX, 0)
-    assertEquals(inputState3.deltaY, -1)
+    assertEquals(inputState3.deltaY, 0)
