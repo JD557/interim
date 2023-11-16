@@ -73,3 +73,13 @@ extension [T](x: T) def asRef(block: Ref[T] => Unit): T = Ref.withRef(x)(block)
 extension [T <: Product](x: T)
   def asRefs(using mirror: Mirror.ProductOf[T])(block: Tuple.Map[mirror.MirroredElemTypes, Ref] => Unit): T =
     Ref.withRefs(x)(block)
+
+/** Destructures a Ref into multiple Refs and passes it to a block, returning the updated Ref.
+  *
+  * Useful to work with large state objects.
+  *
+  * Equivalent to `x.modify(_.asRefs(block))`
+  */
+extension [T <: Product](x: Ref[T])
+  def modifyRefs(using mirror: Mirror.ProductOf[T])(block: Tuple.Map[mirror.MirroredElemTypes, Ref] => Unit): Ref[T] =
+    x.modify(_.asRefs(block))
