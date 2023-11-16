@@ -25,23 +25,26 @@ object SliderSkin extends DefaultSkin:
       val steps = (max - min) + 1
       math.max(minSliderSize, math.max(area.w, area.h) / steps)
 
-    def sliderArea(area: Rect): Rect =
-      Rect(area.x + padding, area.y + padding, area.w - 2 * padding, area.h - 2 * padding)
+    def sliderArea(area: Rect): Rect = area.shrink(padding)
 
     def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =
       val sliderArea = this.sliderArea(area)
       val sliderSize = this.sliderSize(area, min, max)
+      val delta      = value - min
+      val maxDelta   = max - min
       val sliderRect =
         if (area.w > area.h)
-          val sliderFill = area.h - 2 * padding
-          val pos        = (value - min) * (sliderArea.w - sliderSize) / (max - min)
-          Rect(area.x + padding + pos, area.y + padding, sliderSize, sliderFill)
+          val sliderFill = sliderArea.h
+          val lastX      = math.max(0, (sliderArea.w - sliderSize))
+          val deltaX     = if (lastX == 0) 0 else delta * lastX / maxDelta
+          Rect(area.x + padding + deltaX, area.y + padding, sliderSize, sliderFill)
         else
-          val sliderFill = area.w - 2 * padding
-          val pos        = (value - min) * (sliderArea.h - sliderSize) / (max - min)
-          Rect(area.x + padding, area.y + padding + pos, sliderFill, sliderSize)
+          val sliderFill = sliderArea.w
+          val lastY      = math.max(0, (sliderArea.h - sliderSize))
+          val deltaY     = if (lastY == 0) 0 else delta * lastY / maxDelta
+          Rect(area.x + padding, area.y + padding + deltaY, sliderFill, sliderSize)
       rectangle(area, scrollbarColor) // Scrollbar
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>
