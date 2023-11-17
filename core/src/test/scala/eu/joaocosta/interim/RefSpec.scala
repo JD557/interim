@@ -27,7 +27,7 @@ class RefSpec extends munit.FunSuite:
       ref.modify(_ + 2)
     assertEquals(result, 2)
 
-  test("withRefs allows to build a case class from temporary Ref value"):
+  test("withRefs allows to build a case class from temporary Ref values"):
     case class Foo(x: Int, y: String)
     val result = Ref.withRefs(Foo(1, "asd")): (x, y) =>
       x := 2
@@ -39,9 +39,17 @@ class RefSpec extends munit.FunSuite:
       ref.modify(_ + 2)
     assertEquals(result, 2)
 
-  test("asRefs allows to build a case class from temporary Ref value"):
+  test("asRefs allows to build a case class from temporary Ref values"):
     case class Foo(x: Int, y: String)
     val result = Foo(1, "asd").asRefs: (x, y) =>
       x := 2
       y := "dsa"
     assertEquals(result, Foo(2, "dsa"))
+
+  test("modifyRefs allows to modify a case class Ref from temporary Ref values"):
+    case class Foo(x: Int, y: String)
+    val ref = Ref(Foo(1, "asd"))
+    ref.modifyRefs: (x, y) =>
+      x := 2
+      y := "dsa"
+    assertEquals(ref.get, Foo(2, "dsa"))
