@@ -11,10 +11,12 @@ object ColorScheme:
   val black     = Color(23, 21, 23)
 
   val lightPrimary          = Color(9, 211, 222)
-  val lightPrimaryHighlight = Color(55, 221, 230)
+  val lightPrimaryShadow    = Color(15, 172, 186)
+  val lightPrimaryHighlight = Color(0, 247, 255)
 
   val darkPrimary          = Color(97, 31, 125)
-  val darkPrimaryHighlight = Color(121, 53, 150)
+  val darkPrimaryShadow    = Color(67, 24, 92)
+  val darkPrimaryHighlight = Color(130, 38, 158)
 
   private var darkMode = false
 
