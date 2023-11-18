@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.5.3"
+//> using lib "eu.joaocosta::minart::0.6.0-M1"
 //> using lib "eu.joaocosta::interim::0.1.5-SNAPSHOT"
 
 /** This file contains a simple graphical backend written in Minart.
@@ -8,12 +8,12 @@
   */
 import scala.concurrent.Future
 
-import eu.joaocosta.minart.backend.defaults.*
-import eu.joaocosta.minart.graphics.{Color => MinartColor, *}
-import eu.joaocosta.minart.graphics.image.*
-import eu.joaocosta.minart.runtime.*
-import eu.joaocosta.minart.input.*
 import eu.joaocosta.interim.*
+import eu.joaocosta.minart.backend.defaults.given
+import eu.joaocosta.minart.graphics.image.*
+import eu.joaocosta.minart.graphics.{Color => MinartColor, *}
+import eu.joaocosta.minart.input.*
+import eu.joaocosta.minart.runtime.*
 
 object MinartBackend:
 
