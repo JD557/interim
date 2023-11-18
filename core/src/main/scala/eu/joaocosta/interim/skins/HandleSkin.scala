@@ -62,12 +62,12 @@ object HandleSkin extends DefaultSkin:
 
   val lightDefault: Default = Default(
     inactiveColor = ColorScheme.black,
-    hotColor = ColorScheme.lightPrimary,
+    hotColor = ColorScheme.pureGray,
     activeColor = ColorScheme.lightPrimaryHighlight
   )
 
   val darkDefault: Default = Default(
-    inactiveColor = ColorScheme.white,
-    hotColor = ColorScheme.darkPrimary,
+    inactiveColor = ColorScheme.lightGray,
+    hotColor = ColorScheme.white,
     activeColor = ColorScheme.darkPrimaryHighlight
   )

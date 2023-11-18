@@ -58,7 +58,7 @@ object SliderSkin extends DefaultSkin:
     padding = 1,
     minSliderSize = 8,
     scrollbarColor = ColorScheme.lightGray,
-    inactiveColor = ColorScheme.darkGray,
+    inactiveColor = ColorScheme.lightPrimaryShadow,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight
   )
@@ -67,7 +67,7 @@ object SliderSkin extends DefaultSkin:
     padding = 1,
     minSliderSize = 8,
     scrollbarColor = ColorScheme.darkGray,
-    inactiveColor = ColorScheme.lightGray,
+    inactiveColor = ColorScheme.darkPrimaryShadow,
     hotColor = ColorScheme.darkPrimary,
     activeColor = ColorScheme.darkPrimaryHighlight
   )

@@ -13,8 +13,7 @@ trait ButtonSkin:
 object ButtonSkin extends DefaultSkin:
 
   final case class Default(
-      shadowDelta: Int,
-      clickDelta: Int,
+      buttonHeight: Int,
       font: Font,
       shadowColor: Color,
       textColor: Color,
@@ -24,23 +23,22 @@ object ButtonSkin extends DefaultSkin:
   ) extends ButtonSkin:
 
     def buttonArea(area: Rect): Rect =
-      area.copy(w = area.w - math.max(shadowDelta, clickDelta), h = area.h - math.max(shadowDelta, clickDelta))
+      area.copy(w = area.w, h = area.h - buttonHeight)
 
     def renderButton(area: Rect, label: String, itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =
       val buttonArea  = this.buttonArea(area)
-      val clickedArea = buttonArea.move(dx = clickDelta, dy = clickDelta)
-      rectangle(
-        buttonArea.move(dx = shadowDelta, dy = shadowDelta),
-        shadowColor
-      )
+      val clickedArea = buttonArea.move(dx = 0, dy = buttonHeight)
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), shadowColor)
           rectangle(buttonArea, inactiveColor)
         case UiContext.ItemStatus(true, false, _, _) =>
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), inactiveColor)
           rectangle(buttonArea, hotColor)
         case UiContext.ItemStatus(false, true, _, _) =>
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), inactiveColor)
           rectangle(buttonArea, activeColor)
         case UiContext.ItemStatus(true, true, _, _) =>
           rectangle(clickedArea, activeColor)
@@ -51,10 +49,9 @@ object ButtonSkin extends DefaultSkin:
           text(buttonArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
 
   val lightDefault: Default = Default(
-    shadowDelta = 2,
-    clickDelta = 1,
+    buttonHeight = 3,
     font = Font.default,
-    shadowColor = ColorScheme.darkGray,
+    shadowColor = ColorScheme.lightPrimaryShadow,
     textColor = ColorScheme.black,
     inactiveColor = ColorScheme.lightPrimary,
     hotColor = ColorScheme.lightPrimaryHighlight,
@@ -62,10 +59,9 @@ object ButtonSkin extends DefaultSkin:
   )
 
   val darkDefault: Default = Default(
-    shadowDelta = 0,
-    clickDelta = 2,
+    buttonHeight = 3,
     font = Font.default,
-    shadowColor = ColorScheme.black,
+    shadowColor = ColorScheme.darkPrimaryShadow,
     textColor = ColorScheme.white,
     inactiveColor = ColorScheme.darkPrimary,
     hotColor = ColorScheme.darkPrimaryHighlight,

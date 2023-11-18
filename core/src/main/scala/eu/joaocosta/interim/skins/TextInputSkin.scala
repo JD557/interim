@@ -11,29 +11,32 @@ object TextInputSkin extends DefaultSkin:
 
   final case class Default(
       border: Int,
+      activeBorder: Int,
       font: Font,
       inactiveColor: Color,
       hotColor: Color,
       activeColor: Color,
       textAreaColor: Color,
+      activeTextAreaColor: Color,
       textColor: Color
   ) extends TextInputSkin:
 
-    def textInputArea(area: Rect): Rect =
-      area.shrink(border)
+    def textInputArea(area: Rect): Rect = area
 
     def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val textInputArea = this.textInputArea(area)
       itemStatus match
         case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-          rectangleOutline(area, activeColor, border)
+          rectangle(textInputArea, activeTextAreaColor)
+          rectangleOutline(area, activeColor, activeBorder)
         case UiContext.ItemStatus(true, _, _, _) =>
+          rectangle(textInputArea, textAreaColor)
           rectangleOutline(area, hotColor, border)
         case _ =>
+          rectangle(textInputArea, textAreaColor)
           rectangleOutline(area, inactiveColor, border)
-      rectangle(textInputArea, textAreaColor)
       text(
-        textInputArea.shrink(border),
+        textInputArea.shrink(activeBorder),
         textColor,
         value,
         font,
@@ -43,20 +46,24 @@ object TextInputSkin extends DefaultSkin:
 
   val lightDefault: Default = Default(
     border = 1,
+    activeBorder = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.darkGray,
+    inactiveColor = ColorScheme.pureGray,
     hotColor = ColorScheme.lightPrimary,
     activeColor = ColorScheme.lightPrimaryHighlight,
     textAreaColor = ColorScheme.lightGray,
+    activeTextAreaColor = ColorScheme.white,
     textColor = ColorScheme.black
   )
 
   val darkDefault: Default = Default(
     border = 1,
+    activeBorder = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.lightGray,
+    inactiveColor = ColorScheme.pureGray,
     hotColor = ColorScheme.darkPrimary,
     activeColor = ColorScheme.darkPrimaryHighlight,
     textAreaColor = ColorScheme.darkGray,
+    activeTextAreaColor = ColorScheme.pureGray,
     textColor = ColorScheme.white
   )
