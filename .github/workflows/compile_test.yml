@@ -17,7 +17,7 @@ jobs:
         platform: [JVM, JS, Native]
 
     env:
-      PROJECT: core${{ matrix.platform }}${{ matrix.scala }}
+      PROJECT: root${{ matrix.platform }}${{ matrix.scala }}
 
     steps:
     - uses: actions/checkout@v2

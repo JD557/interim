@@ -32,8 +32,9 @@ val siteSettings = Seq(
   )
 )
 
-lazy val core =
+lazy val root =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  .in(file("."))
   .settings(
     name                                    := "interim",
     libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
