@@ -32,7 +32,8 @@ val siteSettings = Seq(
   )
 )
 
-lazy val core = (projectMatrix in file("core"))
+lazy val core =
+  crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     name                                    := "interim",
     libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
@@ -47,9 +48,6 @@ lazy val core = (projectMatrix in file("core"))
         "docs"
       )
   )
-  .jvmPlatform(scalaVersions = Seq("3.3.1"))
-  .jsPlatform(scalaVersions = Seq("3.3.1"))
-  .nativePlatform(scalaVersions = Seq("3.3.1"))
 
 releaseCrossBuild    := true
 releaseTagComment    := s"Release ${(ThisBuild / version).value}"
