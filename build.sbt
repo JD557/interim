@@ -24,6 +24,13 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 
+// Don't publish the root project
+publish / skip := true
+publish := (())
+publishLocal := (())
+publishArtifact := false
+publishTo := None
+
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= (
     if (scalaBinaryVersion.value.startsWith("3"))
@@ -32,9 +39,9 @@ val siteSettings = Seq(
   )
 )
 
-lazy val root =
+lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-  .in(file("."))
+  .in(file("core"))
   .settings(
     name                                    := "interim",
     libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
