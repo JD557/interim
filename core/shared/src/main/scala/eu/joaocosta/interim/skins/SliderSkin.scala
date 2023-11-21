@@ -4,7 +4,6 @@ import eu.joaocosta.interim.*
 import eu.joaocosta.interim.api.Primitives.*
 
 trait SliderSkin:
-  def sliderSize(area: Rect, min: Int, max: Int): Int
   def sliderArea(area: Rect): Rect
   def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
@@ -21,30 +20,25 @@ object SliderSkin extends DefaultSkin:
       activeColor: Color
   ) extends SliderSkin:
 
-    def sliderSize(area: Rect, min: Int, max: Int): Int =
-      val steps = (max - min) + 1
-      math.max(minSliderSize, math.max(area.w, area.h) / steps)
-
     def sliderArea(area: Rect): Rect = area.shrink(padding)
 
     def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
         uiContext: UiContext
     ): Unit =
       val sliderArea = this.sliderArea(area)
-      val sliderSize = this.sliderSize(area, min, max)
       val delta      = value - min
-      val maxDelta   = max - min
+      val steps      = (max - min) + 1
       val sliderRect =
         if (area.w > area.h)
-          val sliderFill = sliderArea.h
-          val lastX      = math.max(0, (sliderArea.w - sliderSize))
-          val deltaX     = if (lastX == 0) 0 else delta * lastX / maxDelta
-          Rect(area.x + padding + deltaX, area.y + padding, sliderSize, sliderFill)
+          val deltaX = delta * sliderArea.w / steps
+          Rect(0, 0, math.max(minSliderSize, sliderArea.w / steps), sliderArea.h)
+            .centerAt(0, sliderArea.centerY)
+            .copy(x = sliderArea.x + deltaX)
         else
-          val sliderFill = sliderArea.w
-          val lastY      = math.max(0, (sliderArea.h - sliderSize))
-          val deltaY     = if (lastY == 0) 0 else delta * lastY / maxDelta
-          Rect(area.x + padding, area.y + padding + deltaY, sliderFill, sliderSize)
+          val deltaY = delta * sliderArea.h / steps
+          Rect(0, 0, sliderArea.w, math.max(minSliderSize, sliderArea.h / steps))
+            .centerAt(sliderArea.centerX, 0)
+            .copy(y = sliderArea.y + deltaY)
       rectangle(area, scrollbarColor) // Scrollbar
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>

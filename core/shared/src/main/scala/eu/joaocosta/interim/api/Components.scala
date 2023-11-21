@@ -111,21 +111,16 @@ trait Components:
     new ComponentWithValue[Int]:
       def render(value: Ref[Int]): Component[Unit] =
         val sliderArea   = skin.sliderArea(area)
-        val sliderSize   = skin.sliderSize(area, min, max)
-        val range        = max - min
+        val steps        = max - min + 1
         val itemStatus   = UiContext.registerItem(id, sliderArea)
         val clampedValue = math.max(min, math.min(value.get, max))
         skin.renderSlider(area, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
           summon[InputState].mouseInput.position.foreach: (mouseX, mouseY) =>
-            if (area.w > area.h)
-              val mousePos = mouseX - sliderArea.x - sliderSize / 2
-              val maxPos   = sliderArea.w - sliderSize
-              value := math.max(min, math.min(min + (mousePos * range) / maxPos, max))
-            else
-              val mousePos = mouseY - sliderArea.y - sliderSize / 2
-              val maxPos   = sliderArea.h - sliderSize
-              value := math.max(min, math.min((mousePos * range) / maxPos, max))
+            val intPosition =
+              if (area.w > area.h) steps * (mouseX - sliderArea.x) / sliderArea.w
+              else steps * (mouseY - sliderArea.y) / sliderArea.h
+            value := math.max(min, math.min(min + intPosition, max))
 
   /** Text input component. Returns the current string inputed.
     */
