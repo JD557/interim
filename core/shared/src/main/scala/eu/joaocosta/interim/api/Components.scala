@@ -75,11 +75,13 @@ trait Components:
   /** Select box component. Returns the index value currently selected inside a PanelState.
     *
     * @param labels text labels for each value
+    * @param undefinedFirstValue if true, the value 0 will not show on the options, acting as a default undefined value
     */
   final def select(
       id: ItemId,
       area: Rect,
       labels: Vector[String],
+      undefinedFirstValue: Boolean = false,
       skin: SelectSkin = SelectSkin.default()
   ): ComponentWithValue[PanelState[Int]] =
     new ComponentWithValue[PanelState[Int]]:
@@ -90,11 +92,13 @@ trait Components:
         skin.renderSelectBox(area, value.get.value, labels, itemStatus)
         if (value.get.isOpen)
           value.modifyIf(!itemStatus.selected)(_.close)
-          labels.zipWithIndex.foreach: (label, idx) =>
-            val selectOptionArea = skin.selectOptionArea(area, idx)
-            val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
-            skin.renderSelectOption(area, idx, labels, optionStatus)
-            if (optionStatus.active) value := PanelState.closed(idx)
+          val selectableLabels = labels.drop(if (undefinedFirstValue) 1 else 0)
+          selectableLabels.zipWithIndex
+            .foreach: (label, idx) =>
+              val selectOptionArea = skin.selectOptionArea(area, idx)
+              val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
+              skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
+              if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *
