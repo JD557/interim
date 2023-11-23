@@ -18,10 +18,7 @@ object WindowSkin extends DefaultSkin:
   final case class Default(
       font: Font,
       border: Int,
-      textColor: Color,
-      panelColor: Color,
-      titleColor: Color,
-      borderColor: Color
+      colorScheme: ColorScheme
   ) extends WindowSkin:
 
     def titleArea(area: Rect): Rect =
@@ -47,25 +44,19 @@ object WindowSkin extends DefaultSkin:
     def renderWindow(area: Rect, title: String)(using uiContext: UiContext): Unit =
       val titleArea = this.titleArea(area)
       val panelArea = this.panelArea(area)
-      rectangle(titleArea, titleColor)
-      text(titleArea, textColor, title, font, HorizontalAlignment.Center, VerticalAlignment.Center)
-      rectangle(panelArea, panelColor)
-      rectangleOutline(area, borderColor, border)
+      rectangle(titleArea, colorScheme.secondary)
+      text(titleArea, colorScheme.text, title, font, HorizontalAlignment.Center, VerticalAlignment.Center)
+      rectangle(panelArea, colorScheme.background)
+      rectangleOutline(area, colorScheme.borderColor, border)
 
   val lightDefault: Default = Default(
     font = Font.default,
     border = 1,
-    textColor = ColorScheme.black,
-    panelColor = ColorScheme.white,
-    titleColor = ColorScheme.lightGray,
-    borderColor = ColorScheme.darkGray
+    colorScheme = ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
     font = Font.default,
     border = 1,
-    textColor = ColorScheme.white,
-    panelColor = ColorScheme.black,
-    titleColor = ColorScheme.darkGray,
-    borderColor = ColorScheme.lightGray
+    colorScheme = ColorScheme.darkScheme
   )

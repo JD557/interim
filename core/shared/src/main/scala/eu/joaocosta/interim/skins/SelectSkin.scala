@@ -17,12 +17,9 @@ trait SelectSkin:
 object SelectSkin extends DefaultSkin:
 
   final case class Default(
-      border: Int,
+      padding: Int,
       font: Font,
-      inactiveColor: Color,
-      hotColor: Color,
-      activeColor: Color,
-      textColor: Color
+      colorScheme: ColorScheme
   ) extends SelectSkin:
 
     // Select box
@@ -36,14 +33,14 @@ object SelectSkin extends DefaultSkin:
       val selectedLabel = labels.applyOrElse(value, _ => "")
       itemStatus match
         case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-          rectangle(selectBoxArea, activeColor)
+          rectangle(selectBoxArea, colorScheme.primaryHighlight)
         case UiContext.ItemStatus(true, _, _, _) =>
-          rectangle(selectBoxArea, hotColor)
+          rectangle(selectBoxArea, colorScheme.secondaryHighlight)
         case UiContext.ItemStatus(_, _, _, _) =>
-          rectangle(selectBoxArea, inactiveColor)
+          rectangle(selectBoxArea, colorScheme.secondary)
       text(
-        selectBoxArea.shrink(border),
-        textColor,
+        selectBoxArea.shrink(padding),
+        colorScheme.text,
         selectedLabel,
         font,
         TextLayout.HorizontalAlignment.Left,
@@ -62,14 +59,14 @@ object SelectSkin extends DefaultSkin:
       onTop:
         itemStatus match
           case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-            rectangle(selectOptionArea, activeColor)
+            rectangle(selectOptionArea, colorScheme.primaryHighlight)
           case UiContext.ItemStatus(true, _, _, _) =>
-            rectangle(selectOptionArea, hotColor)
+            rectangle(selectOptionArea, colorScheme.secondaryHighlight)
           case _ =>
-            rectangle(selectOptionArea, inactiveColor)
+            rectangle(selectOptionArea, colorScheme.secondary)
         text(
-          selectOptionArea.shrink(border),
-          textColor,
+          selectOptionArea.shrink(padding),
+          colorScheme.text,
           optionLabel,
           font,
           TextLayout.HorizontalAlignment.Left,
@@ -77,19 +74,13 @@ object SelectSkin extends DefaultSkin:
         )
 
   val lightDefault: Default = Default(
-    border = 2,
+    padding = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.lightGray,
-    hotColor = ColorScheme.pureGray,
-    activeColor = ColorScheme.lightPrimaryHighlight,
-    textColor = ColorScheme.black
+    colorScheme = ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
-    border = 2,
+    padding = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.darkGray,
-    hotColor = ColorScheme.pureGray,
-    activeColor = ColorScheme.darkPrimaryHighlight,
-    textColor = ColorScheme.white
+    colorScheme = ColorScheme.darkScheme
   )

@@ -13,12 +13,7 @@ object TextInputSkin extends DefaultSkin:
       border: Int,
       activeBorder: Int,
       font: Font,
-      inactiveColor: Color,
-      hotColor: Color,
-      activeColor: Color,
-      textAreaColor: Color,
-      activeTextAreaColor: Color,
-      textColor: Color
+      colorScheme: ColorScheme
   ) extends TextInputSkin:
 
     def textInputArea(area: Rect): Rect = area
@@ -27,17 +22,17 @@ object TextInputSkin extends DefaultSkin:
       val textInputArea = this.textInputArea(area)
       itemStatus match
         case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-          rectangle(textInputArea, activeTextAreaColor)
-          rectangleOutline(area, activeColor, activeBorder)
+          rectangle(textInputArea, colorScheme.background)
+          rectangleOutline(area, colorScheme.primaryHighlight, activeBorder)
         case UiContext.ItemStatus(true, _, _, _) =>
-          rectangle(textInputArea, textAreaColor)
-          rectangleOutline(area, hotColor, border)
+          rectangle(textInputArea, colorScheme.secondary)
+          rectangleOutline(area, colorScheme.primary, border)
         case _ =>
-          rectangle(textInputArea, textAreaColor)
-          rectangleOutline(area, inactiveColor, border)
+          rectangle(textInputArea, colorScheme.secondary)
+          rectangleOutline(area, colorScheme.borderColor, border)
       text(
         textInputArea.shrink(activeBorder),
-        textColor,
+        colorScheme.text,
         value,
         font,
         TextLayout.HorizontalAlignment.Left,
@@ -48,22 +43,12 @@ object TextInputSkin extends DefaultSkin:
     border = 1,
     activeBorder = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.pureGray,
-    hotColor = ColorScheme.lightPrimary,
-    activeColor = ColorScheme.lightPrimaryHighlight,
-    textAreaColor = ColorScheme.lightGray,
-    activeTextAreaColor = ColorScheme.white,
-    textColor = ColorScheme.black
+    colorScheme = ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
     border = 1,
     activeBorder = 2,
     font = Font.default,
-    inactiveColor = ColorScheme.pureGray,
-    hotColor = ColorScheme.darkPrimary,
-    activeColor = ColorScheme.darkPrimaryHighlight,
-    textAreaColor = ColorScheme.darkGray,
-    activeTextAreaColor = ColorScheme.pureGray,
-    textColor = ColorScheme.white
+    colorScheme = ColorScheme.darkScheme
   )

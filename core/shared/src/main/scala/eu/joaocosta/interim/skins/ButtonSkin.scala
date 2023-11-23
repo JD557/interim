@@ -15,11 +15,7 @@ object ButtonSkin extends DefaultSkin:
   final case class Default(
       buttonHeight: Int,
       font: Font,
-      shadowColor: Color,
-      textColor: Color,
-      inactiveColor: Color,
-      hotColor: Color,
-      activeColor: Color
+      colorScheme: ColorScheme
   ) extends ButtonSkin:
 
     def buttonArea(area: Rect): Rect =
@@ -32,38 +28,30 @@ object ButtonSkin extends DefaultSkin:
       val clickedArea = buttonArea.move(dx = 0, dy = buttonHeight)
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>
-          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), shadowColor)
-          rectangle(buttonArea, inactiveColor)
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), colorScheme.primaryShadow)
+          rectangle(buttonArea, colorScheme.primary)
         case UiContext.ItemStatus(true, false, _, _) =>
-          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), inactiveColor)
-          rectangle(buttonArea, hotColor)
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), colorScheme.primary)
+          rectangle(buttonArea, colorScheme.primaryHighlight)
         case UiContext.ItemStatus(false, true, _, _) =>
-          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), inactiveColor)
-          rectangle(buttonArea, activeColor)
+          rectangle(area.copy(y = buttonArea.y2, h = buttonHeight), colorScheme.primary)
+          rectangle(buttonArea, colorScheme.primaryHighlight)
         case UiContext.ItemStatus(true, true, _, _) =>
-          rectangle(clickedArea, activeColor)
+          rectangle(clickedArea, colorScheme.primaryHighlight)
       itemStatus match
         case UiContext.ItemStatus(true, true, _, _) =>
-          text(clickedArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(clickedArea, colorScheme.text, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
         case _ =>
-          text(buttonArea, textColor, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
+          text(buttonArea, colorScheme.text, label, font, HorizontalAlignment.Center, VerticalAlignment.Center)
 
   val lightDefault: Default = Default(
     buttonHeight = 3,
     font = Font.default,
-    shadowColor = ColorScheme.lightPrimaryShadow,
-    textColor = ColorScheme.black,
-    inactiveColor = ColorScheme.lightPrimary,
-    hotColor = ColorScheme.lightPrimaryHighlight,
-    activeColor = ColorScheme.lightPrimaryHighlight
+    colorScheme = ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
     buttonHeight = 3,
     font = Font.default,
-    shadowColor = ColorScheme.darkPrimaryShadow,
-    textColor = ColorScheme.white,
-    inactiveColor = ColorScheme.darkPrimary,
-    hotColor = ColorScheme.darkPrimaryHighlight,
-    activeColor = ColorScheme.darkPrimaryHighlight
+    colorScheme = ColorScheme.darkScheme
   )
