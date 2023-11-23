@@ -14,10 +14,7 @@ object SliderSkin extends DefaultSkin:
   final case class Default(
       padding: Int,
       minSliderSize: Int,
-      scrollbarColor: Color,
-      inactiveColor: Color,
-      hotColor: Color,
-      activeColor: Color
+      colorScheme: ColorScheme
   ) extends SliderSkin:
 
     def sliderArea(area: Rect): Rect = area.shrink(padding)
@@ -39,29 +36,23 @@ object SliderSkin extends DefaultSkin:
           Rect(0, 0, sliderArea.w, math.max(minSliderSize, sliderArea.h / steps))
             .centerAt(sliderArea.centerX, 0)
             .copy(y = sliderArea.y + deltaY)
-      rectangle(area, scrollbarColor) // Scrollbar
+      rectangle(area, colorScheme.secondary)
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>
-          rectangle(sliderRect, inactiveColor)
+          rectangle(sliderRect, colorScheme.primaryShadow)
         case UiContext.ItemStatus(true, false, _, _) =>
-          rectangle(sliderRect, hotColor)
+          rectangle(sliderRect, colorScheme.primary)
         case _ =>
-          rectangle(sliderRect, activeColor)
+          rectangle(sliderRect, colorScheme.primaryHighlight)
 
   val lightDefault: Default = Default(
     padding = 1,
     minSliderSize = 8,
-    scrollbarColor = ColorScheme.lightGray,
-    inactiveColor = ColorScheme.lightPrimaryShadow,
-    hotColor = ColorScheme.lightPrimary,
-    activeColor = ColorScheme.lightPrimaryHighlight
+    ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
     padding = 1,
     minSliderSize = 8,
-    scrollbarColor = ColorScheme.darkGray,
-    inactiveColor = ColorScheme.darkPrimaryShadow,
-    hotColor = ColorScheme.darkPrimary,
-    activeColor = ColorScheme.darkPrimaryHighlight
+    ColorScheme.darkScheme
   )

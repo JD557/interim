@@ -11,10 +11,7 @@ object CheckboxSkin extends DefaultSkin:
 
   final case class Default(
       padding: Int,
-      inactiveColor: Color,
-      hotColor: Color,
-      activeColor: Color,
-      checkColor: Color
+      colorScheme: ColorScheme
   ) extends CheckboxSkin:
 
     def checkboxArea(area: Rect): Rect =
@@ -25,25 +22,19 @@ object CheckboxSkin extends DefaultSkin:
       val checkboxArea = this.checkboxArea(area)
       itemStatus match
         case UiContext.ItemStatus(false, false, _, _) =>
-          rectangle(checkboxArea, inactiveColor)
+          rectangle(checkboxArea, colorScheme.secondary)
         case UiContext.ItemStatus(true, false, _, _) =>
-          rectangle(checkboxArea, hotColor)
+          rectangle(checkboxArea, colorScheme.secondaryHighlight)
         case UiContext.ItemStatus(_, true, _, _) =>
-          rectangle(checkboxArea, activeColor)
-      if (value) rectangle(checkboxArea.shrink(padding), checkColor)
+          rectangle(checkboxArea, colorScheme.primaryHighlight)
+      if (value) rectangle(checkboxArea.shrink(padding), colorScheme.icon)
 
   val lightDefault: Default = Default(
     padding = 2,
-    inactiveColor = ColorScheme.lightGray,
-    hotColor = ColorScheme.lightPrimary,
-    activeColor = ColorScheme.lightPrimaryHighlight,
-    checkColor = ColorScheme.black
+    ColorScheme.lightScheme
   )
 
   val darkDefault: Default = Default(
     padding = 2,
-    inactiveColor = ColorScheme.darkGray,
-    hotColor = ColorScheme.darkPrimary,
-    activeColor = ColorScheme.darkPrimaryHighlight,
-    checkColor = ColorScheme.white
+    ColorScheme.darkScheme
   )
