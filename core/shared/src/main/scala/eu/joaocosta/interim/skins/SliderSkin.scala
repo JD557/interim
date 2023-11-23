@@ -27,13 +27,19 @@ object SliderSkin extends DefaultSkin:
       val steps      = (max - min) + 1
       val sliderRect =
         if (area.w > area.h)
-          val deltaX = delta * sliderArea.w / steps
-          Rect(0, 0, math.max(minSliderSize, sliderArea.w / steps), sliderArea.h)
+          val sliderSize = math.max(minSliderSize, sliderArea.w / steps)
+          val maxX =
+            (steps + 1) * sliderArea.w / steps - sliderSize // Correction for when the slider hits the min size
+          val deltaX = delta * maxX / steps
+          Rect(0, 0, sliderSize, sliderArea.h)
             .centerAt(0, sliderArea.centerY)
             .copy(x = sliderArea.x + deltaX)
         else
-          val deltaY = delta * sliderArea.h / steps
-          Rect(0, 0, sliderArea.w, math.max(minSliderSize, sliderArea.h / steps))
+          val sliderSize = math.max(minSliderSize, sliderArea.h / steps)
+          val maxY =
+            (steps + 1) * sliderArea.h / steps - sliderSize // Correction for when the slider hits the min size
+          val deltaY = delta * maxY / steps
+          Rect(0, 0, sliderArea.w, sliderSize)
             .centerAt(sliderArea.centerX, 0)
             .copy(y = sliderArea.y + deltaY)
       rectangle(area, colorScheme.secondary)
