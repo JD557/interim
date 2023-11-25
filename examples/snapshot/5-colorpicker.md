@@ -111,11 +111,11 @@ def application(inputState: InputState, appState: AppState) =
             val clipArea = newColumn(maxSize)
             clip(area = clipArea):
               rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10): rows =>
-                results.zip(rows).foreach { case ((colorName, colorValue), row) =>
-                  if (button(s"$colorName button", row, colorName))
-                    colorPickerArea.modify(_.open)
-                    color := colorValue
-                }
+                results.zip(rows).foreach:
+                  case ((colorName, colorValue), row) =>
+                    button(s"$colorName button", row, colorName):
+                      colorPickerArea.modify(_.open)
+                      color := colorValue
 
       onBottom:
         window(id = "settings", area = PanelState.open(Rect(10, 430, 250, 40)), title = "Settings", movable = false): area =>

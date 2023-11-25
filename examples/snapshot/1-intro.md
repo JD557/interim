@@ -54,7 +54,7 @@ Now, let's write our interface. We are going to need the following components:
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
+    button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"):
       counter = counter - 1
     text(
       area = Rect(x = 40, y = 10, w = 30, h = 30),
@@ -64,7 +64,7 @@ def application(inputState: InputState) =
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )
-    if (button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"))
+    button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"):
       counter = counter + 1
 ```
 
@@ -128,7 +128,7 @@ def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     val (decrementCounter, _, incrementCounter) = (
-      button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"),
+      button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-")(true).getOrElse(false),
       text(
         area = Rect(x = 40, y = 10, w = 30, h = 30),
         color = Color(0, 0, 0),
@@ -137,7 +137,7 @@ def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       ),
-      button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")
+      button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")(true).getOrElse(false)
     )
     if (decrementCounter && !incrementCounter) counter - 1
     else if (!decrementCounter && incrementCounter) counter + 1
@@ -154,7 +154,7 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
   import eu.joaocosta.interim.InterIm.*
   var _counter = counter
   ui(inputState, uiContext):
-    if (button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"))
+    button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"):
       _counter = counter - 1
     text(
       area = Rect(x = 40, y = 10, w = 30, h = 30),
@@ -164,7 +164,7 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )
-    if (button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"))
+    button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"):
       _counter = counter + 1
     _counter
 ```
