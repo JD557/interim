@@ -29,7 +29,7 @@ trait Panels:
     * @param movable if true, the window will include a move handle in the title bar
     * @param resizable if true, the window will include a resize handle in the bottom corner
     */
-  final def window[T](
+  final def window(
       id: ItemId,
       area: Rect | PanelState[Rect] | Ref[PanelState[Rect]],
       title: String,
@@ -38,40 +38,40 @@ trait Panels:
       resizable: Boolean = false,
       skin: WindowSkin = WindowSkin.default(),
       handleSkin: HandleSkin = HandleSkin.default()
-  )(
-      body: Rect => T
-  ): Components.Component[(Option[T], PanelState[Rect])] =
-    val panelStateRef = area match
-      case ref: Ref[PanelState[Rect]] => ref
-      case v: PanelState[Rect]        => Ref(v)
-      case v: Rect                    => Ref(PanelState.open(v))
-    if (panelStateRef.get.isOpen)
-      def windowArea = panelStateRef.get.value
-      UiContext.registerItem(id, windowArea, passive = true)
-      skin.renderWindow(windowArea, title)
-      val res = body(skin.panelArea(windowArea))
-      if (closable)
-        Components
-          .closeHandle(
-            id |> "internal_close_handle",
-            skin.titleTextArea(windowArea),
-            handleSkin
-          )(panelStateRef)
-      if (resizable)
-        val newArea = Components
-          .resizeHandle(
-            id |> "internal_resize_handle",
-            skin.resizeArea(windowArea),
-            handleSkin
-          )(windowArea)
-        panelStateRef.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
-      if (movable)
-        val newArea = Components
-          .moveHandle(
-            id |> "internal_move_handle",
-            skin.titleTextArea(windowArea),
-            handleSkin
-          )(windowArea)
-        panelStateRef.modify(_.copy(value = newArea))
-      (Option.when(panelStateRef.get.isOpen)(res), panelStateRef.get)
-    else (None, panelStateRef.get)
+  ): Components.ComponentWithBody[Rect, [T] =>> (Option[T], PanelState[Rect])] =
+    new Components.ComponentWithBody[Rect, [T] =>> (Option[T], PanelState[Rect])]:
+      def render[T](body: Rect => T): Components.Component[(Option[T], PanelState[Rect])] =
+        val panelStateRef = area match
+          case ref: Ref[PanelState[Rect]] => ref
+          case v: PanelState[Rect]        => Ref(v)
+          case v: Rect                    => Ref(PanelState.open(v))
+        if (panelStateRef.get.isOpen)
+          def windowArea = panelStateRef.get.value
+          UiContext.registerItem(id, windowArea, passive = true)
+          skin.renderWindow(windowArea, title)
+          val res = body(skin.panelArea(windowArea))
+          if (closable)
+            Components
+              .closeHandle(
+                id |> "internal_close_handle",
+                skin.titleTextArea(windowArea),
+                handleSkin
+              )(panelStateRef)
+          if (resizable)
+            val newArea = Components
+              .resizeHandle(
+                id |> "internal_resize_handle",
+                skin.resizeArea(windowArea),
+                handleSkin
+              )(windowArea)
+            panelStateRef.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
+          if (movable)
+            val newArea = Components
+              .moveHandle(
+                id |> "internal_move_handle",
+                skin.titleTextArea(windowArea),
+                handleSkin
+              )(windowArea)
+            panelStateRef.modify(_.copy(value = newArea))
+          (Option.when(panelStateRef.get.isOpen)(res), panelStateRef.get)
+        else (None, panelStateRef.get)

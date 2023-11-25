@@ -27,6 +27,13 @@ trait Components:
       case x: T      => applyValue(x)
       case x: Ref[T] => applyRef(x)
 
+  trait ComponentWithBody[I, F[_]]:
+    def render[T](body: I => T): Component[F[T]]
+
+    def apply[T](body: I => T): Component[F[T]] = render(body)
+
+    def apply[T](body: => T)(using ev: I =:= Unit): Component[F[T]] = render(_ => body)
+
   /** Button component. Returns true if it's being clicked, false otherwise.
     *
     * @param label text label to show on this button
@@ -36,11 +43,13 @@ trait Components:
       area: Rect,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): Component[Boolean] =
-    val buttonArea = skin.buttonArea(area)
-    val itemStatus = UiContext.registerItem(id, buttonArea)
-    skin.renderButton(area, label, itemStatus)
-    itemStatus.clicked
+  ): ComponentWithBody[Unit, Option] =
+    new ComponentWithBody[Unit, Option]:
+      def render[T](body: Unit => T): Component[Option[T]] =
+        val buttonArea = skin.buttonArea(area)
+        val itemStatus = UiContext.registerItem(id, buttonArea)
+        skin.renderButton(area, label, itemStatus)
+        Option.when(itemStatus.clicked)(body(()))
 
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */

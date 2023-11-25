@@ -50,8 +50,8 @@ var counter = 0
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10) { column =>
-      if (button(id = "minus", area = column(0), label = "-"))
+    columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10): column =>
+      button(id = "minus", area = column(0), label = "-"):
         counter = counter - 1
       text(
         area = column(1),
@@ -61,9 +61,8 @@ def application(inputState: InputState) =
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
-      if (button(id = "plus", area = column(2), label = "+"))
+      button(id = "plus", area = column(2), label = "+"):
         counter = counter + 1
-    }
 ```
 
 Now let's run it:
@@ -87,10 +86,10 @@ For example, this is how our application would look like with a dynamic layout:
 def dynamicApp(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10) { column =>
-      if (button(id = "minus", area = column(30), label = "-")) // 30px from the left
+    dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10): column =>
+      button(id = "minus", area = column(30), label = "-"): // 30px from the left
         counter = counter - 1
-      if (button(id = "plus", area = column(-30), label = "+")) // 30px from the right
+      button(id = "plus", area = column(-30), label = "+"): // 30px from the right
         counter = counter + 1
       text(
         area = column(maxSize), // Fill the remaining area
@@ -100,5 +99,4 @@ def dynamicApp(inputState: InputState) =
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
-    }
 ```

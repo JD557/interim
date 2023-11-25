@@ -39,9 +39,9 @@ def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     // window takes area as a ref, so will mutate the window area variable
-    window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
-      columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
-        if (button(id = "minus", area = column(0), label = "-"))
+    window(id = "window", area = windowArea, title = "My Counter", movable = true):area =>
+      columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
+        button(id = "minus", area = column(0), label = "-"):
           counter = counter - 1
         text(
           area = column(1),
@@ -51,10 +51,8 @@ def application(inputState: InputState) =
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        if (button(id = "plus", area = column(2), label = "+"))
+        button(id = "plus", area = column(2), label = "+"):
           counter = counter + 1
-      }
-    }
 ```
 
 Be aware that, while the code is more concise, coding with out parameters can lead to confusing code where it's hard
@@ -82,10 +80,10 @@ val initialState = AppState()
 def applicationRef(inputState: InputState, appState: AppState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    appState.asRefs { (counter, windowArea) =>
-      window(id = "window", area = windowArea, title = "My Counter", movable = true) { area =>
-        columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
-          if (button(id = "minus", area = column(0), label = "-"))
+    appState.asRefs: (counter, windowArea) =>
+      window(id = "window", area = windowArea, title = "My Counter", movable = true): area =>
+        columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
+          button(id = "minus", area = column(0), label = "-"):
             counter := counter.get - 1 // Counter is a Ref, so we need to use :=
           text(
             area = column(1),
@@ -95,11 +93,8 @@ def applicationRef(inputState: InputState, appState: AppState) =
             horizontalAlignment = centerHorizontally,
             verticalAlignment = centerVertically
           )
-          if (button(id = "plus", area = column(2), label = "+"))
+          button(id = "plus", area = column(2), label = "+"):
             counter := counter.get + 1  // Counter is a Ref, so we need to use :=
-        }
-      }
-    }
 ```
 
 Then we can run our app:
