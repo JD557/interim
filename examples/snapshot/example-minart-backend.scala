@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using lib "eu.joaocosta::minart::0.6.0-M1"
+//> using lib "eu.joaocosta::minart::0.6.0-M2"
 //> using lib "eu.joaocosta::interim::0.1.6-SNAPSHOT"
 
 /** This file contains a simple graphical backend written in Minart.
@@ -47,26 +47,16 @@ object MinartBackend:
   private def processKeyboard(keyboardInput: KeyboardInput): String =
     import KeyboardInput.Key._
     keyboardInput.events
-      .collect { case KeyboardInput.Event.Pressed(key) =>
-        key
-      }
+      .collect { case KeyboardInput.Event.Pressed(key) => key }
       .flatMap {
-        case Digit0 | NumPad0                                                            => "0"
-        case Digit1 | NumPad1                                                            => "1"
-        case Digit2 | NumPad2                                                            => "2"
-        case Digit3 | NumPad3                                                            => "3"
-        case Digit4 | NumPad4                                                            => "4"
-        case Digit5 | NumPad5                                                            => "5"
-        case Digit6 | NumPad6                                                            => "6"
-        case Digit7 | NumPad7                                                            => "7"
-        case Digit8 | NumPad8                                                            => "8"
-        case Digit9 | NumPad9                                                            => "9"
-        case Space                                                                       => " "
-        case Backspace                                                                   => "\u0008"
-        case Tab | Enter | Escape | Shift | Ctrl | Alt | Meta | Up | Down | Left | Right => ""
+        case Enter => ""
         case x =>
-          if (keyboardInput.keysDown(Shift)) x.toString.toUpperCase()
-          else x.toString.toLowerCase()
+          x.baseChar
+            .map(char =>
+              if (keyboardInput.keysDown(Shift)) char.toUpper.toString
+              else char.toString
+            )
+            .getOrElse("")
       }
       .mkString
 
