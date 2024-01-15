@@ -1,6 +1,6 @@
 //> using scala "3.3.1"
 //> using lib "eu.joaocosta::minart::0.6.0-M2"
-//> using lib "eu.joaocosta::interim::0.1.5-1"
+//> using lib "eu.joaocosta::interim::0.1.6"
 
 /** This file contains a simple graphical backend written in Minart.
   *
@@ -61,8 +61,7 @@ object MinartBackend:
       .mkString
 
   private def getInputState(canvas: Canvas): InputState = InputState(
-    canvas.getPointerInput().position.map(_.x).getOrElse(0),
-    canvas.getPointerInput().position.map(_.y).getOrElse(0),
+    canvas.getPointerInput().position.map(pos => (pos.x, pos.y)),
     canvas.getPointerInput().isPressed,
     processKeyboard(canvas.getKeyboardInput())
   )
