@@ -1,0 +1,22 @@
+index: index.html
+subsection:
+  - title: Feature Overview
+    page: overview.md
+  - title: Getting Started
+    page: getting-started.md
+  - title: Advanced Usage
+    page: advanced-usage.md
+  - title: Tutorial
+    directory: tutorial
+    index: tutorial.md
+    subsection:
+      - title: "1. Introduction"
+        page: ../../examples/release/1-introduction.md
+      - title: "2. Layout"
+        page: ../../examples/release/2-layout.md
+      - title: "3. Windows"
+        page: ../../examples/release/3-windows.md
+      - title: "4. Refs"
+        page: ../../examples/release/4-refs.md
+      - title: "5. Color Picker"
+        page: ../../examples/release/5-colorpicker.md
