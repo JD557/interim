@@ -25,11 +25,11 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixOnCompile := true
 
 // Don't publish the root project
-publish / skip := true
-publish := (())
-publishLocal := (())
+publish / skip  := true
+publish         := (())
+publishLocal    := (())
 publishArtifact := false
-publishTo := None
+publishTo       := None
 
 val siteSettings = Seq(
   Compile / doc / scalacOptions ++= (
@@ -41,21 +41,21 @@ val siteSettings = Seq(
 
 lazy val core =
   crossProject(JVMPlatform, JSPlatform, NativePlatform)
-  .in(file("core"))
-  .settings(
-    name                                    := "interim",
-    libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
-    Compile / doc / scalacOptions ++=
-      Seq(
-        "-project",
-        "InterIm",
-        "-project-version",
-        version.value,
-        "-social-links:github::https://github.com/JD557/interim",
-        "-siteroot",
-        "docs"
-      )
-  )
+    .in(file("core"))
+    .settings(
+      name                                    := "interim",
+      libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
+      Compile / doc / scalacOptions ++=
+        Seq(
+          "-project",
+          "InterIm",
+          "-project-version",
+          version.value,
+          "-social-links:github::https://github.com/JD557/interim",
+          "-siteroot",
+          "docs"
+        )
+    )
 
 releaseCrossBuild    := true
 releaseTagComment    := s"Release ${(ThisBuild / version).value}"
