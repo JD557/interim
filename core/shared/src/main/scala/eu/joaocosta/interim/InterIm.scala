@@ -1,6 +1,6 @@
 package eu.joaocosta.interim
 
-import eu.joaocosta.interim.TextLayout.*
+import eu.joaocosta.interim.TextLayout._
 
 /** Object with all the DSL operations.
   *
@@ -21,14 +21,15 @@ object InterIm extends api.Primitives with api.Layouts with api.Components with 
       run: (historicalInputState: InputState.Historical, uiContext: UiContext) ?=> T
   ): (List[RenderOp], T) =
     // prepare
+    uiContext.commit()
     uiContext.ops.clear()
     uiContext.currentZ = 0
-    uiContext.hotItem = None
+    uiContext.scratchItemState.hotItem = None
     val historicalInputState = uiContext.pushInputState(inputState)
-    if (inputState.mouseInput.isPressed) uiContext.selectedItem = None
+    if (inputState.mouseInput.isPressed) uiContext.scratchItemState.selectedItem = None
     // run
     val res = run(using historicalInputState, uiContext)
     // finish
-    if (!historicalInputState.mouseInput.isPressed) uiContext.activeItem = None
+    if (!historicalInputState.mouseInput.isPressed) uiContext.scratchItemState.activeItem = None
     // return
     (uiContext.getOrderedOps(), res)

@@ -14,17 +14,17 @@ class LayoutsSpec extends munit.FunSuite:
   test("clip ignores input outside the clip area"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(5, 5, false, "")
-    val itemStatus =
-      Layouts.clip(Rect(10, 10, 10, 10)):
-        UiContext.registerItem(1, Rect(0, 0, 15, 15))
+    Layouts.clip(Rect(10, 10, 10, 10)):
+      UiContext.registerItem(1, Rect(0, 0, 15, 15))
+    val itemStatus = UiContext.getScratchItemStatus(1)
     assertEquals(itemStatus.hot, false)
 
   test("clip considers input inside the clip area"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(12, 12, false, "")
-    val itemStatus =
-      Layouts.clip(Rect(10, 10, 10, 10)):
-        UiContext.registerItem(1, Rect(0, 0, 15, 15))
+    Layouts.clip(Rect(10, 10, 10, 10)):
+      UiContext.registerItem(1, Rect(0, 0, 15, 15))
+    val itemStatus = UiContext.getScratchItemStatus(1)
     assertEquals(itemStatus.hot, true)
 
   test("grid correctly lays out elements in a grid"):

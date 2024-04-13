@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.skins
 
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Primitives.*
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.api.Primitives._
 
 trait SelectSkin:
   def selectBoxArea(area: Rect): Rect
@@ -56,22 +56,21 @@ object SelectSkin extends DefaultSkin:
     ): Unit =
       val selectOptionArea = this.selectOptionArea(area, value)
       val optionLabel      = labels.applyOrElse(value, _ => "")
-      onTop:
-        itemStatus match
-          case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
-            rectangle(selectOptionArea, colorScheme.primaryHighlight)
-          case UiContext.ItemStatus(true, _, _, _) =>
-            rectangle(selectOptionArea, colorScheme.secondaryHighlight)
-          case _ =>
-            rectangle(selectOptionArea, colorScheme.secondary)
-        text(
-          selectOptionArea.shrink(padding),
-          colorScheme.text,
-          optionLabel,
-          font,
-          TextLayout.HorizontalAlignment.Left,
-          TextLayout.VerticalAlignment.Center
-        )
+      itemStatus match
+        case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
+          rectangle(selectOptionArea, colorScheme.primaryHighlight)
+        case UiContext.ItemStatus(true, _, _, _) =>
+          rectangle(selectOptionArea, colorScheme.secondaryHighlight)
+        case _ =>
+          rectangle(selectOptionArea, colorScheme.secondary)
+      text(
+        selectOptionArea.shrink(padding),
+        colorScheme.text,
+        optionLabel,
+        font,
+        TextLayout.HorizontalAlignment.Left,
+        TextLayout.VerticalAlignment.Center
+      )
 
   val lightDefault: Default = Default(
     padding = 2,
