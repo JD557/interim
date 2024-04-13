@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.skins.*
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.skins._
 
 /** Object containing the default components.
   *
@@ -102,12 +102,13 @@ trait Components:
         if (value.get.isOpen)
           value.modifyIf(!itemStatus.selected)(_.close)
           val selectableLabels = labels.drop(if (undefinedFirstValue) 1 else 0)
-          selectableLabels.zipWithIndex
-            .foreach: (label, idx) =>
-              val selectOptionArea = skin.selectOptionArea(area, idx)
-              val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
-              skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
-              if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
+          Primitives.onTop:
+            selectableLabels.zipWithIndex
+              .foreach: (label, idx) =>
+                val selectOptionArea = skin.selectOptionArea(area, idx)
+                val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
+                skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
+                if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *

@@ -5,45 +5,59 @@ class UiContextSpec extends munit.FunSuite:
   test("registerItem should not mark an item not under the cursor"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(0, 0, false, "")
-    val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
+
+    UiContext.registerItem(1, Rect(1, 1, 10, 10))
+    assertEquals(uiContext.scratchItemState.hotItem, None)
+    assertEquals(uiContext.scratchItemState.activeItem, None)
+    assertEquals(uiContext.scratchItemState.selectedItem, None)
+
+    val itemStatus = UiContext.getScratchItemStatus(1)
     assertEquals(itemStatus.hot, false)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.selected, false)
     assertEquals(itemStatus.clicked, false)
-    assertEquals(uiContext.hotItem, None)
-    assertEquals(uiContext.activeItem, None)
-    assertEquals(uiContext.selectedItem, None)
 
   test("registerItem should mark an item under the cursor as hot"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(5, 5, false, "")
-    val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
+
+    UiContext.registerItem(1, Rect(1, 1, 10, 10))
+    assertEquals(uiContext.scratchItemState.hotItem, Some(0 -> 1))
+    assertEquals(uiContext.scratchItemState.activeItem, None)
+    assertEquals(uiContext.scratchItemState.selectedItem, None)
+
+    val itemStatus = UiContext.getScratchItemStatus(1)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.selected, false)
     assertEquals(itemStatus.clicked, false)
-    assertEquals(uiContext.hotItem, Some(0 -> 1))
-    assertEquals(uiContext.activeItem, None)
-    assertEquals(uiContext.selectedItem, None)
 
   test("registerItem should mark a clicked item as active and focused"):
     given uiContext: UiContext   = new UiContext()
     given inputState: InputState = InputState(5, 5, true, "")
-    val itemStatus               = UiContext.registerItem(1, Rect(1, 1, 10, 10))
+
+    UiContext.registerItem(1, Rect(1, 1, 10, 10))
+    assertEquals(uiContext.scratchItemState.hotItem, Some(0 -> 1))
+    assertEquals(uiContext.scratchItemState.activeItem, Some(1))
+    assertEquals(uiContext.scratchItemState.selectedItem, Some(1))
+
+    val itemStatus = UiContext.getScratchItemStatus(1)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
     assertEquals(itemStatus.selected, true)
     assertEquals(itemStatus.clicked, false)
-    assertEquals(uiContext.hotItem, Some(0 -> 1))
-    assertEquals(uiContext.activeItem, Some(1))
-    assertEquals(uiContext.selectedItem, Some(1))
 
   test("registerItem should mark a clicked item as clicked once the mouse is released"):
     val uiContext: UiContext    = new UiContext()
     val inputState1: InputState = InputState(5, 5, true, "")
     UiContext.registerItem(1, Rect(1, 1, 10, 10))(using uiContext, inputState1)
+    uiContext.commit()
+
     val inputState2: InputState = InputState(5, 5, false, "")
-    val itemStatus              = UiContext.registerItem(1, Rect(1, 1, 10, 10))(using uiContext, inputState2)
+    UiContext.registerItem(1, Rect(1, 1, 10, 10))(using uiContext, inputState2)
+    uiContext.commit()
+
+    val itemStatus = UiContext.getItemStatus(1)(using uiContext, inputState2)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, true)
     assertEquals(itemStatus.selected, true)
@@ -53,16 +67,21 @@ class UiContextSpec extends munit.FunSuite:
     val uiContext   = new UiContext()
     val inputState1 = InputState(5, 5, true, "")
     UiContext.registerItem(1, Rect(1, 1, 10, 10))(using uiContext, inputState1)
+    uiContext.commit()
+
     val inputState2 = InputState(20, 20, true, "")
     UiContext.registerItem(1, Rect(1, 1, 10, 10))(using uiContext, inputState2)
-    val itemStatus = UiContext.registerItem(2, Rect(15, 15, 10, 10))(using uiContext, inputState2)
+    UiContext.registerItem(2, Rect(15, 15, 10, 10))(using uiContext, inputState2)
+    assertEquals(uiContext.scratchItemState.hotItem, Some(0 -> 2))
+    assertEquals(uiContext.scratchItemState.activeItem, Some(1))
+    assertEquals(uiContext.scratchItemState.selectedItem, Some(1))
+    uiContext.commit()
+
+    val itemStatus = UiContext.getItemStatus(2)(using uiContext, inputState2)
     assertEquals(itemStatus.hot, true)
     assertEquals(itemStatus.active, false)
     assertEquals(itemStatus.selected, false)
     assertEquals(itemStatus.clicked, false)
-    assertEquals(uiContext.hotItem, Some(0 -> 2))
-    assertEquals(uiContext.activeItem, Some(1))
-    assertEquals(uiContext.selectedItem, Some(1))
 
   test("fork should create a new UiContext with no ops, and merge them back with ++="):
     val uiContext: UiContext = new UiContext()
