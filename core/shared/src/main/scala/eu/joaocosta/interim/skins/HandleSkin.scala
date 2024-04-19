@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.skins
 
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Primitives.*
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.api.Primitives._
 
 trait HandleSkin:
   def moveHandleArea(area: Rect): Rect

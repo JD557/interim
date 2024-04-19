@@ -90,3 +90,37 @@ object TextLayout:
             else
               layout(nextLine, dy + lineHeight, alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc)
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
+
+  private[interim] def computeArea(
+      boundingArea: Rect,
+      text: String,
+      font: Font,
+      lineHeight: Int
+  ): Rect =
+    @tailrec
+    def layout(
+        remaining: String,
+        dy: Int,
+        areaAcc: Rect
+    ): Rect =
+      remaining match
+        case "" => areaAcc
+        case str =>
+          if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
+          else
+            val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
+            val charAreas = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+              val width = font.charWidth(char)
+              val charArea = Rect(
+                x = boundingArea.x + dx - width,
+                y = boundingArea.y + dy,
+                w = width,
+                h = font.fontSize
+              )
+              charArea
+            }.toList
+            if (charAreas.isEmpty && nextLine == remaining)
+              layout("", dy, areaAcc) // Can't fit a single character, end here
+            else
+              layout(nextLine, dy + lineHeight, charAreas.fold(areaAcc)(_ ++ _))
+    layout(text, 0, boundingArea.copy(w = 0, h = 0)) & boundingArea

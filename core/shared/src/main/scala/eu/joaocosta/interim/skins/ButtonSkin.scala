@@ -1,8 +1,8 @@
 package eu.joaocosta.interim.skins
 
-import eu.joaocosta.interim.TextLayout.*
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Primitives.*
+import eu.joaocosta.interim.TextLayout._
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.api.Primitives._
 
 trait ButtonSkin:
   def buttonArea(area: Rect): Rect
