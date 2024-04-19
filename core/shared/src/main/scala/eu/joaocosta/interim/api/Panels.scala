@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.skins.*
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.skins._
 
 /** Objects containing all default panels.
   *

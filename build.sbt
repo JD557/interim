@@ -44,9 +44,7 @@ lazy val core =
     .in(file("core"))
     .settings(
       name                                    := "interim",
-      resolvers += "jitpack" at "https://www.jitpack.io", // Bootleg Munit
-      libraryDependencies += "com.github.JD557.munit" %%% "munit" % "297481cecd" % Test,
-      //libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M11" % Test,
+      libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M12" % Test,
       Compile / doc / scalacOptions ++=
         Seq(
           "-project",

@@ -69,58 +69,18 @@ trait Layouts:
     * The body receives a `nextRow: Int => Rect`, where `nextRow(height)` is the rect of the next row, with the
     * specified height (if possible). If the size is negative, the row will start from the bottom.
     */
-  final def dynamicRows[T](area: Rect, padding: Int)(body: (Int => Rect) => T): T =
-    var currentY = area.y
-    var currentH = area.h
-    def generateRect(height: Int): Rect =
-      val absHeight = math.abs(height).toInt
-      if (absHeight == 0 || currentH <= 0) // Empty
-        area.copy(y = currentY, h = 0)
-      else if (absHeight >= currentH) // Fill remaining area
-        val areaY = currentY
-        val areaH = currentH
-        currentY = area.h
-        currentH = 0
-        area.copy(y = areaY, h = areaH)
-      else if (height >= 0) // Fill from the top
-        val areaY = currentY
-        currentY += absHeight + padding
-        currentH -= absHeight + padding
-        area.copy(y = areaY, h = absHeight)
-      else // Fill from the bottom
-        val areaY = currentY + currentH - absHeight
-        currentH -= absHeight + padding
-        area.copy(y = areaY, h = absHeight)
-    body(generateRect)
+  final def dynamicRows[T](area: Rect, padding: Int)(body: LayoutAllocator => T): T =
+    val allocator = new LayoutAllocator.RowAllocator(area, padding)
+    body(allocator)
 
   /** Lays out the components in a sequence of columns of different sizes, separated by a padding.
     *
     * The body receives a `nextColumn: Int => Rect`, where `nextColumn(width)` is the rect of the next column, with the
     * specified width (if possible). . If the size is negative, the row will start from the right.
     */
-  final def dynamicColumns[T](area: Rect, padding: Int)(body: (Int => Rect) => T): T =
-    var currentX = area.x
-    var currentW = area.w
-    def generateRect(width: Int): Rect =
-      val absWidth = math.abs(width).toInt
-      if (absWidth == 0 || currentW <= 0) // Empty
-        area.copy(x = currentX, w = 0)
-      else if (absWidth >= currentW) // Fill remaining area
-        val areaX = currentX
-        val areaW = currentW
-        currentX = area.w
-        currentW = 0
-        area.copy(x = areaX, w = areaW)
-      else if (width >= 0) // Fill from the left
-        val areaX = currentX
-        currentX += absWidth + padding
-        currentW -= absWidth + padding
-        area.copy(x = areaX, w = absWidth)
-      else // Fill from the right
-        val areaX = currentX + currentW - absWidth
-        currentW -= absWidth + padding
-        area.copy(x = areaX, w = absWidth)
-    body(generateRect)
+  final def dynamicColumns[T](area: Rect, padding: Int)(body: LayoutAllocator => T): T =
+    val allocator = new LayoutAllocator.ColumnAllocator(area, padding)
+    body(allocator)
 
   /** Handle mouse events inside a specified area.
     *
