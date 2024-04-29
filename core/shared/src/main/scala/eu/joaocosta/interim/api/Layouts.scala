@@ -1,5 +1,6 @@
 package eu.joaocosta.interim.api
 
+import eu.joaocosta.interim.api.LayoutAllocator._
 import eu.joaocosta.interim.{InputState, Rect, UiContext}
 
 /** Objects containing all default layouts.
@@ -31,46 +32,32 @@ trait Layouts:
     * The body receives a `cell: Vector[Vector[Rect]]`, where `cell(y)(x)` is the rect of the y-th row and x-th
     * column.
     */
-  final def grid[T](area: Rect, numRows: Int, numColumns: Int, padding: Int)(body: Vector[Vector[Rect]] => T): T =
+  final def grid[T](area: Rect, numRows: Int, numColumns: Int, padding: Int)(
+      body: IndexedSeq[IndexedSeq[Rect]] => T
+  ): T =
     body(rows(area, numRows, padding)(_.map(subArea => columns(subArea, numColumns, padding)(identity))))
 
   /** Lays out the components in a sequence of rows where all elements have the same size, separated by a padding.
     *
     * The body receives a `row: Vector[Rect]`, where `row(y)` is the rect of the y-th row.
     */
-  final def rows[T](area: Rect, numRows: Int, padding: Int)(body: Vector[Rect] => T): T =
-    if (numRows <= 0) body(Vector.empty)
-    else
-      val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
-      val intRowSize = rowSize.toInt
-      val vec = for
-        row <- (0 until numRows)
-        dy = (row * (rowSize + padding)).toInt
-      yield Rect(area.x, area.y + dy, area.w, intRowSize)
-      body(vec.toVector)
+  final def rows[T](area: Rect, numRows: Int, padding: Int)(body: StaticRowAllocator => T): T =
+    body(new StaticRowAllocator(area, padding, numRows))
 
   /** Lays out the components in a sequence of columns where all elements have the same size, separated by a padding.
     *
     * The body receives a `column: Vector[Rect]`, where `column(y)` is the rect of the x-th column.
     */
-  final def columns[T](area: Rect, numColumns: Int, padding: Int)(body: Vector[Rect] => T): T =
-    if (numColumns <= 0) body(Vector.empty)
-    else
-      val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
-      val intColumnSize = columnSize.toInt
-      val vec = for
-        column <- (0 until numColumns)
-        dx = (column * (columnSize + padding)).toInt
-      yield Rect(area.x + dx, area.y, intColumnSize, area.h)
-      body(vec.toVector)
+  final def columns[T](area: Rect, numColumns: Int, padding: Int)(body: StaticColumnAllocator => T): T =
+    body(new StaticColumnAllocator(area, padding, numColumns))
 
   /** Lays out the components in a sequence of rows of different sizes, separated by a padding.
     *
     * The body receives a `nextRow: Int => Rect`, where `nextRow(height)` is the rect of the next row, with the
     * specified height (if possible). If the size is negative, the row will start from the bottom.
     */
-  final def dynamicRows[T](area: Rect, padding: Int)(body: LayoutAllocator => T): T =
-    val allocator = new LayoutAllocator.RowAllocator(area, padding)
+  final def dynamicRows[T](area: Rect, padding: Int)(body: DynamicRowAllocator => T): T =
+    val allocator = new LayoutAllocator.DynamicRowAllocator(area, padding)
     body(allocator)
 
   /** Lays out the components in a sequence of columns of different sizes, separated by a padding.
@@ -78,8 +65,8 @@ trait Layouts:
     * The body receives a `nextColumn: Int => Rect`, where `nextColumn(width)` is the rect of the next column, with the
     * specified width (if possible). . If the size is negative, the row will start from the right.
     */
-  final def dynamicColumns[T](area: Rect, padding: Int)(body: LayoutAllocator => T): T =
-    val allocator = new LayoutAllocator.ColumnAllocator(area, padding)
+  final def dynamicColumns[T](area: Rect, padding: Int)(body: DynamicColumnAllocator => T): T =
+    val allocator = new LayoutAllocator.DynamicColumnAllocator(area, padding)
     body(allocator)
 
   /** Handle mouse events inside a specified area.
