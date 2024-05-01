@@ -88,7 +88,7 @@ class LayoutsSpec extends munit.FunSuite:
       Vector(Rect(10, 10, 16, 100), Rect(78, 10, 32, 100), Rect(34, 10, 36, 100))
     assertEquals(areas, expected)
 
-  test("mouseArea passes un updated mouse input"):
+  test("mouseArea passes an updated mouse input"):
     val inputState = InputState(10, 10, false, "")
     val inArea     = Layouts.mouseArea(Rect(5, 5, 10, 10))(identity)(using inputState)
     assertEquals(inArea, Some(InputState.MouseInput(5, 5, false)))
