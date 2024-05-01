@@ -19,7 +19,7 @@ object TextInputSkin extends DefaultSkin:
   ) extends TextInputSkin:
 
     def allocateArea(allocator: LayoutAllocator): Rect =
-      val maxBorder = math.max(border, activeBorder) + 1
+      val maxBorder = math.max(border, activeBorder) + 2
       allocator.allocate(2 * maxBorder + 8 * font.fontSize, 2 * maxBorder + font.fontSize)
 
     def textInputArea(area: Rect): Rect = area

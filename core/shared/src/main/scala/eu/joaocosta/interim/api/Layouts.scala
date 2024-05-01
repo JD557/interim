@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
 import eu.joaocosta.interim.api.LayoutAllocator._
-import eu.joaocosta.interim.{InputState, Rect, UiContext}
+import eu.joaocosta.interim.{HorizontalAlignment, InputState, Rect, UiContext, VerticalAlignment}
 
 /** Objects containing all default layouts.
   *
@@ -43,16 +43,26 @@ trait Layouts:
     *
     * The body receives a `row: Vector[Rect]`, where `row(y)` is the rect of the y-th row.
     */
-  final def rows[T](area: Rect, numRows: Int, padding: Int)(body: StaticRowAllocator ?=> T): T =
-    val allocator = new StaticRowAllocator(area, padding, numRows)
-    body(using new StaticRowAllocator(area, padding, numRows))
+  final def rows[T](
+      area: Rect,
+      numRows: Int,
+      padding: Int,
+      alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type = VerticalAlignment.Top
+  )(body: StaticRowAllocator ?=> T): T =
+    val allocator = new StaticRowAllocator(area, padding, numRows, alignment)
+    body(using allocator)
 
   /** Lays out the components in a sequence of columns where all elements have the same size, separated by a padding.
     *
     * The body receives a `column: Vector[Rect]`, where `column(y)` is the rect of the x-th column.
     */
-  final def columns[T](area: Rect, numColumns: Int, padding: Int)(body: StaticColumnAllocator ?=> T): T =
-    val allocator = new StaticColumnAllocator(area, padding, numColumns)
+  final def columns[T](
+      area: Rect,
+      numColumns: Int,
+      padding: Int,
+      alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type = HorizontalAlignment.Left
+  )(body: StaticColumnAllocator ?=> T): T =
+    val allocator = new StaticColumnAllocator(area, padding, numColumns, alignment)
     body(using allocator)
 
   /** Lays out the components in a sequence of rows of different sizes, separated by a padding.
@@ -60,8 +70,12 @@ trait Layouts:
     * The body receives a `nextRow: Int => Rect`, where `nextRow(height)` is the rect of the next row, with the
     * specified height (if possible). If the size is negative, the row will start from the bottom.
     */
-  final def dynamicRows[T](area: Rect, padding: Int)(body: DynamicRowAllocator ?=> T): T =
-    val allocator = new LayoutAllocator.DynamicRowAllocator(area, padding)
+  final def dynamicRows[T](
+      area: Rect,
+      padding: Int,
+      alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type = VerticalAlignment.Top
+  )(body: DynamicRowAllocator ?=> T): T =
+    val allocator = new LayoutAllocator.DynamicRowAllocator(area, padding, alignment)
     body(using allocator)
 
   /** Lays out the components in a sequence of columns of different sizes, separated by a padding.
@@ -69,8 +83,12 @@ trait Layouts:
     * The body receives a `nextColumn: Int => Rect`, where `nextColumn(width)` is the rect of the next column, with the
     * specified width (if possible). . If the size is negative, the row will start from the right.
     */
-  final def dynamicColumns[T](area: Rect, padding: Int)(body: DynamicColumnAllocator ?=> T): T =
-    val allocator = new LayoutAllocator.DynamicColumnAllocator(area, padding)
+  final def dynamicColumns[T](
+      area: Rect,
+      padding: Int,
+      alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type = HorizontalAlignment.Left
+  )(body: DynamicColumnAllocator ?=> T): T =
+    val allocator = new LayoutAllocator.DynamicColumnAllocator(area, padding, alignment)
     body(using allocator)
 
   /** Handle mouse events inside a specified area.

@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.{Font, Rect, TextLayout}
+import eu.joaocosta.interim.{Font, HorizontalAlignment, Rect, TextLayout, VerticalAlignment}
 
 /** A layout allocator is a side-effectful function that, given a size (width or height) tries to allocate
   * a new area.
@@ -27,9 +27,15 @@ object LayoutAllocator:
     def nextColumn(width: Int): Rect
     def allocate(width: Int, height: Int): Rect = nextColumn(width)
 
-  final class DynamicRowAllocator(val area: Rect, padding: Int) extends RowAllocator with (Int => Rect):
+  final class DynamicRowAllocator(
+      val area: Rect,
+      padding: Int,
+      alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type
+  ) extends RowAllocator
+      with (Int => Rect):
     private var currentY = area.y
     private var currentH = area.h
+    private val dirMod   = if (alignment == VerticalAlignment.Top) 1 else -1
 
     def nextRow(height: Int) =
       val absHeight = math.abs(height).toInt
@@ -41,7 +47,7 @@ object LayoutAllocator:
         currentY = area.h
         currentH = 0
         area.copy(y = areaY, h = areaH)
-      else if (height >= 0) // Fill from the top
+      else if (dirMod * height >= 0) // Fill from the top
         val areaY = currentY
         currentY += absHeight + padding
         currentH -= absHeight + padding
@@ -53,16 +59,24 @@ object LayoutAllocator:
 
     def apply(height: Int) = nextRow(height)
 
-  final class StaticRowAllocator(val area: Rect, padding: Int, numRows: Int) extends RowAllocator with IndexedSeq[Rect]:
+  final class StaticRowAllocator(
+      val area: Rect,
+      padding: Int,
+      numRows: Int,
+      alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type
+  ) extends RowAllocator
+      with IndexedSeq[Rect]:
     val cells: IndexedSeq[Rect] =
       if (numRows == 0) Vector.empty
       else
         val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
         val intRowSize = rowSize.toInt
-        for
+        val baseCells = for
           row <- (0 until numRows)
           dy = (row * (rowSize + padding)).toInt
         yield Rect(area.x, area.y + dy, area.w, intRowSize)
+        if (alignment == VerticalAlignment.Top) baseCells
+        else baseCells.reverse
 
     def apply(i: Int): Rect = cells(i)
     val length              = cells.length
@@ -81,9 +95,15 @@ object LayoutAllocator:
           acc = acc ++ cellsIterator.next()
         acc
 
-  final class DynamicColumnAllocator(val area: Rect, padding: Int) extends ColumnAllocator with (Int => Rect):
+  final class DynamicColumnAllocator(
+      val area: Rect,
+      padding: Int,
+      alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type
+  ) extends ColumnAllocator
+      with (Int => Rect):
     private var currentX = area.x
     private var currentW = area.w
+    private val dirMod   = if (alignment == HorizontalAlignment.Left) 1 else -1
 
     def nextColumn(width: Int): Rect =
       val absWidth = math.abs(width).toInt
@@ -95,7 +115,7 @@ object LayoutAllocator:
         currentX = area.w
         currentW = 0
         area.copy(x = areaX, w = areaW)
-      else if (width >= 0) // Fill from the left
+      else if (dirMod * width >= 0) // Fill from the left
         val areaX = currentX
         currentX += absWidth + padding
         currentW -= absWidth + padding
@@ -107,18 +127,24 @@ object LayoutAllocator:
 
     def apply(height: Int) = nextColumn(height)
 
-  final class StaticColumnAllocator(val area: Rect, padding: Int, numColumns: Int)
-      extends ColumnAllocator
+  final class StaticColumnAllocator(
+      val area: Rect,
+      padding: Int,
+      numColumns: Int,
+      alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type
+  ) extends ColumnAllocator
       with IndexedSeq[Rect]:
     val cells: IndexedSeq[Rect] =
       if (numColumns == 0) Vector.empty
       else
         val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
         val intColumnSize = columnSize.toInt
-        for
+        val baseCells = for
           column <- (0 until numColumns)
           dx = (column * (columnSize + padding)).toInt
         yield Rect(area.x + dx, area.y, intColumnSize, area.h)
+        if (alignment == HorizontalAlignment.Left) baseCells
+        else baseCells.reverse
 
     def apply(i: Int): Rect = cells(i)
     val length              = cells.length

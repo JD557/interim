@@ -104,10 +104,10 @@ def application(inputState: InputState, appState: AppState) =
           val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
           val resultsArea = rowAlloc.fill()
           val buttonSize = 32
-          dynamicColumns(area = resultsArea, padding = 10): newColumn ?=>
+          dynamicColumns(area = resultsArea, padding = 10, alignRight): newColumn ?=>
             val resultsHeight = results.size * buttonSize
             if (resultsHeight > resultsArea.h)
-              slider("result scroller", min = 0, max = resultsHeight - resultsArea.h)(newColumn(-16), resultDelta)
+              slider("result scroller", min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
             val clipArea = newColumn(maxSize)
             clip(area = clipArea):
               rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10): rows ?=>
@@ -119,8 +119,8 @@ def application(inputState: InputState, appState: AppState) =
 
       onBottom:
         window(id = "settings", title = "Settings", movable = false)(area = Rect(10, 430, 250, 40)): area =>
-          dynamicColumns(area = area.shrink(5), padding = 10): colAlloc ?=>
-            if (checkbox(id = "dark mode")(colAlloc.nextColumn(-16), skins.ColorScheme.darkModeEnabled()))
+          dynamicColumns(area = area.shrink(5), padding = 10, alignRight): colAlloc ?=>
+            if (checkbox(id = "dark mode")(skins.ColorScheme.darkModeEnabled()))
               skins.ColorScheme.useDarkMode()
             else skins.ColorScheme.useLightMode()
             text(colAlloc.fill(), textColor, "Dark Mode", Font.default, alignRight)

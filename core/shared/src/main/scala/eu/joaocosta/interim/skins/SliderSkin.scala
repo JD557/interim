@@ -20,7 +20,7 @@ object SliderSkin extends DefaultSkin:
   ) extends SliderSkin:
 
     def allocateArea(allocator: LayoutAllocator): Rect =
-      allocator.allocate(Font.default.fontSize, Font.default.fontSize)
+      allocator.allocate(Font.default.fontSize + 2 * padding, Font.default.fontSize + 2 * padding)
 
     def sliderArea(area: Rect): Rect = area.shrink(padding)
 
