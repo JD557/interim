@@ -51,29 +51,29 @@ class LayoutsSpec extends munit.FunSuite:
     assertEquals(areas, expected)
 
   test("rows correctly lays out elements in rows"):
-    val areas = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(identity).toVector
+    val areas = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(alloc ?=> alloc.toVector)
     val expected =
       Vector(Rect(10, 10, 100, 28), Rect(10, 46, 100, 28), Rect(10, 82, 100, 28))
     assertEquals(areas, expected)
 
   test("rows returns nothing for 0 rows"):
-    val areas    = Layouts.rows(Rect(10, 10, 100, 100), numRows = 0, padding = 8)(identity).toVector
+    val areas    = Layouts.rows(Rect(10, 10, 100, 100), numRows = 0, padding = 8)(alloc ?=> alloc.toVector)
     val expected = Vector.empty
     assertEquals(areas, expected)
 
   test("columns correctly lays out elements in columns"):
-    val areas = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(identity).toVector
+    val areas = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(alloc ?=> alloc.toVector)
     val expected =
       Vector(Rect(10, 10, 28, 100), Rect(46, 10, 28, 100), Rect(82, 10, 28, 100))
     assertEquals(areas, expected)
 
   test("columns returns nothing for 0 columns"):
-    val areas    = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 0, padding = 8)(identity).toVector
+    val areas    = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 0, padding = 8)(alloc ?=> alloc.toVector)
     val expected = Vector.empty
     assertEquals(areas, expected)
 
   test("dynamicRows correctly lays out elements in rows"):
-    val areas = Layouts.dynamicRows(Rect(10, 10, 100, 100), padding = 8) { nextRow =>
+    val areas = Layouts.dynamicRows(Rect(10, 10, 100, 100), padding = 8) { nextRow ?=>
       Vector(nextRow(16), nextRow(-32), nextRow(Int.MaxValue))
     }
     val expected =
@@ -81,7 +81,7 @@ class LayoutsSpec extends munit.FunSuite:
     assertEquals(areas, expected)
 
   test("dynamicColumns correctly lays out elements in columns"):
-    val areas = Layouts.dynamicColumns(Rect(10, 10, 100, 100), padding = 8) { nextColumn =>
+    val areas = Layouts.dynamicColumns(Rect(10, 10, 100, 100), padding = 8) { nextColumn ?=>
       Vector(nextColumn(16), nextColumn(-32), nextColumn(Int.MaxValue))
     }
     val expected =
