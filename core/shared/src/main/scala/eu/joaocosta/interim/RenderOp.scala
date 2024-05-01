@@ -46,8 +46,8 @@ object RenderOp:
       text: String,
       font: Font,
       textArea: Rect,
-      horizontalAlignment: TextLayout.HorizontalAlignment,
-      verticalAlignment: TextLayout.VerticalAlignment
+      horizontalAlignment: HorizontalAlignment,
+      verticalAlignment: VerticalAlignment
   ) extends RenderOp:
     def clip(rect: Rect): DrawText = copy(area = area & rect)
 

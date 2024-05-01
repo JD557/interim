@@ -4,12 +4,6 @@ import scala.annotation.tailrec
 
 object TextLayout:
 
-  enum HorizontalAlignment:
-    case Left, Center, Right
-
-  enum VerticalAlignment:
-    case Top, Center, Bottom
-
   private def cumulativeSum(xs: Iterable[Int]): Iterable[Int] =
     if (xs.isEmpty) xs
     else xs.tail.scanLeft(xs.head)(_ + _)

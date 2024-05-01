@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
+import eu.joaocosta.interim.{HorizontalAlignment, VerticalAlignment}
 
 /** Object containing some aliases for some constants.
   */

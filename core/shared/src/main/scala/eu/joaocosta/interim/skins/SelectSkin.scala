@@ -50,8 +50,8 @@ object SelectSkin extends DefaultSkin:
         colorScheme.text,
         selectedLabel,
         font,
-        TextLayout.HorizontalAlignment.Left,
-        TextLayout.VerticalAlignment.Center
+        HorizontalAlignment.Left,
+        VerticalAlignment.Center
       )
 
     // Select option
@@ -75,8 +75,8 @@ object SelectSkin extends DefaultSkin:
         colorScheme.text,
         optionLabel,
         font,
-        TextLayout.HorizontalAlignment.Left,
-        TextLayout.VerticalAlignment.Center
+        HorizontalAlignment.Left,
+        VerticalAlignment.Center
       )
 
   val lightDefault: Default = Default(

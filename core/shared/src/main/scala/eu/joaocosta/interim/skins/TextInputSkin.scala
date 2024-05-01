@@ -41,8 +41,8 @@ object TextInputSkin extends DefaultSkin:
         colorScheme.text,
         value,
         font,
-        TextLayout.HorizontalAlignment.Left,
-        TextLayout.VerticalAlignment.Center
+        HorizontalAlignment.Left,
+        VerticalAlignment.Center
       )
 
   val lightDefault: Default = Default(

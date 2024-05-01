@@ -1,7 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.TextLayout.{HorizontalAlignment, VerticalAlignment}
-import eu.joaocosta.interim.{Color, Font, Rect, RenderOp, UiContext}
+import eu.joaocosta.interim.{Color, Font, HorizontalAlignment, Rect, RenderOp, UiContext, VerticalAlignment}
 
 /** Object containing the default primitives.
   *
