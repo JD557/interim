@@ -41,17 +41,17 @@ def application(inputState: InputState) =
     // window takes area as a ref, so will mutate the window area variable
     window(id = "window", area = windowArea, title = "My Counter", movable = true):area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
-        button(id = "minus", area = column(0), label = "-"):
+        button(id = "minus", area = column, label = "-"):
           counter = counter - 1
         text(
-          area = column(1),
+          area = column,
           color = Color(0, 0, 0),
-          text = counter.toString,
+          message = counter.toString,
           font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        button(id = "plus", area = column(2), label = "+"):
+        button(id = "plus", area = column, label = "+"):
           counter = counter + 1
 ```
 
@@ -83,17 +83,17 @@ def applicationRef(inputState: InputState, appState: AppState) =
     appState.asRefs: (counter, windowArea) =>
       window(id = "window", area = windowArea, title = "My Counter", movable = true): area =>
         columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
-          button(id = "minus", area = column(0), label = "-"):
+          button(id = "minus", area = column, label = "-"):
             counter := counter.get - 1 // Counter is a Ref, so we need to use :=
           text(
-            area = column(1),
+            area = column,
             color = Color(0, 0, 0),
-            text = counter.get.toString,  // Counter is a Ref, so we need to use .get
+            message = counter.get.toString,  // Counter is a Ref, so we need to use .get
             font = Font.default,
             horizontalAlignment = centerHorizontally,
             verticalAlignment = centerVertically
           )
-          button(id = "plus", area = column(2), label = "+"):
+          button(id = "plus", area = column, label = "+"):
             counter := counter.get + 1  // Counter is a Ref, so we need to use :=
 ```
 

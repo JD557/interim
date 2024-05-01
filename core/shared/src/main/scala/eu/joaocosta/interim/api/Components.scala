@@ -40,25 +40,37 @@ trait Components:
     */
   final def button(
       id: ItemId,
-      area: Rect,
+      area: Rect | LayoutAllocator,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithBody[Unit, Option] =
     new ComponentWithBody[Unit, Option]:
       def render[T](body: Unit => T): Component[Option[T]] =
-        val buttonArea = skin.buttonArea(area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc, label)
+        }
+        val buttonArea = skin.buttonArea(reservedArea)
         val itemStatus = UiContext.registerItem(id, buttonArea)
-        skin.renderButton(area, label, itemStatus)
+        skin.renderButton(reservedArea, label, itemStatus)
         Option.when(itemStatus.clicked)(body(()))
 
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */
-  final def checkbox(id: ItemId, area: Rect, skin: CheckboxSkin = CheckboxSkin.default()): ComponentWithValue[Boolean] =
+  final def checkbox(
+      id: ItemId,
+      area: Rect | LayoutAllocator,
+      skin: CheckboxSkin = CheckboxSkin.default()
+  ): ComponentWithValue[Boolean] =
     new ComponentWithValue[Boolean]:
       def render(value: Ref[Boolean]): Component[Unit] =
-        val checkboxArea = skin.checkboxArea(area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc)
+        }
+        val checkboxArea = skin.checkboxArea(reservedArea)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
-        skin.renderCheckbox(area, value.get, itemStatus)
+        skin.renderCheckbox(reservedArea, value.get, itemStatus)
         value.modifyIf(itemStatus.clicked)(!_)
 
   /** Radio button component. Returns value currently selected.
@@ -68,18 +80,22 @@ trait Components:
     */
   final def radioButton[T](
       id: ItemId,
-      area: Rect,
+      area: Rect | LayoutAllocator,
       buttonValue: T,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithValue[T] =
     new ComponentWithValue[T]:
       def render(value: Ref[T]): Component[Unit] =
-        val buttonArea = skin.buttonArea(area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc, label)
+        }
+        val buttonArea = skin.buttonArea(reservedArea)
         val itemStatus = UiContext.registerItem(id, buttonArea)
         if (itemStatus.clicked) value := buttonValue
-        if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
-        else skin.renderButton(area, label, itemStatus)
+        if (value.get == buttonValue) skin.renderButton(reservedArea, label, itemStatus.copy(hot = true, active = true))
+        else skin.renderButton(reservedArea, label, itemStatus)
 
   /** Select box component. Returns the index value currently selected inside a PanelState.
     *
@@ -88,26 +104,30 @@ trait Components:
     */
   final def select(
       id: ItemId,
-      area: Rect,
+      area: Rect | LayoutAllocator,
       labels: Vector[String],
       undefinedFirstValue: Boolean = false,
       skin: SelectSkin = SelectSkin.default()
   ): ComponentWithValue[PanelState[Int]] =
     new ComponentWithValue[PanelState[Int]]:
       def render(value: Ref[PanelState[Int]]): Component[Unit] =
-        val selectBoxArea = skin.selectBoxArea(area)
-        val itemStatus    = UiContext.registerItem(id, area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc, labels)
+        }
+        val selectBoxArea = skin.selectBoxArea(reservedArea)
+        val itemStatus    = UiContext.registerItem(id, reservedArea)
         value.modifyIf(itemStatus.selected)(_.open)
-        skin.renderSelectBox(area, value.get.value, labels, itemStatus)
+        skin.renderSelectBox(reservedArea, value.get.value, labels, itemStatus)
         if (value.get.isOpen)
           value.modifyIf(!itemStatus.selected)(_.close)
           val selectableLabels = labels.drop(if (undefinedFirstValue) 1 else 0)
           Primitives.onTop:
             selectableLabels.zipWithIndex
               .foreach: (label, idx) =>
-                val selectOptionArea = skin.selectOptionArea(area, idx)
+                val selectOptionArea = skin.selectOptionArea(reservedArea, idx)
                 val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
-                skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
+                skin.renderSelectOption(reservedArea, idx, selectableLabels, optionStatus)
                 if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
 
   /** Slider component. Returns the current position of the slider, between min and max.
@@ -117,22 +137,26 @@ trait Components:
     */
   final def slider(
       id: ItemId,
-      area: Rect,
+      area: Rect | LayoutAllocator,
       min: Int,
       max: Int,
       skin: SliderSkin = SliderSkin.default()
   ): ComponentWithValue[Int] =
     new ComponentWithValue[Int]:
       def render(value: Ref[Int]): Component[Unit] =
-        val sliderArea   = skin.sliderArea(area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc)
+        }
+        val sliderArea   = skin.sliderArea(reservedArea)
         val steps        = max - min + 1
         val itemStatus   = UiContext.registerItem(id, sliderArea)
         val clampedValue = math.max(min, math.min(value.get, max))
-        skin.renderSlider(area, min, clampedValue, max, itemStatus)
+        skin.renderSlider(reservedArea, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
           summon[InputState].mouseInput.position.foreach: (mouseX, mouseY) =>
             val intPosition =
-              if (area.w > area.h) steps * (mouseX - sliderArea.x) / sliderArea.w
+              if (reservedArea.w > reservedArea.h) steps * (mouseX - sliderArea.x) / sliderArea.w
               else steps * (mouseY - sliderArea.y) / sliderArea.h
             value := math.max(min, math.min(min + intPosition, max))
 
@@ -140,14 +164,18 @@ trait Components:
     */
   final def textInput(
       id: ItemId,
-      area: Rect,
+      area: Rect | LayoutAllocator,
       skin: TextInputSkin = TextInputSkin.default()
   ): ComponentWithValue[String] =
     new ComponentWithValue[String]:
       def render(value: Ref[String]): Component[Unit] =
-        val textInputArea = skin.textInputArea(area)
+        val reservedArea = area match {
+          case rect: Rect             => rect
+          case alloc: LayoutAllocator => skin.allocateArea(alloc)
+        }
+        val textInputArea = skin.textInputArea(reservedArea)
         val itemStatus    = UiContext.registerItem(id, textInputArea)
-        skin.renderTextInput(area, value.get, itemStatus)
+        skin.renderTextInput(reservedArea, value.get, itemStatus)
         value.modifyIf(itemStatus.selected)(summon[InputState].appendKeyboardInput)
 
   /** Draggable handle. Returns the moved area.

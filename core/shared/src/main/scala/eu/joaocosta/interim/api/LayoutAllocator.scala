@@ -11,9 +11,10 @@ trait LayoutAllocator:
   def area: Rect
 
   def allocate(width: Int, height: Int): Rect
-  def allocate(text: String, font: Font): Rect =
-    val textArea = TextLayout.computeArea(area, text, font, (font.fontSize * 1.3).toInt)
-    allocate(textArea.w, textArea.h)
+  def allocate(text: String, font: Font, paddingW: Int = 0, paddingH: Int = 0): Rect =
+    val textArea =
+      TextLayout.computeArea(area.resize(-2 * paddingW, -2 * paddingH), text, font, (font.fontSize * 1.3).toInt)
+    allocate(textArea.w + 2 * paddingW, textArea.h + 2 * paddingH)
 
   def fill(): Rect = allocate(Int.MaxValue, Int.MaxValue)
 
@@ -68,6 +69,10 @@ object LayoutAllocator:
 
     private val cellsIterator = cells.iterator
 
+    def nextRow(): Rect =
+      if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)
+      else cellsIterator.next()
+
     def nextRow(height: Int): Rect =
       if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)
       else
@@ -119,6 +124,10 @@ object LayoutAllocator:
     val length              = cells.length
 
     private val cellsIterator = cells.iterator
+
+    def nextColumn(): Rect =
+      if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)
+      else cellsIterator.next()
 
     def nextColumn(width: Int): Rect =
       if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)

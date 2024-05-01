@@ -51,17 +51,17 @@ def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10): column =>
-      button(id = "minus", area = column(0), label = "-"):
+      button(id = "minus", area = column, label = "-"):
         counter = counter - 1
       text(
-        area = column(1),
+        area = column,
         color = Color(0, 0, 0),
-        text = counter.toString,
+        message = counter.toString,
         font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
-      button(id = "plus", area = column(2), label = "+"):
+      button(id = "plus", area = column, label = "+"):
         counter = counter + 1
 ```
 
@@ -94,7 +94,7 @@ def dynamicApp(inputState: InputState) =
       text(
         area = column(maxSize), // Fill the remaining area
         color = Color(0, 0, 0),
-        text = counter.toString,
+        message = counter.toString,
         font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically

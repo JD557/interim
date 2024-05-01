@@ -23,16 +23,17 @@ object TextLayout:
     else
       val (nextFullLine, remainingLines) = str.span(_ != '\n')
       // If the line fits, simply return the line
-      if (textSize(nextFullLine) < lineSize) (nextFullLine, remainingLines.drop(1))
+      if (textSize(nextFullLine) <= lineSize) (nextFullLine, remainingLines.drop(1))
       else
         val words     = nextFullLine.split(" ")
         val firstWord = words.headOption.getOrElse("")
         // If the first word is too big, it needs to be broken
         if (textSize(firstWord) > lineSize)
-          val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 < lineSize)
+          val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 <= lineSize)
           (firstPart.map(_._1).mkString(""), secondPart.map(_._1).mkString("") ++ remainingLines)
         else // Otherwise, pick as many words as fit
-          val (selectedWords, remainingWords) = cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 < lineSize)
+          val (selectedWords, remainingWords) =
+            cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 <= lineSize)
           (selectedWords.map(_._1).mkString(" "), remainingWords.map(_._1).mkString(" ") ++ remainingLines)
 
   private def alignH(

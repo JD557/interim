@@ -79,30 +79,30 @@ def application(inputState: InputState, appState: AppState) =
     appState.asRefs: (colorPickerArea, colorSearchArea, colorRange, resultDelta, color, query) =>
       onTop:
         window(id = "color picker", area = colorPickerArea, title = "Color Picker", closable = true, movable = true, resizable = true): area =>
-          rows(area = area.shrink(5), numRows = 6, padding = 10): row =>
-            rectangle(row(0), color.get)
-            select(id = "range", row(1), Vector("0-255","0-100", "0x00-0xff"))(colorRange).value match
+          rows(area = area.shrink(5), numRows = 6, padding = 10): rowAlloc =>
+            rectangle(rowAlloc.nextRow(), color.get)
+            select(id = "range", rowAlloc, Vector("0-255","0-100", "0x00-0xff"))(colorRange).value match
               case 0 =>
                 val colorStr = f"R:${color.get.r}%03d G:${color.get.g}%03d B:${color.get.b}%03d"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
+                text(rowAlloc, textColor, colorStr, Font.default, alignLeft, centerVertically)
               case 1 =>
                 val colorStr = f"R:${color.get.r * 100 / 255}%03d G:${color.get.g * 100 / 255}%03d B:${color.get.b * 100 / 255}%03d"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
+                text(rowAlloc, textColor, colorStr, Font.default, alignLeft, centerVertically)
               case 2 =>
                 val colorStr = f"R:0x${color.get.r}%02x G:0x${color.get.g}%02x B:0x${color.get.b}%02x"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
-            val r = slider("red slider", row(3), min = 0, max = 255)(color.get.r)
-            val g = slider("green slider", row(4), min = 0, max = 255)(color.get.g)
-            val b = slider("blue slider", row(5), min = 0, max = 255)(color.get.b)
+                text(rowAlloc, textColor, colorStr, Font.default, alignLeft, centerVertically)
+            val r = slider("red slider", rowAlloc, min = 0, max = 255)(color.get.r)
+            val g = slider("green slider", rowAlloc, min = 0, max = 255)(color.get.g)
+            val b = slider("blue slider", rowAlloc, min = 0, max = 255)(color.get.b)
             color := Color(r, g, b)
 
       window(id = "color search", area = colorSearchArea, title = "Color Search", closable = false, movable = true): area =>
-        dynamicRows(area = area.shrink(5), padding = 10): newRow =>
+        dynamicRows(area = area.shrink(5), padding = 10): rowAlloc =>
           val oldQuery = query.get
-          textInput("query", newRow(16))(query)
+          textInput("query", rowAlloc.nextRow(16))(query)
           if (query.get != oldQuery) resultDelta := 0
           val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
-          val resultsArea = newRow(maxSize)
+          val resultsArea = rowAlloc.fill()
           val buttonSize = 32
           dynamicColumns(area = resultsArea, padding = 10): newColumn =>
             val resultsHeight = results.size * buttonSize
@@ -119,11 +119,11 @@ def application(inputState: InputState, appState: AppState) =
 
       onBottom:
         window(id = "settings", area = PanelState.open(Rect(10, 430, 250, 40)), title = "Settings", movable = false): area =>
-          dynamicColumns(area = area.shrink(5), padding = 10): newColumn =>
-            if (checkbox(id = "dark mode", newColumn(-16))(skins.ColorScheme.darkModeEnabled()))
+          dynamicColumns(area = area.shrink(5), padding = 10): colAlloc =>
+            if (checkbox(id = "dark mode", colAlloc.nextColumn(-16))(skins.ColorScheme.darkModeEnabled()))
               skins.ColorScheme.useDarkMode()
             else skins.ColorScheme.useLightMode()
-            text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", Font.default, alignRight)
+            text(colAlloc.fill(), textColor, "Dark Mode", Font.default, alignRight)
 ```
 
 Let's run it:

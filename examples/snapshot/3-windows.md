@@ -42,17 +42,17 @@ def application(inputState: InputState) =
   ui(inputState, uiContext):
     windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true, closable = false) { area =>
       columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
-        button(id = "minus", area = column(0), label = "-"):
+        button(id = "minus", area = column, label = "-"):
           counter = counter - 1
         text(
-          area = column(1),
+          area = column,
           color = Color(0, 0, 0),
-          text = counter.toString,
+          message = counter.toString,
           font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        button(id = "plus", area = column(2), label = "+"):
+        button(id = "plus", area = column, label = "+"):
           counter = counter + 1
       }
     }._2 // We don't care about the value, just the rect
