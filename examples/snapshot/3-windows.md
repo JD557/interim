@@ -40,19 +40,19 @@ var counter    = 0
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true, closable = false) { area =>
-      columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
-        button(id = "minus", area = column, label = "-"):
+    windowArea = window(id = "window", title = "My Counter", movable = true, closable = false)(area = windowArea) { area =>
+      columns(area = area.shrink(5), numColumns = 3, padding = 10) {
+        button(id = "minus", label = "-"):
           counter = counter - 1
         text(
-          area = column,
+          area = summon,
           color = Color(0, 0, 0),
           message = counter.toString,
           font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        button(id = "plus", area = column, label = "+"):
+        button(id = "plus", label = "+"):
           counter = counter + 1
       }
     }._2 // We don't care about the value, just the rect

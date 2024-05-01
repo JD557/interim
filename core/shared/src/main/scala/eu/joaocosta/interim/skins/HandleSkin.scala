@@ -1,9 +1,12 @@
 package eu.joaocosta.interim.skins
 
 import eu.joaocosta.interim._
+import eu.joaocosta.interim.api.LayoutAllocator
 import eu.joaocosta.interim.api.Primitives._
 
 trait HandleSkin:
+  def allocateArea(allocator: LayoutAllocator): Rect
+
   def moveHandleArea(area: Rect): Rect
   def closeHandleArea(area: Rect): Rect
   def resizeHandleArea(area: Rect): Rect
@@ -15,6 +18,9 @@ trait HandleSkin:
 object HandleSkin extends DefaultSkin:
 
   final case class Default(colorScheme: ColorScheme) extends HandleSkin:
+
+    def allocateArea(allocator: LayoutAllocator): Rect =
+      allocator.allocate(Font.default.fontSize, Font.default.fontSize)
 
     def moveHandleArea(area: Rect): Rect =
       val smallSide = math.min(area.w, area.h)

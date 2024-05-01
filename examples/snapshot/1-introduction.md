@@ -54,17 +54,17 @@ Now, let's write our interface. We are going to need the following components:
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"):
+    button(id = "minus", label = "-")(area = Rect(x = 10, y = 10, w = 30, h = 30)):
       counter = counter - 1
     text(
       area = Rect(x = 40, y = 10, w = 30, h = 30),
       color = Color(0, 0, 0),
-      text = counter.toString,
+      message = counter.toString,
       font = Font.default,
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )
-    button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"):
+    button(id = "plus", label = "+")(area = Rect(x = 70, y = 10, w = 30, h = 30)):
       counter = counter + 1
 ```
 
@@ -128,16 +128,16 @@ def immutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     val (decrementCounter, _, incrementCounter) = (
-      button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-")(true).getOrElse(false),
+      button(id = "minus", label = "-")(area = Rect(x = 10, y = 10, w = 30, h = 30))(true).getOrElse(false),
       text(
         area = Rect(x = 40, y = 10, w = 30, h = 30),
         color = Color(0, 0, 0),
-        text = counter.toString,
+        message = counter.toString,
         font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       ),
-      button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+")(true).getOrElse(false)
+      button(id = "plus", label = "+")(area = Rect(x = 70, y = 10, w = 30, h = 30))(true).getOrElse(false)
     )
     if (decrementCounter && !incrementCounter) counter - 1
     else if (!decrementCounter && incrementCounter) counter + 1
@@ -154,17 +154,17 @@ def localMutableApp(inputState: InputState, counter: Int): (List[RenderOp], Int)
   import eu.joaocosta.interim.InterIm.*
   var _counter = counter
   ui(inputState, uiContext):
-    button(id = "minus", area = Rect(x = 10, y = 10, w = 30, h = 30), label = "-"):
+    button(id = "minus", label = "-")(area = Rect(x = 10, y = 10, w = 30, h = 30)):
       _counter = counter - 1
     text(
       area = Rect(x = 40, y = 10, w = 30, h = 30),
       color = Color(0, 0, 0),
-      text = counter.toString,
+      message = counter.toString,
       font = Font.default,
       horizontalAlignment = centerHorizontally,
       verticalAlignment = centerVertically
     )
-    button(id = "plus", area = Rect(x = 70, y = 10, w = 30, h = 30), label = "+"):
+    button(id = "plus", label = "+")(area = Rect(x = 70, y = 10, w = 30, h = 30)):
       _counter = counter + 1
     _counter
 ```

@@ -39,19 +39,19 @@ def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     // window takes area as a ref, so will mutate the window area variable
-    window(id = "window", area = windowArea, title = "My Counter", movable = true):area =>
-      columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
-        button(id = "minus", area = column, label = "-"):
+    window(id = "window", title = "My Counter", movable = true)(area = windowArea): area =>
+      columns(area = area.shrink(5), numColumns = 3, padding = 10):
+        button(id = "minus", label = "-"):
           counter = counter - 1
         text(
-          area = column,
+          area = summon,
           color = Color(0, 0, 0),
           message = counter.toString,
           font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        button(id = "plus", area = column, label = "+"):
+        button(id = "plus", label = "+"):
           counter = counter + 1
 ```
 
@@ -81,19 +81,19 @@ def applicationRef(inputState: InputState, appState: AppState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
     appState.asRefs: (counter, windowArea) =>
-      window(id = "window", area = windowArea, title = "My Counter", movable = true): area =>
-        columns(area = area.shrink(5), numColumns = 3, padding = 10): column =>
-          button(id = "minus", area = column, label = "-"):
+      window(id = "window", title = "My Counter", movable = true)(area = windowArea): area =>
+        columns(area = area.shrink(5), numColumns = 3, padding = 10):
+          button(id = "minus", label = "-"):
             counter := counter.get - 1 // Counter is a Ref, so we need to use :=
           text(
-            area = column,
+            area = summon,
             color = Color(0, 0, 0),
             message = counter.get.toString,  // Counter is a Ref, so we need to use .get
             font = Font.default,
             horizontalAlignment = centerHorizontally,
             verticalAlignment = centerVertically
           )
-          button(id = "plus", area = column, label = "+"):
+          button(id = "plus", label = "+"):
             counter := counter.get + 1  // Counter is a Ref, so we need to use :=
 ```
 

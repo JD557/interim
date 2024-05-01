@@ -14,25 +14,42 @@ trait Components:
   type Component[+T] = (inputState: InputState.Historical, uiContext: UiContext) ?=> T
 
   trait ComponentWithValue[T]:
-    def render(value: Ref[T]): Component[Unit]
+    def allocateArea(using allocator: LayoutAllocator): Rect
 
-    def applyRef(value: Ref[T]): Component[T] =
-      render(value)
+    def render(area: Rect, value: Ref[T]): Component[Unit]
+
+    def render(value: Ref[T])(using allocator: LayoutAllocator): Component[Unit] =
+      render(allocateArea, value)
+
+    def applyRef(area: Rect, value: Ref[T]): Component[T] =
+      render(area, value)
       value.get
 
-    def applyValue(value: T): Component[T] =
-      apply(Ref(value))
+    def applyValue(area: Rect, value: T): Component[T] =
+      apply(area, Ref(value))
 
-    inline def apply(value: T | Ref[T]): Component[T] = inline value match
-      case x: T      => applyValue(x)
-      case x: Ref[T] => applyRef(x)
+    inline def apply(area: Rect, value: T | Ref[T]): Component[T] = inline value match
+      case x: T      => applyValue(area, x)
+      case x: Ref[T] => applyRef(area, x)
+
+    inline def apply(value: T | Ref[T])(using allocator: LayoutAllocator): Component[T] = apply(allocateArea, value)
 
   trait ComponentWithBody[I, F[_]]:
-    def render[T](body: I => T): Component[F[T]]
+    def allocateArea(using allocator: LayoutAllocator): Rect
 
-    def apply[T](body: I => T): Component[F[T]] = render(body)
+    def render[T](area: Rect, body: I => T): Component[F[T]]
 
-    def apply[T](body: => T)(using ev: I =:= Unit): Component[F[T]] = render(_ => body)
+    def render[T](body: I => T)(using allocator: LayoutAllocator): Component[Unit] =
+      render(allocateArea, body)
+
+    def apply[T](area: Rect)(body: I => T): Component[F[T]] = render(area, body)
+
+    def apply[T](area: Rect)(body: => T)(using ev: I =:= Unit): Component[F[T]] = render(area, _ => body)
+
+    def apply[T](body: I => T)(using allocator: LayoutAllocator): Component[F[T]] = render(allocateArea, body)
+
+    def apply[T](body: => T)(using allocator: LayoutAllocator, ev: I =:= Unit): Component[F[T]] =
+      render(allocateArea, _ => body)
 
   /** Button component. Returns true if it's being clicked, false otherwise.
     *
@@ -40,37 +57,33 @@ trait Components:
     */
   final def button(
       id: ItemId,
-      area: Rect | LayoutAllocator,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithBody[Unit, Option] =
     new ComponentWithBody[Unit, Option]:
-      def render[T](body: Unit => T): Component[Option[T]] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc, label)
-        }
-        val buttonArea = skin.buttonArea(reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator, label)
+
+      def render[T](area: Rect, body: Unit => T): Component[Option[T]] =
+        val buttonArea = skin.buttonArea(area)
         val itemStatus = UiContext.registerItem(id, buttonArea)
-        skin.renderButton(reservedArea, label, itemStatus)
+        skin.renderButton(area, label, itemStatus)
         Option.when(itemStatus.clicked)(body(()))
 
   /** Checkbox component. Returns true if it's enabled, false otherwise.
     */
   final def checkbox(
       id: ItemId,
-      area: Rect | LayoutAllocator,
       skin: CheckboxSkin = CheckboxSkin.default()
   ): ComponentWithValue[Boolean] =
     new ComponentWithValue[Boolean]:
-      def render(value: Ref[Boolean]): Component[Unit] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc)
-        }
-        val checkboxArea = skin.checkboxArea(reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[Boolean]): Component[Unit] =
+        val checkboxArea = skin.checkboxArea(area)
         val itemStatus   = UiContext.registerItem(id, checkboxArea)
-        skin.renderCheckbox(reservedArea, value.get, itemStatus)
+        skin.renderCheckbox(area, value.get, itemStatus)
         value.modifyIf(itemStatus.clicked)(!_)
 
   /** Radio button component. Returns value currently selected.
@@ -80,22 +93,21 @@ trait Components:
     */
   final def radioButton[T](
       id: ItemId,
-      area: Rect | LayoutAllocator,
+      area: Rect,
       buttonValue: T,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
   ): ComponentWithValue[T] =
     new ComponentWithValue[T]:
-      def render(value: Ref[T]): Component[Unit] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc, label)
-        }
-        val buttonArea = skin.buttonArea(reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator, label)
+
+      def render(area: Rect, value: Ref[T]): Component[Unit] =
+        val buttonArea = skin.buttonArea(area)
         val itemStatus = UiContext.registerItem(id, buttonArea)
         if (itemStatus.clicked) value := buttonValue
-        if (value.get == buttonValue) skin.renderButton(reservedArea, label, itemStatus.copy(hot = true, active = true))
-        else skin.renderButton(reservedArea, label, itemStatus)
+        if (value.get == buttonValue) skin.renderButton(area, label, itemStatus.copy(hot = true, active = true))
+        else skin.renderButton(area, label, itemStatus)
 
   /** Select box component. Returns the index value currently selected inside a PanelState.
     *
@@ -104,30 +116,28 @@ trait Components:
     */
   final def select(
       id: ItemId,
-      area: Rect | LayoutAllocator,
       labels: Vector[String],
       undefinedFirstValue: Boolean = false,
       skin: SelectSkin = SelectSkin.default()
   ): ComponentWithValue[PanelState[Int]] =
     new ComponentWithValue[PanelState[Int]]:
-      def render(value: Ref[PanelState[Int]]): Component[Unit] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc, labels)
-        }
-        val selectBoxArea = skin.selectBoxArea(reservedArea)
-        val itemStatus    = UiContext.registerItem(id, reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator, labels)
+
+      def render(area: Rect, value: Ref[PanelState[Int]]): Component[Unit] =
+        val selectBoxArea = skin.selectBoxArea(area)
+        val itemStatus    = UiContext.registerItem(id, area)
         value.modifyIf(itemStatus.selected)(_.open)
-        skin.renderSelectBox(reservedArea, value.get.value, labels, itemStatus)
+        skin.renderSelectBox(area, value.get.value, labels, itemStatus)
         if (value.get.isOpen)
           value.modifyIf(!itemStatus.selected)(_.close)
           val selectableLabels = labels.drop(if (undefinedFirstValue) 1 else 0)
           Primitives.onTop:
             selectableLabels.zipWithIndex
               .foreach: (label, idx) =>
-                val selectOptionArea = skin.selectOptionArea(reservedArea, idx)
+                val selectOptionArea = skin.selectOptionArea(area, idx)
                 val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
-                skin.renderSelectOption(reservedArea, idx, selectableLabels, optionStatus)
+                skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
                 if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
 
   /** Slider component. Returns the current position of the slider, between min and max.
@@ -137,26 +147,24 @@ trait Components:
     */
   final def slider(
       id: ItemId,
-      area: Rect | LayoutAllocator,
       min: Int,
       max: Int,
       skin: SliderSkin = SliderSkin.default()
   ): ComponentWithValue[Int] =
     new ComponentWithValue[Int]:
-      def render(value: Ref[Int]): Component[Unit] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc)
-        }
-        val sliderArea   = skin.sliderArea(reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[Int]): Component[Unit] =
+        val sliderArea   = skin.sliderArea(area)
         val steps        = max - min + 1
         val itemStatus   = UiContext.registerItem(id, sliderArea)
         val clampedValue = math.max(min, math.min(value.get, max))
-        skin.renderSlider(reservedArea, min, clampedValue, max, itemStatus)
+        skin.renderSlider(area, min, clampedValue, max, itemStatus)
         if (itemStatus.active)
           summon[InputState].mouseInput.position.foreach: (mouseX, mouseY) =>
             val intPosition =
-              if (reservedArea.w > reservedArea.h) steps * (mouseX - sliderArea.x) / sliderArea.w
+              if (area.w > area.h) steps * (mouseX - sliderArea.x) / sliderArea.w
               else steps * (mouseY - sliderArea.y) / sliderArea.h
             value := math.max(min, math.min(min + intPosition, max))
 
@@ -164,18 +172,16 @@ trait Components:
     */
   final def textInput(
       id: ItemId,
-      area: Rect | LayoutAllocator,
       skin: TextInputSkin = TextInputSkin.default()
   ): ComponentWithValue[String] =
     new ComponentWithValue[String]:
-      def render(value: Ref[String]): Component[Unit] =
-        val reservedArea = area match {
-          case rect: Rect             => rect
-          case alloc: LayoutAllocator => skin.allocateArea(alloc)
-        }
-        val textInputArea = skin.textInputArea(reservedArea)
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[String]): Component[Unit] =
+        val textInputArea = skin.textInputArea(area)
         val itemStatus    = UiContext.registerItem(id, textInputArea)
-        skin.renderTextInput(reservedArea, value.get, itemStatus)
+        skin.renderTextInput(area, value.get, itemStatus)
         value.modifyIf(itemStatus.selected)(summon[InputState].appendKeyboardInput)
 
   /** Draggable handle. Returns the moved area.
@@ -183,9 +189,12 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def moveHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
+  final def moveHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
-      def render(value: Ref[Rect]): Component[Unit] =
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[Rect]): Component[Unit] =
         val handleArea = skin.moveHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
         val deltaX     = summon[InputState.Historical].deltaX
@@ -198,9 +207,12 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def resizeHandle(id: ItemId, area: Rect, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
+  final def resizeHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
     new ComponentWithValue[Rect]:
-      def render(value: Ref[Rect]): Component[Unit] =
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[Rect]): Component[Unit] =
         val handleArea = skin.resizeHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
         val deltaX     = summon[InputState.Historical].deltaX
@@ -215,11 +227,13 @@ trait Components:
     */
   final def closeHandle[T](
       id: ItemId,
-      area: Rect,
       skin: HandleSkin = HandleSkin.default()
   ): ComponentWithValue[PanelState[T]] =
     new ComponentWithValue[PanelState[T]]:
-      def render(value: Ref[PanelState[T]]): Component[Unit] =
+      def allocateArea(using allocator: LayoutAllocator): Rect =
+        skin.allocateArea(allocator)
+
+      def render(area: Rect, value: Ref[PanelState[T]]): Component[Unit] =
         val handleArea = skin.closeHandleArea(area)
         val itemStatus = UiContext.registerItem(id, handleArea)
         skin.renderCloseHandle(area, itemStatus)
