@@ -51,13 +51,8 @@ object RenderOp:
   ) extends RenderOp:
     def clip(rect: Rect): DrawText = copy(area = area & rect)
 
-    /** Converts a DrawText operation into a sequence of simpler DrawChar operations.
-      *
-      * @param lineHeight line height to use, in pixels
-      */
-    def asDrawChars(
-        lineHeight: Int = (font.fontSize * 1.3).toInt
-    ): List[DrawChar] = TextLayout.asDrawChars(this, lineHeight)
+    /** Converts a DrawText operation into a sequence of simpler DrawChar operations. */
+    def asDrawChars: List[DrawChar] = TextLayout.asDrawChars(this)
 
   /** Operation to draw a custom element on the screen
     *

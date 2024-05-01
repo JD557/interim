@@ -13,7 +13,7 @@ trait LayoutAllocator:
   def allocate(width: Int, height: Int): Rect
   def allocate(text: String, font: Font, paddingW: Int = 0, paddingH: Int = 0): Rect =
     val textArea =
-      TextLayout.computeArea(area.resize(-2 * paddingW, -2 * paddingH), text, font, (font.fontSize * 1.3).toInt)
+      TextLayout.computeArea(area.resize(-2 * paddingW, -2 * paddingH), text, font)
     allocate(textArea.w + 2 * paddingW, textArea.h + 2 * paddingH)
 
   def fill(): Rect = allocate(Int.MaxValue, Int.MaxValue)

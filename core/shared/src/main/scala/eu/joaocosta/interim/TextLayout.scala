@@ -57,8 +57,7 @@ object TextLayout:
     chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
   private[interim] def asDrawChars(
-      textOp: RenderOp.DrawText,
-      lineHeight: Int
+      textOp: RenderOp.DrawText
   ): List[RenderOp.DrawChar] =
     @tailrec
     def layout(
@@ -89,14 +88,17 @@ object TextLayout:
             }.toList
             if (ops.isEmpty && nextLine == remaining) layout("", dy, textAcc) // Can't fit a single character, end here
             else
-              layout(nextLine, dy + lineHeight, alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc)
+              layout(
+                nextLine,
+                dy + textOp.font.lineHeight,
+                alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
+              )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
   private[interim] def computeArea(
       boundingArea: Rect,
       text: String,
-      font: Font,
-      lineHeight: Int
+      font: Font
   ): Rect =
     @tailrec
     def layout(
@@ -123,5 +125,5 @@ object TextLayout:
             if (charAreas.isEmpty && nextLine == remaining)
               layout("", dy, areaAcc) // Can't fit a single character, end here
             else
-              layout(nextLine, dy + lineHeight, charAreas.fold(areaAcc)(_ ++ _))
+              layout(nextLine, dy + font.lineHeight, charAreas.fold(areaAcc)(_ ++ _))
     layout(text, 0, boundingArea.copy(w = 0, h = 0)) & boundingArea
