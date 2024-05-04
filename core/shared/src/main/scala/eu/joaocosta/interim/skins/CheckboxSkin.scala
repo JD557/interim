@@ -4,7 +4,7 @@ import eu.joaocosta.interim._
 import eu.joaocosta.interim.api.Primitives._
 
 trait CheckboxSkin:
-  def allocateArea(allocator: LayoutAllocator): Rect
+  def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect
   def checkboxArea(area: Rect): Rect
   def renderCheckbox(area: Rect, value: Boolean, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
@@ -15,7 +15,7 @@ object CheckboxSkin extends DefaultSkin:
       colorScheme: ColorScheme
   ) extends CheckboxSkin:
 
-    def allocateArea(allocator: LayoutAllocator): Rect =
+    def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect =
       allocator.allocate(Font.default.fontSize, Font.default.fontSize)
 
     def checkboxArea(area: Rect): Rect =

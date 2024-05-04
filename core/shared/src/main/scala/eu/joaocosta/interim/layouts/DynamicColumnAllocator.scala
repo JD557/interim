@@ -7,6 +7,7 @@ final class DynamicColumnAllocator(
     padding: Int,
     alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type
 ) extends LayoutAllocator.ColumnAllocator
+    with LayoutAllocator.AreaAllocator
     with (Int => Rect):
   private var currentX = area.x
   private var currentW = area.w

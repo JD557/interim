@@ -4,7 +4,7 @@ import eu.joaocosta.interim._
 import eu.joaocosta.interim.api.Primitives._
 
 trait SliderSkin:
-  def allocateArea(allocator: LayoutAllocator): Rect
+  def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect
   def sliderArea(area: Rect): Rect
   def renderSlider(area: Rect, min: Int, value: Int, max: Int, itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
@@ -18,7 +18,7 @@ object SliderSkin extends DefaultSkin:
       colorScheme: ColorScheme
   ) extends SliderSkin:
 
-    def allocateArea(allocator: LayoutAllocator): Rect =
+    def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect =
       allocator.allocate(Font.default.fontSize + 2 * padding, Font.default.fontSize + 2 * padding)
 
     def sliderArea(area: Rect): Rect = area.shrink(padding)

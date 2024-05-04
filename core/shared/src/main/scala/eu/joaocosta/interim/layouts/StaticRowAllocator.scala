@@ -8,8 +8,9 @@ final class StaticRowAllocator(
     numRows: Int,
     alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type
 ) extends LayoutAllocator.RowAllocator
-    with IndexedSeq[Rect]:
-  val cells: IndexedSeq[Rect] =
+    with LayoutAllocator.AreaAllocator
+    with LayoutAllocator.CellAllocator:
+  lazy val cells: IndexedSeq[Rect] =
     if (numRows == 0) Vector.empty
     else
       val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
@@ -21,14 +22,7 @@ final class StaticRowAllocator(
       if (alignment == VerticalAlignment.Top) baseCells
       else baseCells.reverse
 
-  def apply(i: Int): Rect = cells(i)
-  val length              = cells.length
-
-  private val cellsIterator = cells.iterator
-
-  def nextRow(): Rect =
-    if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)
-    else cellsIterator.next()
+  def nextRow(): Rect = nextCell()
 
   def nextRow(height: Int): Rect =
     if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)

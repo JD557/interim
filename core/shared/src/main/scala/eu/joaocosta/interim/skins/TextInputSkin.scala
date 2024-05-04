@@ -4,7 +4,7 @@ import eu.joaocosta.interim._
 import eu.joaocosta.interim.api.Primitives._
 
 trait TextInputSkin:
-  def allocateArea(allocator: LayoutAllocator): Rect
+  def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect
   def textInputArea(area: Rect): Rect
   def renderTextInput(area: Rect, value: String, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit
 
@@ -17,7 +17,7 @@ object TextInputSkin extends DefaultSkin:
       colorScheme: ColorScheme
   ) extends TextInputSkin:
 
-    def allocateArea(allocator: LayoutAllocator): Rect =
+    def allocateArea(allocator: LayoutAllocator.AreaAllocator): Rect =
       val maxBorder = math.max(border, activeBorder) + 2
       allocator.allocate(2 * maxBorder + 8 * font.fontSize, 2 * maxBorder + font.fontSize)
 

@@ -8,8 +8,9 @@ final class StaticColumnAllocator(
     numColumns: Int,
     alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type
 ) extends LayoutAllocator.ColumnAllocator
-    with IndexedSeq[Rect]:
-  val cells: IndexedSeq[Rect] =
+    with LayoutAllocator.AreaAllocator
+    with LayoutAllocator.CellAllocator:
+  lazy val cells: IndexedSeq[Rect] =
     if (numColumns == 0) Vector.empty
     else
       val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
@@ -21,14 +22,7 @@ final class StaticColumnAllocator(
       if (alignment == HorizontalAlignment.Left) baseCells
       else baseCells.reverse
 
-  def apply(i: Int): Rect = cells(i)
-  val length              = cells.length
-
-  private val cellsIterator = cells.iterator
-
-  def nextColumn(): Rect =
-    if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)
-    else cellsIterator.next()
+  def nextColumn(): Rect = nextCell()
 
   def nextColumn(width: Int): Rect =
     if (!cellsIterator.hasNext) area.copy(w = 0, h = 0)

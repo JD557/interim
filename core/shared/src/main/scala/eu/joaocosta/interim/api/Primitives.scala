@@ -12,16 +12,26 @@ trait Primitives:
 
   /** Draws a rectangle filling the specified area with a color.
     */
-  final def rectangle(area: Rect, color: Color)(using uiContext: UiContext): Unit =
-    uiContext.pushRenderOp(RenderOp.DrawRect(area, color))
+  final def rectangle(area: Rect | LayoutAllocator.CellAllocator, color: Color)(using uiContext: UiContext): Unit =
+    val reservedArea = area match {
+      case rect: Rect                           => rect
+      case alloc: LayoutAllocator.CellAllocator => alloc.nextCell()
+    }
+    uiContext.pushRenderOp(RenderOp.DrawRect(reservedArea, color))
 
   /** Draws the outline a rectangle inside the specified area with a color.
     */
-  final def rectangleOutline(area: Rect, color: Color, strokeSize: Int)(using uiContext: UiContext): Unit =
-    val top    = area.copy(h = strokeSize)
-    val bottom = top.move(dx = 0, dy = area.h - strokeSize)
-    val left   = area.copy(w = strokeSize)
-    val right  = left.move(dx = area.w - strokeSize, dy = 0)
+  final def rectangleOutline(area: Rect | LayoutAllocator.CellAllocator, color: Color, strokeSize: Int)(using
+      uiContext: UiContext
+  ): Unit =
+    val reservedArea = area match {
+      case rect: Rect                           => rect
+      case alloc: LayoutAllocator.CellAllocator => alloc.nextCell()
+    }
+    val top    = reservedArea.copy(h = strokeSize)
+    val bottom = top.move(dx = 0, dy = reservedArea.h - strokeSize)
+    val left   = reservedArea.copy(w = strokeSize)
+    val right  = left.move(dx = reservedArea.w - strokeSize, dy = 0)
     rectangle(top, color)
     rectangle(bottom, color)
     rectangle(left, color)
@@ -35,7 +45,7 @@ trait Primitives:
     * @param verticalAlignment how the text should be aligned vertically
     */
   final def text(
-      area: Rect | LayoutAllocator,
+      area: Rect | LayoutAllocator.AreaAllocator,
       color: Color,
       message: String,
       font: Font = Font.default,
@@ -46,8 +56,8 @@ trait Primitives:
   ): Unit =
     if (message.nonEmpty)
       val reservedArea = area match {
-        case rect: Rect             => rect
-        case alloc: LayoutAllocator => alloc.allocate(message, font)
+        case rect: Rect                           => rect
+        case alloc: LayoutAllocator.AreaAllocator => alloc.allocate(message, font)
       }
       uiContext.pushRenderOp(
         RenderOp.DrawText(reservedArea, color, message, font, reservedArea, horizontalAlignment, verticalAlignment)

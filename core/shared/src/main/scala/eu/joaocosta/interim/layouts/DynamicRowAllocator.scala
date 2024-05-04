@@ -7,6 +7,7 @@ final class DynamicRowAllocator(
     padding: Int,
     alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type
 ) extends LayoutAllocator.RowAllocator
+    with LayoutAllocator.AreaAllocator
     with (Int => Rect):
   private var currentY = area.y
   private var currentH = area.h
