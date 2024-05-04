@@ -5,6 +5,8 @@ import eu.joaocosta.interim._
 /** Object containing the default primitives.
   *
   * By convention, all components are functions in the form `def primitive(area, color, params...): Unit`.
+  *
+  * The area parameter can be either a `Rect` or a `LayoutAllocator`.
   */
 object Primitives extends Primitives
 

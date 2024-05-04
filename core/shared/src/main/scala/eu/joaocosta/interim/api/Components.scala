@@ -5,7 +5,9 @@ import eu.joaocosta.interim.skins._
 
 /** Object containing the default components.
   *
-  * By convention, all components are functions in the form `def component(id, area, ...params, skin)(value): Value`.
+  * By convention, all components are functions in the form `def component(id, ...params, skin)(area, value): Value`.
+  *
+  * The area parameter can be ommited if there's an area allocator in scope.
   */
 object Components extends Components
 

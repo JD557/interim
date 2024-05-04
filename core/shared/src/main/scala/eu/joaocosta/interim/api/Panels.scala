@@ -14,7 +14,7 @@ import eu.joaocosta.interim.skins._
   * As such, panels should be called like:
   *
   * ```
-  *  val (value, nextRect) = panel(id, panelRect, ...) {area => ...}
+  *  val (value, nextRect) = panel(id, params..., skins...)(panelRect){area => ...}
   *  panelRect = nextRect
   * ```
   */
