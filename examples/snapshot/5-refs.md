@@ -1,4 +1,4 @@
-# 4. Mutable References
+# 5. Mutable References
 
 Welcome to the InterIm tutorial!
 
@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli 4-refs.md example-minart-backend.scala
+scala-cli 5-refs.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion

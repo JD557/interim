@@ -1,4 +1,4 @@
-# 3. Windows
+# 4. Windows
 
 Welcome to the InterIm tutorial!
 
@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli 3-windows.md example-minart-backend.scala
+scala-cli 4-windows.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion

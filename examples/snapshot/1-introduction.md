@@ -81,8 +81,8 @@ in the end, returns the sequence of render operations that must be executed by t
 
 Now, to the button logic:
 1. Interactive components like buttons require a unique ID, which is the first parameter;
-2. Then we need to specify an area where the button will be drawn;
-3. We also add a label, which is the text that will be shown on the button;
+2. We also add a label, which is the text that will be shown on the button;
+3. Then we need to specify an area where the button will be drawn;
 4. Finally, `button` returns `true` when the button is pressed, so we use that to decrement our counter.
 
 For the text block we don't need an id, as it's just a rendering primitive with no interaction, so we just need to
