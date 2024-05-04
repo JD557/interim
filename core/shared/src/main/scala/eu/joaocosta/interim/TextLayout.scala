@@ -89,7 +89,7 @@ object TextLayout:
               )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
-  private[interim] def computeArea(
+  def computeArea(
       boundingArea: Rect,
       text: String,
       font: Font
