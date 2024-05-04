@@ -1,6 +1,6 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.{Color, Font, HorizontalAlignment, Rect, RenderOp, UiContext, VerticalAlignment}
+import eu.joaocosta.interim._
 
 /** Object containing the default primitives.
   *

@@ -1,7 +1,6 @@
 package eu.joaocosta.interim.skins
 
 import eu.joaocosta.interim._
-import eu.joaocosta.interim.api.LayoutAllocator
 import eu.joaocosta.interim.api.Primitives._
 
 trait TextInputSkin:

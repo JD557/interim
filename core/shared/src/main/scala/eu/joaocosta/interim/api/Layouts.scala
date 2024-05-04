@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.api.LayoutAllocator._
-import eu.joaocosta.interim.{HorizontalAlignment, InputState, Rect, UiContext, VerticalAlignment}
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.layouts._
 
 /** Objects containing all default layouts.
   *
@@ -75,7 +75,7 @@ trait Layouts:
       padding: Int,
       alignment: VerticalAlignment.Top.type | VerticalAlignment.Bottom.type = VerticalAlignment.Top
   )(body: DynamicRowAllocator ?=> T): T =
-    val allocator = new LayoutAllocator.DynamicRowAllocator(area, padding, alignment)
+    val allocator = new DynamicRowAllocator(area, padding, alignment)
     body(using allocator)
 
   /** Lays out the components in a sequence of columns of different sizes, separated by a padding.
@@ -88,7 +88,7 @@ trait Layouts:
       padding: Int,
       alignment: HorizontalAlignment.Left.type | HorizontalAlignment.Right.type = HorizontalAlignment.Left
   )(body: DynamicColumnAllocator ?=> T): T =
-    val allocator = new LayoutAllocator.DynamicColumnAllocator(area, padding, alignment)
+    val allocator = new DynamicColumnAllocator(area, padding, alignment)
     body(using allocator)
 
   /** Handle mouse events inside a specified area.
