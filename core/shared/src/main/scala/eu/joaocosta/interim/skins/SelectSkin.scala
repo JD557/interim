@@ -7,7 +7,13 @@ trait SelectSkin:
   def allocateArea(allocator: LayoutAllocator.AreaAllocator, labels: Vector[String]): Rect
 
   def selectBoxArea(area: Rect): Rect
-  def renderSelectBox(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
+  def renderSelectBox(
+      area: Rect,
+      value: Int,
+      labels: Vector[String],
+      defaultLabel: String,
+      itemStatus: UiContext.ItemStatus
+  )(using
       uiContext: UiContext
   ): Unit
 
@@ -32,11 +38,17 @@ object SelectSkin extends DefaultSkin:
     def selectBoxArea(area: Rect): Rect =
       area
 
-    def renderSelectBox(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
+    def renderSelectBox(
+        area: Rect,
+        value: Int,
+        labels: Vector[String],
+        defaultLabel: String,
+        itemStatus: UiContext.ItemStatus
+    )(using
         uiContext: UiContext
     ): Unit =
       val selectBoxArea = this.selectBoxArea(area)
-      val selectedLabel = labels.applyOrElse(value, _ => "")
+      val selectedLabel = labels.applyOrElse(value, _ => defaultLabel)
       itemStatus match
         case UiContext.ItemStatus(_, _, true, _) | UiContext.ItemStatus(_, true, _, _) =>
           rectangle(selectBoxArea, colorScheme.primaryHighlight)
