@@ -1,10 +1,11 @@
 package eu.joaocosta.interim.skins
 
-import eu.joaocosta.interim.TextLayout.*
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.api.Primitives.*
+import eu.joaocosta.interim.TextLayout._
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.api.Primitives._
 
 trait ButtonSkin:
+  def allocateArea(allocator: LayoutAllocator.AreaAllocator, label: String): Rect
   def buttonArea(area: Rect): Rect
   def renderButton(area: Rect, label: String, itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
@@ -17,6 +18,9 @@ object ButtonSkin extends DefaultSkin:
       font: Font,
       colorScheme: ColorScheme
   ) extends ButtonSkin:
+
+    def allocateArea(allocator: LayoutAllocator.AreaAllocator, label: String): Rect =
+      allocator.allocate(label, font, paddingH = buttonHeight / 2)
 
     def buttonArea(area: Rect): Rect =
       area.copy(w = area.w, h = area.h - buttonHeight)

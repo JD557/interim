@@ -1,4 +1,4 @@
-# 5. Color Picker
+# 6. Color Picker
 
 Welcome to the InterIm tutorial!
 
@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli 5-colorpicker.md example-minart-backend.scala
+scala-cli 6-colorpicker.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion
@@ -78,52 +78,52 @@ def application(inputState: InputState, appState: AppState) =
   ui(inputState, uiContext):
     appState.asRefs: (colorPickerArea, colorSearchArea, colorRange, resultDelta, color, query) =>
       onTop:
-        window(id = "color picker", area = colorPickerArea, title = "Color Picker", closable = true, movable = true, resizable = true): area =>
-          rows(area = area.shrink(5), numRows = 6, padding = 10): row =>
-            rectangle(row(0), color.get)
-            select(id = "range", row(1), Vector("0-255","0-100", "0x00-0xff"))(colorRange).value match
+        window(id = "color picker", title = "Color Picker", closable = true, movable = true, resizable = true)(area = colorPickerArea): area =>
+          rows(area = area.shrink(5), numRows = 6, padding = 10):
+            rectangle(summon, color.get)
+            select(id = "range", Vector("0-255","0-100", "0x00-0xff"))(colorRange).value match
               case 0 =>
                 val colorStr = f"R:${color.get.r}%03d G:${color.get.g}%03d B:${color.get.b}%03d"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
+                text(summon, textColor, colorStr, Font.default, alignLeft, centerVertically)
               case 1 =>
                 val colorStr = f"R:${color.get.r * 100 / 255}%03d G:${color.get.g * 100 / 255}%03d B:${color.get.b * 100 / 255}%03d"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
+                text(summon, textColor, colorStr, Font.default, alignLeft, centerVertically)
               case 2 =>
                 val colorStr = f"R:0x${color.get.r}%02x G:0x${color.get.g}%02x B:0x${color.get.b}%02x"
-                text(row(2), textColor, colorStr, Font.default, alignLeft, centerVertically)
-            val r = slider("red slider", row(3), min = 0, max = 255)(color.get.r)
-            val g = slider("green slider", row(4), min = 0, max = 255)(color.get.g)
-            val b = slider("blue slider", row(5), min = 0, max = 255)(color.get.b)
+                text(summon, textColor, colorStr, Font.default, alignLeft, centerVertically)
+            val r = slider("red slider", min = 0, max = 255)(color.get.r)
+            val g = slider("green slider", min = 0, max = 255)(color.get.g)
+            val b = slider("blue slider", min = 0, max = 255)(color.get.b)
             color := Color(r, g, b)
 
-      window(id = "color search", area = colorSearchArea, title = "Color Search", closable = false, movable = true): area =>
-        dynamicRows(area = area.shrink(5), padding = 10): newRow =>
+      window(id = "color search", title = "Color Search", closable = false, movable = true)(area = colorSearchArea): area =>
+        dynamicRows(area = area.shrink(5), padding = 10): rowAlloc ?=>
           val oldQuery = query.get
-          textInput("query", newRow(16))(query)
+          textInput("query")(query)
           if (query.get != oldQuery) resultDelta := 0
           val results = htmlColors.filter(_._1.toLowerCase.startsWith(query.get.toLowerCase))
-          val resultsArea = newRow(maxSize)
+          val resultsArea = rowAlloc.fill()
           val buttonSize = 32
-          dynamicColumns(area = resultsArea, padding = 10): newColumn =>
+          dynamicColumns(area = resultsArea, padding = 10, alignRight): newColumn ?=>
             val resultsHeight = results.size * buttonSize
             if (resultsHeight > resultsArea.h)
-              slider("result scroller", newColumn(-16), min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
-            val clipArea = newColumn(maxSize)
+              slider("result scroller", min = 0, max = resultsHeight - resultsArea.h)(resultDelta)
+            val clipArea = newColumn.fill()
             clip(area = clipArea):
-              rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10): rows =>
+              rows(area = clipArea.copy(y = clipArea.y - resultDelta.get, h = resultsHeight), numRows = results.size, padding = 10): rows ?=>
                 results.zip(rows).foreach:
                   case ((colorName, colorValue), row) =>
-                    button(s"$colorName button", row, colorName):
+                    button(s"$colorName button", colorName)(row):
                       colorPickerArea.modify(_.open)
                       color := colorValue
 
       onBottom:
-        window(id = "settings", area = PanelState.open(Rect(10, 430, 250, 40)), title = "Settings", movable = false): area =>
-          dynamicColumns(area = area.shrink(5), padding = 10): newColumn =>
-            if (checkbox(id = "dark mode", newColumn(-16))(skins.ColorScheme.darkModeEnabled()))
+        window(id = "settings", title = "Settings", movable = false)(area = Rect(10, 430, 250, 40)): area =>
+          dynamicColumns(area = area.shrink(5), padding = 10, alignRight): colAlloc ?=>
+            if (checkbox(id = "dark mode")(skins.ColorScheme.darkModeEnabled()))
               skins.ColorScheme.useDarkMode()
             else skins.ColorScheme.useLightMode()
-            text(newColumn(maxSize).move(0, 4), textColor, "Dark Mode", Font.default, alignRight)
+            text(colAlloc.fill(), textColor, "Dark Mode", Font.default, alignRight)
 ```
 
 Let's run it:

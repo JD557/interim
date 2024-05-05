@@ -1,7 +1,7 @@
 package eu.joaocosta.interim.api
 
-import eu.joaocosta.interim.*
-import eu.joaocosta.interim.skins.*
+import eu.joaocosta.interim._
+import eu.joaocosta.interim.skins._
 
 /** Objects containing all default panels.
   *
@@ -14,13 +14,25 @@ import eu.joaocosta.interim.skins.*
   * As such, panels should be called like:
   *
   * ```
-  *  val (value, nextRect) = panel(id, panelRect, ...) {area => ...}
+  *  val (value, nextRect) = panel(id, params..., skins...)(panelRect){area => ...}
   *  panelRect = nextRect
   * ```
   */
 object Panels extends Panels
 
 trait Panels:
+
+  trait Panel[I, F[_]]:
+    def render[T](area: Ref[PanelState[Rect]], body: I => T): Components.Component[F[T]]
+
+    def apply[T](area: Ref[PanelState[Rect]])(body: I => T): Components.Component[F[T]] =
+      render(area, body)
+
+    def apply[T](area: PanelState[Rect])(body: I => T): Components.Component[F[T]] =
+      render(Ref(area), body)
+
+    def apply[T](area: Rect)(body: I => T): Components.Component[F[T]] =
+      render(Ref(PanelState.open(area)), body)
 
   /**  Window with a title.
     *
@@ -31,22 +43,17 @@ trait Panels:
     */
   final def window(
       id: ItemId,
-      area: Rect | PanelState[Rect] | Ref[PanelState[Rect]],
       title: String,
       closable: Boolean = false,
       movable: Boolean = false,
       resizable: Boolean = false,
       skin: WindowSkin = WindowSkin.default(),
       handleSkin: HandleSkin = HandleSkin.default()
-  ): Components.ComponentWithBody[Rect, [T] =>> (Option[T], PanelState[Rect])] =
-    new Components.ComponentWithBody[Rect, [T] =>> (Option[T], PanelState[Rect])]:
-      def render[T](body: Rect => T): Components.Component[(Option[T], PanelState[Rect])] =
-        val panelStateRef = area match
-          case ref: Ref[PanelState[Rect]] => ref
-          case v: PanelState[Rect]        => Ref(v)
-          case v: Rect                    => Ref(PanelState.open(v))
-        if (panelStateRef.get.isOpen)
-          def windowArea = panelStateRef.get.value
+  ): Panel[Rect, [T] =>> (Option[T], PanelState[Rect])] =
+    new Panel[Rect, [T] =>> (Option[T], PanelState[Rect])]:
+      def render[T](area: Ref[PanelState[Rect]], body: Rect => T): Components.Component[(Option[T], PanelState[Rect])] =
+        if (area.get.isOpen)
+          def windowArea = area.get.value
           UiContext.registerItem(id, windowArea, passive = true)
           skin.renderWindow(windowArea, title)
           val res = body(skin.panelArea(windowArea))
@@ -54,24 +61,21 @@ trait Panels:
             Components
               .closeHandle(
                 id |> "internal_close_handle",
-                skin.titleTextArea(windowArea),
                 handleSkin
-              )(panelStateRef)
+              )(skin.titleTextArea(windowArea), area)
           if (resizable)
             val newArea = Components
               .resizeHandle(
                 id |> "internal_resize_handle",
-                skin.resizeArea(windowArea),
                 handleSkin
-              )(windowArea)
-            panelStateRef.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
+              )(skin.resizeArea(windowArea), windowArea)
+            area.modify(_.copy(value = skin.ensureMinimumArea(newArea)))
           if (movable)
             val newArea = Components
               .moveHandle(
                 id |> "internal_move_handle",
-                skin.titleTextArea(windowArea),
                 handleSkin
-              )(windowArea)
-            panelStateRef.modify(_.copy(value = newArea))
-          (Option.when(panelStateRef.get.isOpen)(res), panelStateRef.get)
-        else (None, panelStateRef.get)
+              )(skin.titleTextArea(windowArea), windowArea)
+            area.modify(_.copy(value = newArea))
+          (Option.when(area.get.isOpen)(res), area.get)
+        else (None, area.get)

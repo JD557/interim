@@ -4,12 +4,6 @@ import scala.annotation.tailrec
 
 object TextLayout:
 
-  enum HorizontalAlignment:
-    case Left, Center, Right
-
-  enum VerticalAlignment:
-    case Top, Center, Bottom
-
   private def cumulativeSum(xs: Iterable[Int]): Iterable[Int] =
     if (xs.isEmpty) xs
     else xs.tail.scanLeft(xs.head)(_ + _)
@@ -23,16 +17,17 @@ object TextLayout:
     else
       val (nextFullLine, remainingLines) = str.span(_ != '\n')
       // If the line fits, simply return the line
-      if (textSize(nextFullLine) < lineSize) (nextFullLine, remainingLines.drop(1))
+      if (textSize(nextFullLine) <= lineSize) (nextFullLine, remainingLines.drop(1))
       else
         val words     = nextFullLine.split(" ")
         val firstWord = words.headOption.getOrElse("")
         // If the first word is too big, it needs to be broken
         if (textSize(firstWord) > lineSize)
-          val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 < lineSize)
+          val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 <= lineSize)
           (firstPart.map(_._1).mkString(""), secondPart.map(_._1).mkString("") ++ remainingLines)
         else // Otherwise, pick as many words as fit
-          val (selectedWords, remainingWords) = cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 < lineSize)
+          val (selectedWords, remainingWords) =
+            cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 <= lineSize)
           (selectedWords.map(_._1).mkString(" "), remainingWords.map(_._1).mkString(" ") ++ remainingLines)
 
   private def alignH(
@@ -56,8 +51,7 @@ object TextLayout:
     chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
   private[interim] def asDrawChars(
-      textOp: RenderOp.DrawText,
-      lineHeight: Int
+      textOp: RenderOp.DrawText
   ): List[RenderOp.DrawChar] =
     @tailrec
     def layout(
@@ -88,5 +82,42 @@ object TextLayout:
             }.toList
             if (ops.isEmpty && nextLine == remaining) layout("", dy, textAcc) // Can't fit a single character, end here
             else
-              layout(nextLine, dy + lineHeight, alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc)
+              layout(
+                nextLine,
+                dy + textOp.font.lineHeight,
+                alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
+              )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
+
+  def computeArea(
+      boundingArea: Rect,
+      text: String,
+      font: Font
+  ): Rect =
+    @tailrec
+    def layout(
+        remaining: String,
+        dy: Int,
+        areaAcc: Rect
+    ): Rect =
+      remaining match
+        case "" => areaAcc
+        case str =>
+          if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
+          else
+            val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
+            val charAreas = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+              val width = font.charWidth(char)
+              val charArea = Rect(
+                x = boundingArea.x + dx - width,
+                y = boundingArea.y + dy,
+                w = width,
+                h = font.fontSize
+              )
+              charArea
+            }.toList
+            if (charAreas.isEmpty && nextLine == remaining)
+              layout("", dy, areaAcc) // Can't fit a single character, end here
+            else
+              layout(nextLine, dy + font.lineHeight, charAreas.fold(areaAcc)(_ ++ _))
+    layout(text, 0, boundingArea.copy(w = 0, h = 0)) & boundingArea

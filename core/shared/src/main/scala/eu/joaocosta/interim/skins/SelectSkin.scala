@@ -4,6 +4,8 @@ import eu.joaocosta.interim._
 import eu.joaocosta.interim.api.Primitives._
 
 trait SelectSkin:
+  def allocateArea(allocator: LayoutAllocator.AreaAllocator, labels: Vector[String]): Rect
+
   def selectBoxArea(area: Rect): Rect
   def renderSelectBox(area: Rect, value: Int, labels: Vector[String], itemStatus: UiContext.ItemStatus)(using
       uiContext: UiContext
@@ -21,6 +23,10 @@ object SelectSkin extends DefaultSkin:
       font: Font,
       colorScheme: ColorScheme
   ) extends SelectSkin:
+
+    def allocateArea(allocator: LayoutAllocator.AreaAllocator, labels: Vector[String]): Rect =
+      val largestLabel = labels.maxByOption(_.size).getOrElse("")
+      allocator.allocate(largestLabel, font, paddingW = padding, paddingH = padding)
 
     // Select box
     def selectBoxArea(area: Rect): Rect =
@@ -43,8 +49,8 @@ object SelectSkin extends DefaultSkin:
         colorScheme.text,
         selectedLabel,
         font,
-        TextLayout.HorizontalAlignment.Left,
-        TextLayout.VerticalAlignment.Center
+        HorizontalAlignment.Left,
+        VerticalAlignment.Center
       )
 
     // Select option
@@ -68,8 +74,8 @@ object SelectSkin extends DefaultSkin:
         colorScheme.text,
         optionLabel,
         font,
-        TextLayout.HorizontalAlignment.Left,
-        TextLayout.VerticalAlignment.Center
+        HorizontalAlignment.Left,
+        VerticalAlignment.Center
       )
 
   val lightDefault: Default = Default(
