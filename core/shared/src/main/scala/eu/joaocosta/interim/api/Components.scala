@@ -115,13 +115,17 @@ trait Components:
 
   /** Select box component. Returns the index value currently selected inside a PanelState.
     *
+    * It also allows one to define a default label if the value is invalid.
+    * This can be particularly to keep track if a user has selected no value, by setting the
+    * initial value to an invalid sentinel value (e.g. -1).
+    *
     * @param labels text labels for each value
-    * @param undefinedFirstValue if true, the value 0 will not show on the options, acting as a default undefined value
+    * @param defaultLabel label to print if the value doesn't match any of the labels.
     */
   final def select(
       id: ItemId,
       labels: Vector[String],
-      undefinedFirstValue: Boolean = false,
+      defaultLabel: String = "",
       skin: SelectSkin = SelectSkin.default()
   ): ComponentWithValue[PanelState[Int]] =
     new ComponentWithValue[PanelState[Int]]:
@@ -132,17 +136,16 @@ trait Components:
         val selectBoxArea = skin.selectBoxArea(area)
         val itemStatus    = UiContext.registerItem(id, area)
         value.modifyIf(itemStatus.selected)(_.open)
-        skin.renderSelectBox(area, value.get.value, labels, itemStatus)
+        skin.renderSelectBox(area, value.get.value, labels, defaultLabel, itemStatus)
         if (value.get.isOpen)
           value.modifyIf(!itemStatus.selected)(_.close)
-          val selectableLabels = labels.drop(if (undefinedFirstValue) 1 else 0)
           Primitives.onTop:
-            selectableLabels.zipWithIndex
+            labels.zipWithIndex
               .foreach: (label, idx) =>
                 val selectOptionArea = skin.selectOptionArea(area, idx)
                 val optionStatus     = UiContext.registerItem(id |> idx, selectOptionArea)
-                skin.renderSelectOption(area, idx, selectableLabels, optionStatus)
-                if (optionStatus.active) value := PanelState.closed(if (undefinedFirstValue) idx + 1 else idx)
+                skin.renderSelectOption(area, idx, labels, optionStatus)
+                if (optionStatus.active) value := PanelState.closed(idx)
 
   /** Slider component. Returns the current position of the slider, between min and max.
     *
