@@ -1,4 +1,4 @@
-# 2. Layouts
+# 2. Explicit Layout
 
 Welcome to the InterIm tutorial!
 
@@ -7,20 +7,19 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli 2-layout.md example-minart-backend.scala
+scala-cli 2-explicit-layout.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion
 
 ## Component layout in InterIm applications
 
-In InterIm, the layout of all components is explicit: Every component receives a `Rect` with the area where it can be
-rendered.
+In InterIm, every component receives a `Rect` with the area where it can be rendered, so its size must be known up front.
 
 This is very different from other systems like HTML, where elements can infer their size from their contents.
 
 This is a typical problem of immediate mode GUIs. While there are some techniques to address that, InterIm
-currently opts for the simpler design of forcing everything to be explicit.
+currently opts for the simpler option.
 
 However, explicit does not mean manual! InterIm comes with multiple helpers to automatically generate areas according
 to a specified layout:
@@ -37,7 +36,7 @@ This can be quite a chore, especially since changing one area might force us to 
 
 Everything was layed out in 3 equally sized columns, so let's use the `columns` layout.
 
-This layout returns a `Vector[Rect]`, with the 3 areas we want to use.
+This layout returns a `IndexedSeq[Rect]`, with the 3 areas we want to use.
 
 Our application now looks like:
 
@@ -50,18 +49,18 @@ var counter = 0
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10): column =>
-      button(id = "minus", area = column(0), label = "-"):
+    columns(area = Rect(x = 10, y = 10, w = 110, h = 30), numColumns = 3, padding = 10): column ?=>
+      button(id = "minus", label = "-")(column(0)):
         counter = counter - 1
       text(
         area = column(1),
         color = Color(0, 0, 0),
-        text = counter.toString,
+        message = counter.toString,
         font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
       )
-      button(id = "plus", area = column(2), label = "+"):
+      button(id = "plus", label = "+")(column(2)):
         counter = counter + 1
 ```
 
@@ -73,7 +72,7 @@ MinartBackend.run(application)
 
 ## Note about dynamic layouts
 
-While `rows`, `columns` and `cells` provide a `Vector[Rect]` (or a `Vector[Vector[Rect]]`) to our body, the dynamic
+While `rows`, `columns` and `cells` provide a `IndexedSeq[Rect]` (or a `IndexedSeq[IndexedSeq[Rect]]`) to our body, the dynamic
 versions work a bit differently.
 
 In those cases, a `Int => Rect` function is provided where, given a desired size, a `Rect` is returned.
@@ -86,15 +85,15 @@ For example, this is how our application would look like with a dynamic layout:
 def dynamicApp(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10): column =>
-      button(id = "minus", area = column(30), label = "-"): // 30px from the left
+    dynamicColumns(area = Rect(x = 10, y = 10, w = 110, h = 30), padding = 10): column ?=>
+      button(id = "minus", label = "-")(area = column(30)): // 30px from the left
         counter = counter - 1
-      button(id = "plus", area = column(-30), label = "+"): // 30px from the right
+      button(id = "plus", label = "+")(area = column(-30)): // 30px from the right
         counter = counter + 1
       text(
         area = column(maxSize), // Fill the remaining area
         color = Color(0, 0, 0),
-        text = counter.toString,
+        message = counter.toString,
         font = Font.default,
         horizontalAlignment = centerHorizontally,
         verticalAlignment = centerVertically
