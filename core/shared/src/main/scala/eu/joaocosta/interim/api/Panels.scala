@@ -23,15 +23,15 @@ object Panels extends Panels
 trait Panels:
 
   trait Panel[I, F[_]]:
-    def render[T](area: Ref[PanelState[Rect]], body: I => T): Components.Component[F[T]]
+    def render[T](area: Ref[PanelState[Rect]], body: I => T): Component[F[T]]
 
-    def apply[T](area: Ref[PanelState[Rect]])(body: I => T): Components.Component[F[T]] =
+    def apply[T](area: Ref[PanelState[Rect]])(body: I => T): Component[F[T]] =
       render(area, body)
 
-    def apply[T](area: PanelState[Rect])(body: I => T): Components.Component[F[T]] =
+    def apply[T](area: PanelState[Rect])(body: I => T): Component[F[T]] =
       render(Ref(area), body)
 
-    def apply[T](area: Rect)(body: I => T): Components.Component[F[T]] =
+    def apply[T](area: Rect)(body: I => T): Component[F[T]] =
       render(Ref(PanelState.open(area)), body)
 
   /**  Window with a title.
@@ -51,7 +51,7 @@ trait Panels:
       handleSkin: HandleSkin = HandleSkin.default()
   ): Panel[Rect, [T] =>> (Option[T], PanelState[Rect])] =
     new Panel[Rect, [T] =>> (Option[T], PanelState[Rect])]:
-      def render[T](area: Ref[PanelState[Rect]], body: Rect => T): Components.Component[(Option[T], PanelState[Rect])] =
+      def render[T](area: Ref[PanelState[Rect]], body: Rect => T): Component[(Option[T], PanelState[Rect])] =
         if (area.get.isOpen)
           def windowArea = area.get.value
           UiContext.registerItem(id, windowArea, passive = true)
