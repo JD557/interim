@@ -89,6 +89,12 @@ object TextLayout:
               )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
+  /** Computes the area that some text will occupy
+    *
+    * @param boundingArea area where the text can be inserted
+    * @param text string of text
+    * @param font font to use
+    */
   def computeArea(
       boundingArea: Rect,
       text: String,

@@ -13,48 +13,6 @@ object Components extends Components
 
 trait Components:
 
-  type Component[+T] = (inputState: InputState.Historical, uiContext: UiContext) ?=> T
-
-  trait ComponentWithValue[T]:
-    def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect
-
-    def render(area: Rect, value: Ref[T]): Component[Unit]
-
-    def render(value: Ref[T])(using allocator: LayoutAllocator.AreaAllocator): Component[Unit] =
-      render(allocateArea, value)
-
-    def applyRef(area: Rect, value: Ref[T]): Component[T] =
-      render(area, value)
-      value.get
-
-    def applyValue(area: Rect, value: T): Component[T] =
-      apply(area, Ref(value))
-
-    inline def apply(area: Rect, value: T | Ref[T]): Component[T] = inline value match
-      case x: T      => applyValue(area, x)
-      case x: Ref[T] => applyRef(area, x)
-
-    inline def apply(value: T | Ref[T])(using allocator: LayoutAllocator.AreaAllocator): Component[T] =
-      apply(allocateArea, value)
-
-  trait ComponentWithBody[I, F[_]]:
-    def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect
-
-    def render[T](area: Rect, body: I => T): Component[F[T]]
-
-    def render[T](body: I => T)(using allocator: LayoutAllocator.AreaAllocator): Component[Unit] =
-      render(allocateArea, body)
-
-    def apply[T](area: Rect)(body: I => T): Component[F[T]] = render(area, body)
-
-    def apply[T](area: Rect)(body: => T)(using ev: I =:= Unit): Component[F[T]] = render(area, _ => body)
-
-    def apply[T](body: I => T)(using allocator: LayoutAllocator.AreaAllocator): Component[F[T]] =
-      render(allocateArea, body)
-
-    def apply[T](body: => T)(using allocator: LayoutAllocator.AreaAllocator, ev: I =:= Unit): Component[F[T]] =
-      render(allocateArea, _ => body)
-
   /** Button component. Returns true if it's being clicked, false otherwise.
     *
     * @param label text label to show on this button
@@ -63,8 +21,8 @@ trait Components:
       id: ItemId,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): ComponentWithBody[Unit, Option] =
-    new ComponentWithBody[Unit, Option]:
+  ): DynamicComponentWithBody[Unit, Option] =
+    new DynamicComponentWithBody[Unit, Option]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, label)
 
@@ -79,8 +37,8 @@ trait Components:
   final def checkbox(
       id: ItemId,
       skin: CheckboxSkin = CheckboxSkin.default()
-  ): ComponentWithValue[Boolean] =
-    new ComponentWithValue[Boolean]:
+  ): DynamicComponentWithValue[Boolean] =
+    new DynamicComponentWithValue[Boolean]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -101,8 +59,8 @@ trait Components:
       buttonValue: T,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): ComponentWithValue[T] =
-    new ComponentWithValue[T]:
+  ): DynamicComponentWithValue[T] =
+    new DynamicComponentWithValue[T]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, label)
 
@@ -127,8 +85,8 @@ trait Components:
       labels: Vector[String],
       defaultLabel: String = "",
       skin: SelectSkin = SelectSkin.default()
-  ): ComponentWithValue[PanelState[Int]] =
-    new ComponentWithValue[PanelState[Int]]:
+  ): DynamicComponentWithValue[PanelState[Int]] =
+    new DynamicComponentWithValue[PanelState[Int]]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, labels)
 
@@ -157,8 +115,8 @@ trait Components:
       min: Int,
       max: Int,
       skin: SliderSkin = SliderSkin.default()
-  ): ComponentWithValue[Int] =
-    new ComponentWithValue[Int]:
+  ): DynamicComponentWithValue[Int] =
+    new DynamicComponentWithValue[Int]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -180,8 +138,8 @@ trait Components:
   final def textInput(
       id: ItemId,
       skin: TextInputSkin = TextInputSkin.default()
-  ): ComponentWithValue[String] =
-    new ComponentWithValue[String]:
+  ): DynamicComponentWithValue[String] =
+    new DynamicComponentWithValue[String]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -196,8 +154,8 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def moveHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
-    new ComponentWithValue[Rect]:
+  final def moveHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): DynamicComponentWithValue[Rect] =
+    new DynamicComponentWithValue[Rect]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -214,8 +172,8 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def resizeHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
-    new ComponentWithValue[Rect]:
+  final def resizeHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): DynamicComponentWithValue[Rect] =
+    new DynamicComponentWithValue[Rect]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -235,8 +193,8 @@ trait Components:
   final def closeHandle[T](
       id: ItemId,
       skin: HandleSkin = HandleSkin.default()
-  ): ComponentWithValue[PanelState[T]] =
-    new ComponentWithValue[PanelState[T]]:
+  ): DynamicComponentWithValue[PanelState[T]] =
+    new DynamicComponentWithValue[PanelState[T]]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
