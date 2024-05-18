@@ -21,8 +21,8 @@ trait Components:
       id: ItemId,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): ComponentWithBody[Unit, Option] =
-    new ComponentWithBody[Unit, Option]:
+  ): DynamicComponentWithBody[Unit, Option] =
+    new DynamicComponentWithBody[Unit, Option]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, label)
 
@@ -37,8 +37,8 @@ trait Components:
   final def checkbox(
       id: ItemId,
       skin: CheckboxSkin = CheckboxSkin.default()
-  ): ComponentWithValue[Boolean] =
-    new ComponentWithValue[Boolean]:
+  ): DynamicComponentWithValue[Boolean] =
+    new DynamicComponentWithValue[Boolean]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -59,8 +59,8 @@ trait Components:
       buttonValue: T,
       label: String,
       skin: ButtonSkin = ButtonSkin.default()
-  ): ComponentWithValue[T] =
-    new ComponentWithValue[T]:
+  ): DynamicComponentWithValue[T] =
+    new DynamicComponentWithValue[T]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, label)
 
@@ -85,8 +85,8 @@ trait Components:
       labels: Vector[String],
       defaultLabel: String = "",
       skin: SelectSkin = SelectSkin.default()
-  ): ComponentWithValue[PanelState[Int]] =
-    new ComponentWithValue[PanelState[Int]]:
+  ): DynamicComponentWithValue[PanelState[Int]] =
+    new DynamicComponentWithValue[PanelState[Int]]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator, labels)
 
@@ -115,8 +115,8 @@ trait Components:
       min: Int,
       max: Int,
       skin: SliderSkin = SliderSkin.default()
-  ): ComponentWithValue[Int] =
-    new ComponentWithValue[Int]:
+  ): DynamicComponentWithValue[Int] =
+    new DynamicComponentWithValue[Int]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -138,8 +138,8 @@ trait Components:
   final def textInput(
       id: ItemId,
       skin: TextInputSkin = TextInputSkin.default()
-  ): ComponentWithValue[String] =
-    new ComponentWithValue[String]:
+  ): DynamicComponentWithValue[String] =
+    new DynamicComponentWithValue[String]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -154,8 +154,8 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def moveHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
-    new ComponentWithValue[Rect]:
+  final def moveHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): DynamicComponentWithValue[Rect] =
+    new DynamicComponentWithValue[Rect]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -172,8 +172,8 @@ trait Components:
     * Instead of using this component directly, it can be easier to use [[eu.joaocosta.interim.api.Panels.window]]
     * with movable = true.
     */
-  final def resizeHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): ComponentWithValue[Rect] =
-    new ComponentWithValue[Rect]:
+  final def resizeHandle(id: ItemId, skin: HandleSkin = HandleSkin.default()): DynamicComponentWithValue[Rect] =
+    new DynamicComponentWithValue[Rect]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
@@ -193,8 +193,8 @@ trait Components:
   final def closeHandle[T](
       id: ItemId,
       skin: HandleSkin = HandleSkin.default()
-  ): ComponentWithValue[PanelState[T]] =
-    new ComponentWithValue[PanelState[T]]:
+  ): DynamicComponentWithValue[PanelState[T]] =
+    new DynamicComponentWithValue[PanelState[T]]:
       def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect =
         skin.allocateArea(allocator)
 
