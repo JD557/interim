@@ -1,7 +1,13 @@
 package eu.joaocosta.interim
 
+/** A Component is something that can be shown in the UI.
+  *
+  * It uses the current input state and UI context to draw itself and returns the current value.
+  */
 type Component[+T] = (inputState: InputState.Historical, uiContext: UiContext) ?=> T
 
+/** A Component that returns a value.
+  */
 trait ComponentWithValue[T]:
   def render(area: Rect, value: Ref[T]): Component[Unit]
 
@@ -16,6 +22,10 @@ trait ComponentWithValue[T]:
     case x: T      => applyValue(area, x)
     case x: Ref[T] => applyRef(area, x)
 
+/** A Component that returns a value.
+  *
+  * The area can be computed dynamically based on a layout allocator.
+  */
 trait DynamicComponentWithValue[T] extends ComponentWithValue[T]:
   def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect
 
@@ -25,6 +35,8 @@ trait DynamicComponentWithValue[T] extends ComponentWithValue[T]:
   inline def apply(value: T | Ref[T])(using allocator: LayoutAllocator.AreaAllocator): Component[T] =
     apply(allocateArea, value)
 
+/** A Component that computes its value based on a body.
+  */
 trait ComponentWithBody[I, F[_]]:
   def render[T](area: Rect, body: I => T): Component[F[T]]
 
@@ -32,6 +44,10 @@ trait ComponentWithBody[I, F[_]]:
 
   def apply[T](area: Rect)(body: => T)(using ev: I =:= Unit): Component[F[T]] = render(area, _ => body)
 
+/** A Component that computes its value based on a body.
+  *
+  * The area can be computed dynamically based on a layout allocator.
+  */
 trait DynamicComponentWithBody[I, F[_]] extends ComponentWithBody[I, F]:
   def allocateArea(using allocator: LayoutAllocator.AreaAllocator): Rect
 
