@@ -1,4 +1,4 @@
-# 3. Windows
+# 4. Windows
 
 Welcome to the InterIm tutorial!
 
@@ -7,7 +7,7 @@ Welcome to the InterIm tutorial!
 You can run the code in this file (and other tutorials) with:
 
 ```bash
-scala-cli 3-windows.md example-minart-backend.scala
+scala-cli 4-windows.md example-minart-backend.scala
 ```
 
 Other examples can be run in a similar fashion
@@ -40,19 +40,19 @@ var counter    = 0
 def application(inputState: InputState) =
   import eu.joaocosta.interim.InterIm.*
   ui(inputState, uiContext):
-    windowArea = window(id = "window", area = windowArea, title = "My Counter", movable = true, closable = false) { area =>
-      columns(area = area.shrink(5), numColumns = 3, padding = 10) { column =>
-        button(id = "minus", area = column(0), label = "-"):
+    windowArea = window(id = "window", title = "My Counter", movable = true, closable = false)(area = windowArea) { area =>
+      columns(area = area.shrink(5), numColumns = 3, padding = 10) {
+        button(id = "minus", label = "-"):
           counter = counter - 1
         text(
-          area = column(1),
+          area = summon,
           color = Color(0, 0, 0),
-          text = counter.toString,
+          message = counter.toString,
           font = Font.default,
           horizontalAlignment = centerHorizontally,
           verticalAlignment = centerVertically
         )
-        button(id = "plus", area = column(2), label = "+"):
+        button(id = "plus", label = "+"):
           counter = counter + 1
       }
     }._2 // We don't care about the value, just the rect
