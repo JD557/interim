@@ -2,7 +2,7 @@ import ReleaseTransformations._
 
 ThisBuild / organization := "eu.joaocosta"
 ThisBuild / publishTo    := sonatypePublishToBundle.value
-ThisBuild / scalaVersion := "3.3.3"
+ThisBuild / scalaVersion := "3.3.4"
 ThisBuild / licenses     := Seq("MIT License" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / homepage     := Some(url("https://github.com/JD557/interim"))
 ThisBuild / scmInfo := Some(
