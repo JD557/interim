@@ -1,5 +1,5 @@
 //> using scala "3.3.4"
-//> using dep "eu.joaocosta::minart::0.6.1"
+//> using dep "eu.joaocosta::minart::0.6.2"
 //> using dep "eu.joaocosta::interim::0.2.1-SNAPSHOT"
 
 /** This file contains a simple graphical backend written in Minart.
