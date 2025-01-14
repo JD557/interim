@@ -49,7 +49,9 @@ object Ref:
     *
     * Useful to set temporary mutable variables.
     */
-  def withRefs[T <: Product](initialValue: T)(using mirror: Mirror.ProductOf[T])(
+  def withRefs[T <: Product](initialValue: T)(using
+      mirror: Mirror.ProductOf[T]
+  )(
       block: Tuple.Map[mirror.MirroredElemTypes, Ref] => Unit
   ): T =
     val tuple: mirror.MirroredElemTypes      = Tuple.fromProductTyped(initialValue)
