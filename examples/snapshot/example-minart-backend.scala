@@ -1,4 +1,4 @@
-//> using scala "3.3.5"
+//> using scala "3.3.6"
 //> using dep "eu.joaocosta::minart::0.6.3"
 //> using dep "eu.joaocosta::interim::0.2.1-SNAPSHOT"
 
