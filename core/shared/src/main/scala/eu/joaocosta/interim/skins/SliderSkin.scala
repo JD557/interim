@@ -32,7 +32,7 @@ object SliderSkin extends DefaultSkin:
       val sliderRect =
         if (area.w > area.h)
           val sliderSize = math.max(minSliderSize, sliderArea.w / steps)
-          val maxX =
+          val maxX       =
             (steps + 1) * sliderArea.w / steps - sliderSize // Correction for when the slider hits the min size
           val deltaX = delta * maxX / steps
           Rect(0, 0, sliderSize, sliderArea.h)
@@ -40,7 +40,7 @@ object SliderSkin extends DefaultSkin:
             .copy(x = sliderArea.x + deltaX)
         else
           val sliderSize = math.max(minSliderSize, sliderArea.h / steps)
-          val maxY =
+          val maxY       =
             (steps + 1) * sliderArea.h / steps - sliderSize // Correction for when the slider hits the min size
           val deltaY = delta * maxY / steps
           Rect(0, 0, sliderArea.w, sliderSize)

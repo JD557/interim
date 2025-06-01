@@ -27,7 +27,7 @@ object HandleSkin extends DefaultSkin:
 
     def renderMoveHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.moveHandleArea(area)
-      val color = itemStatus match
+      val color      = itemStatus match
         case UiContext.ItemStatus(false, false, _, _) => colorScheme.icon
         case UiContext.ItemStatus(true, false, _, _)  => colorScheme.iconHighlight
         case UiContext.ItemStatus(_, true, _, _)      => colorScheme.primaryHighlight
@@ -41,7 +41,7 @@ object HandleSkin extends DefaultSkin:
 
     def renderCloseHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.closeHandleArea(area)
-      val color = itemStatus match
+      val color      = itemStatus match
         case UiContext.ItemStatus(false, false, _, _) => colorScheme.icon
         case UiContext.ItemStatus(true, false, _, _)  => colorScheme.iconHighlight
         case UiContext.ItemStatus(_, true, _, _)      => colorScheme.primaryHighlight
@@ -53,7 +53,7 @@ object HandleSkin extends DefaultSkin:
 
     def renderResizeHandle(area: Rect, itemStatus: UiContext.ItemStatus)(using uiContext: UiContext): Unit =
       val handleArea = this.resizeHandleArea(area)
-      val color = itemStatus match
+      val color      = itemStatus match
         case UiContext.ItemStatus(false, false, _, _) => colorScheme.icon
         case UiContext.ItemStatus(true, false, _, _)  => colorScheme.iconHighlight
         case UiContext.ItemStatus(_, true, _, _)      => colorScheme.primaryHighlight

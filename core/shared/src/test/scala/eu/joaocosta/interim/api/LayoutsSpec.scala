@@ -28,7 +28,7 @@ class LayoutsSpec extends munit.FunSuite:
     assertEquals(itemStatus.hot, true)
 
   test("grid correctly lays out elements in a grid"):
-    val areas = Layouts.grid(Rect(10, 10, 100, 100), numRows = 3, numColumns = 2, padding = 8)(identity)
+    val areas    = Layouts.grid(Rect(10, 10, 100, 100), numRows = 3, numColumns = 2, padding = 8)(identity)
     val expected =
       Vector(
         Vector(Rect(10, 10, 46, 28), Rect(64, 10, 46, 28)),
@@ -51,7 +51,7 @@ class LayoutsSpec extends munit.FunSuite:
     assertEquals(areas, expected)
 
   test("rows correctly lays out elements in rows"):
-    val areas = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(alloc ?=> alloc.toVector)
+    val areas    = Layouts.rows(Rect(10, 10, 100, 100), numRows = 3, padding = 8)(alloc ?=> alloc.toVector)
     val expected =
       Vector(Rect(10, 10, 100, 28), Rect(10, 46, 100, 28), Rect(10, 82, 100, 28))
     assertEquals(areas, expected)
@@ -62,7 +62,7 @@ class LayoutsSpec extends munit.FunSuite:
     assertEquals(areas, expected)
 
   test("columns correctly lays out elements in columns"):
-    val areas = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(alloc ?=> alloc.toVector)
+    val areas    = Layouts.columns(Rect(10, 10, 100, 100), numColumns = 3, padding = 8)(alloc ?=> alloc.toVector)
     val expected =
       Vector(Rect(10, 10, 28, 100), Rect(46, 10, 28, 100), Rect(82, 10, 28, 100))
     assertEquals(areas, expected)

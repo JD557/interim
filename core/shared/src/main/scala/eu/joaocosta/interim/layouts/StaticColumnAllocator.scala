@@ -15,7 +15,7 @@ final class StaticColumnAllocator(
     else
       val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
       val intColumnSize = columnSize.toInt
-      val baseCells = for
+      val baseCells     = for
         column <- (0 until numColumns)
         dx = (column * (columnSize + padding)).toInt
       yield Rect(area.x + dx, area.y, intColumnSize, area.h)
