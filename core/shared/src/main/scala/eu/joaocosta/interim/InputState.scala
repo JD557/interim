@@ -19,7 +19,7 @@ sealed trait InputState:
   def appendKeyboardInput(str: String): String =
     if (keyboardInput.isEmpty) str
     else
-      val fullString = str + keyboardInput
+      val fullString      = str + keyboardInput
       val processedString =
         if (fullString.size >= 2)
           fullString.iterator

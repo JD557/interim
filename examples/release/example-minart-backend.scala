@@ -31,7 +31,7 @@ object MinartBackend:
       }
 
   case class BitmapFontPack(fonts: List[BitmapFont]):
-    val sortedFonts = fonts.sortBy(_.height)
+    val sortedFonts                         = fonts.sortBy(_.height)
     def withSize(fontSize: Int): MinartFont =
       val baseFont = sortedFonts.filter(_.height <= fontSize).lastOption.getOrElse(sortedFonts.head)
       if (baseFont.height == fontSize) baseFont
@@ -50,7 +50,7 @@ object MinartBackend:
       .collect { case KeyboardInput.Event.Pressed(key) => key }
       .flatMap {
         case Enter => ""
-        case x =>
+        case x     =>
           x.baseChar
             .map(char =>
               if (keyboardInput.keysDown(Shift)) char.toUpper.toString

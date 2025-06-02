@@ -70,8 +70,8 @@ object TextLayout:
           if (dy + textOp.font.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, textOp.font.charWidth)
-            val ops = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
-              val width = textOp.font.charWidth(char)
+            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
+              val width    = textOp.font.charWidth(char)
               val charArea = Rect(
                 x = textOp.textArea.x + dx - width,
                 y = textOp.textArea.y + dy,
@@ -107,13 +107,13 @@ object TextLayout:
         areaAcc: Rect
     ): Rect =
       remaining match
-        case "" => areaAcc
+        case ""  => areaAcc
         case str =>
           if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
-            val charAreas = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
-              val width = font.charWidth(char)
+            val charAreas            = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+              val width    = font.charWidth(char)
               val charArea = Rect(
                 x = boundingArea.x + dx - width,
                 y = boundingArea.y + dy,

@@ -15,7 +15,7 @@ final class StaticRowAllocator(
     else
       val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
       val intRowSize = rowSize.toInt
-      val baseCells = for
+      val baseCells  = for
         row <- (0 until numRows)
         dy = (row * (rowSize + padding)).toInt
       yield Rect(area.x, area.y + dy, area.w, intRowSize)
