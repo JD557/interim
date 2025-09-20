@@ -44,7 +44,7 @@ lazy val core =
     .in(file("core"))
     .settings(
       name                                    := "interim",
-      libraryDependencies += "org.scalameta" %%% "munit" % "1.1.2" % Test,
+      libraryDependencies += "org.scalameta" %%% "munit" % "1.2.0" % Test,
       Compile / doc / scalacOptions ++=
         Seq(
           "-project",
