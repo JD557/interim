@@ -13,12 +13,12 @@ final class StaticRowAllocator(
   lazy val cells: IndexedSeq[Rect] =
     if (numRows == 0) Vector.empty
     else
-      val rowSize    = (area.h - (numRows - 1) * padding) / numRows.toDouble
-      val intRowSize = rowSize.toInt
-      val baseCells  = for
+      val totalInnerArea = (area.h - (numRows - 1) * padding)
+      val rowSize        = totalInnerArea / numRows
+      val baseCells      = for
         row <- (0 until numRows)
-        dy = (row * (rowSize + padding)).toInt
-      yield Rect(area.x, area.y + dy, area.w, intRowSize)
+        dy = (row * totalInnerArea) / numRows + (row * padding)
+      yield Rect(area.x, area.y + dy, area.w, rowSize)
       if (alignment == VerticalAlignment.Top) baseCells
       else baseCells.reverse
 
