@@ -15,10 +15,10 @@ final class StaticColumnAllocator(
     else
       val totalInnerArea = (area.w - (numColumns - 1) * padding)
       val columnSize     = totalInnerArea / numColumns
-      val baseCells      = for
-        column <- (0 until numColumns)
-        dx = (column * totalInnerArea) / numColumns + (column * padding)
-      yield Rect(area.x + dx, area.y, columnSize, area.h)
+      val baseCells      = Vector.tabulate(numColumns)(column =>
+        val dx = (column * totalInnerArea) / numColumns + (column * padding)
+        Rect(area.x + dx, area.y, columnSize, area.h)
+      )
       if (alignment == HorizontalAlignment.Left) baseCells
       else baseCells.reverse
 
