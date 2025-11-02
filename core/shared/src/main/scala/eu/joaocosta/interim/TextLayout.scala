@@ -4,12 +4,9 @@ import scala.annotation.tailrec
 
 object TextLayout:
 
-  private def cumulativeSum(xs: Iterable[Int]): Iterable[Int] =
-    if (xs.isEmpty) xs
-    else xs.tail.scanLeft(xs.head)(_ + _)
-
-  private def cumulativeSum[A](xs: Iterable[A])(f: A => Int): Iterable[(A, Int)] =
-    xs.zip(cumulativeSum(xs.map(f)))
+  private def cumulativeSum[A](xs: Iterable[A])(f: A => Int): Iterator[(A, Int)] =
+    if (xs.isEmpty) Iterator.empty
+    else xs.iterator.zip(xs.tail.iterator.map(f).scanLeft(f(xs.head))(_ + _))
 
   private def getNextLine(str: String, lineSize: Int, charWidth: Char => Int): (String, String) =
     def textSize(str: String): Int = str.foldLeft(0)(_ + charWidth(_))
@@ -24,31 +21,40 @@ object TextLayout:
         // If the first word is too big, it needs to be broken
         if (textSize(firstWord) > lineSize)
           val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 <= lineSize)
-          (firstPart.map(_._1).mkString(""), secondPart.map(_._1).mkString("") ++ remainingLines)
+          val lineStr                 = firstPart.map(_._1).mkString("")
+          val remainderStr            = secondPart.map(_._1).mkString("")
+          (lineStr, remainderStr ++ remainingLines)
         else // Otherwise, pick as many words as fit
+          val spaceCharWidth                  = charWidth(' ')
           val (selectedWords, remainingWords) =
-            cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 <= lineSize)
-          (selectedWords.map(_._1).mkString(" "), remainingWords.map(_._1).mkString(" ") ++ remainingLines)
+            cumulativeSum(words)(spaceCharWidth + textSize(_)).span(_._2 <= lineSize)
+          val lineStr      = selectedWords.map(_._1).mkString("")
+          val remainderStr = remainingWords.map(_._1).mkString("")
+          (lineStr, remainderStr ++ remainingLines)
 
   private def alignH(
       chars: List[RenderOp.DrawChar],
       areaWidth: Int,
       alignment: HorizontalAlignment
   ): List[RenderOp.DrawChar] =
-    val minX   = chars.map(_.area.x).minOption.getOrElse(0)
-    val maxX   = chars.map(c => c.area.x + c.area.w).maxOption.getOrElse(0)
-    val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
-    chars.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
+    if (chars.isEmpty) chars
+    else
+      val minX   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.x))
+      val maxX   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.x + c.area.w))
+      val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
+      chars.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
 
   private def alignV(
       chars: List[RenderOp.DrawChar],
       areaHeight: Int,
       alignment: VerticalAlignment
   ): List[RenderOp.DrawChar] =
-    val minY   = chars.map(_.area.y).minOption.getOrElse(0)
-    val maxY   = chars.map(c => c.area.y + c.area.h).maxOption.getOrElse(0)
-    val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
-    chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
+    if (chars.isEmpty) chars
+    else
+      val minY   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.y))
+      val maxY   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.y + c.area.h))
+      val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
+      chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
   private[interim] def asDrawChars(
       textOp: RenderOp.DrawText
@@ -70,7 +76,7 @@ object TextLayout:
           if (dy + textOp.font.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, textOp.font.charWidth)
-            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
+            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).iterator.map { case (char, dx) =>
               val width    = textOp.font.charWidth(char)
               val charArea = Rect(
                 x = textOp.textArea.x + dx - width,
@@ -79,13 +85,13 @@ object TextLayout:
                 h = textOp.font.fontSize
               )
               RenderOp.DrawChar(charArea, textOp.color, char)
-            }.toList
+            }
             if (ops.isEmpty && nextLine == remaining) layout("", dy, textAcc) // Can't fit a single character, end here
             else
               layout(
                 nextLine,
                 dy + textOp.font.lineHeight,
-                alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
+                alignH(ops.toList, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
               )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
@@ -112,7 +118,7 @@ object TextLayout:
           if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
-            val charAreas            = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+            val charAreas            = cumulativeSum(thisLine)(font.charWidth).iterator.map { case (char, dx) =>
               val width    = font.charWidth(char)
               val charArea = Rect(
                 x = boundingArea.x + dx - width,
@@ -121,7 +127,7 @@ object TextLayout:
                 h = font.fontSize
               )
               charArea
-            }.toList
+            }
             if (charAreas.isEmpty && nextLine == remaining)
               layout("", dy, areaAcc) // Can't fit a single character, end here
             else
