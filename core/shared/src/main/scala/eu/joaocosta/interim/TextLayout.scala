@@ -36,25 +36,25 @@ object TextLayout:
       chars: List[RenderOp.DrawChar],
       areaWidth: Int,
       alignment: HorizontalAlignment
-  ): List[RenderOp.DrawChar] =
-    if (chars.isEmpty) chars
+  ): Iterator[RenderOp.DrawChar] =
+    if (chars.isEmpty) Iterator.empty
     else
       val minX   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.x))
       val maxX   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.x + c.area.w))
       val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
-      chars.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
+      chars.iterator.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
 
   private def alignV(
       chars: List[RenderOp.DrawChar],
       areaHeight: Int,
       alignment: VerticalAlignment
-  ): List[RenderOp.DrawChar] =
-    if (chars.isEmpty) chars
+  ): Iterator[RenderOp.DrawChar] =
+    if (chars.isEmpty) Iterator.empty
     else
       val minY   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.y))
       val maxY   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.y + c.area.h))
       val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
-      chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
+      chars.iterator.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
   private[interim] def asDrawChars(
       textOp: RenderOp.DrawText
@@ -63,12 +63,12 @@ object TextLayout:
     def layout(
         remaining: String,
         dy: Int,
-        textAcc: List[RenderOp.DrawChar]
-    ): List[RenderOp.DrawChar] =
+        textAcc: List[Iterator[RenderOp.DrawChar]]
+    ): Iterator[RenderOp.DrawChar] =
       remaining match
         case "" =>
           alignV(
-            textAcc,
+            textAcc.flatten,
             textOp.textArea.h,
             textOp.verticalAlignment
           )
@@ -91,9 +91,9 @@ object TextLayout:
               layout(
                 nextLine,
                 dy + textOp.font.lineHeight,
-                alignH(ops.toList, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
+                alignH(ops.toList, textOp.textArea.w, textOp.horizontalAlignment) :: textAcc
               )
-    layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
+    layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area).toList
 
   /** Computes the area that some text will occupy
     *
