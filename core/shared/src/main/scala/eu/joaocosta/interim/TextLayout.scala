@@ -35,20 +35,24 @@ object TextLayout:
       areaWidth: Int,
       alignment: HorizontalAlignment
   ): List[RenderOp.DrawChar] =
-    val minX   = chars.map(_.area.x).minOption.getOrElse(0)
-    val maxX   = chars.map(c => c.area.x + c.area.w).maxOption.getOrElse(0)
-    val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
-    chars.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
+    if (chars.isEmpty) chars
+    else
+      val minX   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.x))
+      val maxX   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.x + c.area.w))
+      val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
+      chars.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
 
   private def alignV(
       chars: List[RenderOp.DrawChar],
       areaHeight: Int,
       alignment: VerticalAlignment
   ): List[RenderOp.DrawChar] =
-    val minY   = chars.map(_.area.y).minOption.getOrElse(0)
-    val maxY   = chars.map(c => c.area.y + c.area.h).maxOption.getOrElse(0)
-    val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
-    chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
+    if (chars.isEmpty) chars
+    else
+      val minY   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.y))
+      val maxY   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.y + c.area.h))
+      val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
+      chars.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
   private[interim] def asDrawChars(
       textOp: RenderOp.DrawText
