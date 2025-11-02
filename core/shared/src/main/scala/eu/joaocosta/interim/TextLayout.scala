@@ -122,15 +122,14 @@ object TextLayout:
           if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
-            val charAreas            = cumulativeSum(thisLine)(font.charWidth).iterator.map { case (char, dx) =>
-              val width    = font.charWidth(char)
-              val charArea = Rect(
+            val charAreas            = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+              val width = font.charWidth(char)
+              Rect(
                 x = boundingArea.x + dx - width,
                 y = boundingArea.y + dy,
                 w = width,
                 h = font.fontSize
               )
-              charArea
             }
             if (charAreas.isEmpty && nextLine == remaining)
               layout("", dy, areaAcc) // Can't fit a single character, end here
