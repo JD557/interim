@@ -15,10 +15,10 @@ final class StaticRowAllocator(
     else
       val totalInnerArea = (area.h - (numRows - 1) * padding)
       val rowSize        = totalInnerArea / numRows
-      val baseCells      = for
-        row <- (0 until numRows)
-        dy = (row * totalInnerArea) / numRows + (row * padding)
-      yield Rect(area.x, area.y + dy, area.w, rowSize)
+      val baseCells      = Vector.tabulate(numRows)(row =>
+        val dy = (row * totalInnerArea) / numRows + (row * padding)
+        Rect(area.x, area.y + dy, area.w, rowSize)
+      )
       if (alignment == VerticalAlignment.Top) baseCells
       else baseCells.reverse
 
