@@ -13,12 +13,12 @@ final class StaticColumnAllocator(
   lazy val cells: IndexedSeq[Rect] =
     if (numColumns == 0) Vector.empty
     else
-      val columnSize    = (area.w - (numColumns - 1) * padding) / numColumns.toDouble
-      val intColumnSize = columnSize.toInt
-      val baseCells     = for
+      val totalInnerArea = (area.w - (numColumns - 1) * padding)
+      val columnSize     = totalInnerArea / numColumns
+      val baseCells      = for
         column <- (0 until numColumns)
-        dx = (column * (columnSize + padding)).toInt
-      yield Rect(area.x + dx, area.y, intColumnSize, area.h)
+        dx = (column * totalInnerArea) / numColumns + (column * padding)
+      yield Rect(area.x + dx, area.y, columnSize, area.h)
       if (alignment == HorizontalAlignment.Left) baseCells
       else baseCells.reverse
 
