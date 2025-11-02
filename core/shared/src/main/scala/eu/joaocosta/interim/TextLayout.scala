@@ -25,8 +25,9 @@ object TextLayout:
           val remainderStr            = secondPart.map(_._1).mkString("")
           (lineStr, remainderStr ++ remainingLines)
         else // Otherwise, pick as many words as fit
+          val spaceCharWidth                  = charWidth(' ')
           val (selectedWords, remainingWords) =
-            cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 <= lineSize)
+            cumulativeSum(words)(spaceCharWidth + textSize(_)).span(_._2 <= lineSize)
           val lineStr      = selectedWords.map(_._1).mkString("")
           val remainderStr = remainingWords.map(_._1).mkString("")
           (lineStr, remainderStr ++ remainingLines)
