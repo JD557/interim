@@ -4,12 +4,12 @@ import scala.annotation.tailrec
 
 object TextLayout:
 
-  private def cumulativeSum(xs: Iterable[Int]): Iterable[Int] =
-    if (xs.isEmpty) xs
-    else xs.tail.scanLeft(xs.head)(_ + _)
+  private def cumulativeSum(xs: Iterable[Int]): Iterator[Int] =
+    if (xs.isEmpty) Iterator.empty
+    else xs.tail.iterator.scanLeft(xs.head)(_ + _)
 
-  private def cumulativeSum[A](xs: Iterable[A])(f: A => Int): Iterable[(A, Int)] =
-    xs.zip(cumulativeSum(xs.map(f)))
+  private def cumulativeSum[A](xs: Iterable[A])(f: A => Int): Iterator[(A, Int)] =
+    xs.iterator.zip(cumulativeSum(xs.map(f)))
 
   private def getNextLine(str: String, lineSize: Int, charWidth: Char => Int): (String, String) =
     def textSize(str: String): Int = str.foldLeft(0)(_ + charWidth(_))
@@ -24,11 +24,15 @@ object TextLayout:
         // If the first word is too big, it needs to be broken
         if (textSize(firstWord) > lineSize)
           val (firstPart, secondPart) = cumulativeSum(firstWord)(charWidth).span(_._2 <= lineSize)
-          (firstPart.map(_._1).mkString(""), secondPart.map(_._1).mkString("") ++ remainingLines)
+          val lineStr                 = firstPart.map(_._1).mkString("")
+          val remainderStr            = secondPart.map(_._1).mkString("")
+          (lineStr, remainderStr ++ remainingLines)
         else // Otherwise, pick as many words as fit
           val (selectedWords, remainingWords) =
             cumulativeSum(words)(charWidth(' ') + textSize(_)).span(_._2 <= lineSize)
-          (selectedWords.map(_._1).mkString(" "), remainingWords.map(_._1).mkString(" ") ++ remainingLines)
+          val lineStr      = selectedWords.map(_._1).mkString("")
+          val remainderStr = remainingWords.map(_._1).mkString("")
+          (lineStr, remainderStr ++ remainingLines)
 
   private def alignH(
       chars: List[RenderOp.DrawChar],
@@ -74,7 +78,7 @@ object TextLayout:
           if (dy + textOp.font.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, textOp.font.charWidth)
-            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
+            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).iterator.map { case (char, dx) =>
               val width    = textOp.font.charWidth(char)
               val charArea = Rect(
                 x = textOp.textArea.x + dx - width,
@@ -83,13 +87,13 @@ object TextLayout:
                 h = textOp.font.fontSize
               )
               RenderOp.DrawChar(charArea, textOp.color, char)
-            }.toList
+            }
             if (ops.isEmpty && nextLine == remaining) layout("", dy, textAcc) // Can't fit a single character, end here
             else
               layout(
                 nextLine,
                 dy + textOp.font.lineHeight,
-                alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
+                alignH(ops.toList, textOp.textArea.w, textOp.horizontalAlignment) ++ textAcc
               )
     layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
@@ -116,7 +120,7 @@ object TextLayout:
           if (dy + font.fontSize > boundingArea.h) layout("", dy, areaAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, boundingArea.w, font.charWidth)
-            val charAreas            = cumulativeSum(thisLine)(font.charWidth).map { case (char, dx) =>
+            val charAreas            = cumulativeSum(thisLine)(font.charWidth).iterator.map { case (char, dx) =>
               val width    = font.charWidth(char)
               val charArea = Rect(
                 x = boundingArea.x + dx - width,
@@ -125,7 +129,7 @@ object TextLayout:
                 h = font.fontSize
               )
               charArea
-            }.toList
+            }
             if (charAreas.isEmpty && nextLine == remaining)
               layout("", dy, areaAcc) // Can't fit a single character, end here
             else
