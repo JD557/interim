@@ -33,24 +33,28 @@ object TextLayout:
           (lineStr, remainderStr ++ remainingLines)
 
   private def alignH(
-      chars: List[RenderOp.DrawChar],
+      charsIt: Iterator[RenderOp.DrawChar],
       areaWidth: Int,
       alignment: HorizontalAlignment
   ): Iterator[RenderOp.DrawChar] =
-    if (chars.isEmpty) Iterator.empty
+    if (charsIt.isEmpty) Iterator.empty
+    else if (alignment.ordinal == 0) charsIt
     else
+      val chars  = charsIt.toList
       val minX   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.x))
       val maxX   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.x + c.area.w))
       val deltaX = alignment.ordinal * (areaWidth - (maxX - minX)) / 2
       chars.iterator.map(c => c.copy(area = c.area.copy(x = c.area.x + deltaX)))
 
   private def alignV(
-      chars: List[RenderOp.DrawChar],
+      charsIt: Iterator[RenderOp.DrawChar],
       areaHeight: Int,
       alignment: VerticalAlignment
   ): Iterator[RenderOp.DrawChar] =
-    if (chars.isEmpty) Iterator.empty
+    if (charsIt.isEmpty) Iterator.empty
+    else if (alignment.ordinal == 0) charsIt
     else
+      val chars  = charsIt.toList
       val minY   = chars.foldLeft(Int.MaxValue)((acc, c) => math.min(acc, c.area.y))
       val maxY   = chars.foldLeft(0)((acc, c) => math.max(acc, c.area.y + c.area.h))
       val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
@@ -58,7 +62,7 @@ object TextLayout:
 
   private[interim] def asDrawCharsIter(
       textOp: RenderOp.DrawText
-  ): List[RenderOp.DrawChar] =
+  ): Iterator[RenderOp.DrawChar] =
     @tailrec
     def layout(
         remaining: String,
@@ -68,7 +72,7 @@ object TextLayout:
       remaining match
         case "" =>
           alignV(
-            textAcc.flatten,
+            textAcc.iterator.flatten,
             textOp.textArea.h,
             textOp.verticalAlignment
           )
@@ -76,7 +80,7 @@ object TextLayout:
           if (dy + textOp.font.fontSize > textOp.textArea.h) layout("", dy, textAcc) // Can't fit this line, end here
           else
             val (thisLine, nextLine) = getNextLine(str, textOp.textArea.w, textOp.font.charWidth)
-            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).iterator.map { case (char, dx) =>
+            val ops                  = cumulativeSum(thisLine)(textOp.font.charWidth).map { case (char, dx) =>
               val width    = textOp.font.charWidth(char)
               val charArea = Rect(
                 x = textOp.textArea.x + dx - width,
@@ -91,9 +95,9 @@ object TextLayout:
               layout(
                 nextLine,
                 dy + textOp.font.lineHeight,
-                alignH(ops.toList, textOp.textArea.w, textOp.horizontalAlignment) :: textAcc
+                alignH(ops, textOp.textArea.w, textOp.horizontalAlignment) :: textAcc
               )
-    layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area).toList
+    layout(textOp.text, 0, Nil).filter(char => (char.area & textOp.area) == char.area)
 
   /** Computes the area that some text will occupy
     *
