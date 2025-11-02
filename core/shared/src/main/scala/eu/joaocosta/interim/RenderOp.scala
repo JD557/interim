@@ -52,7 +52,10 @@ object RenderOp:
     def clip(rect: Rect): DrawText = copy(area = area & rect)
 
     /** Converts a DrawText operation into a sequence of simpler DrawChar operations. */
-    def asDrawChars: List[DrawChar] = TextLayout.asDrawChars(this)
+    def asDrawChars: List[DrawChar] = TextLayout.asDrawCharsIter(this).toList
+
+    /** Converts a DrawText operation into a sequence of simpler DrawChar operations and applies a function to each one. */
+    def foreachDrawChar(f: DrawChar => Unit): Unit = TextLayout.asDrawCharsIter(this).foreach(f)
 
   /** Operation to draw a custom element on the screen
     *
