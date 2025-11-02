@@ -56,7 +56,7 @@ object TextLayout:
       val deltaY = alignment.ordinal * (areaHeight - (maxY - minY)) / 2
       chars.iterator.map(c => c.copy(area = c.area.copy(y = c.area.y + deltaY)))
 
-  private[interim] def asDrawChars(
+  private[interim] def asDrawCharsIter(
       textOp: RenderOp.DrawText
   ): List[RenderOp.DrawChar] =
     @tailrec
