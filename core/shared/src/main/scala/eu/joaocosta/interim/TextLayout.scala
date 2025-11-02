@@ -4,12 +4,9 @@ import scala.annotation.tailrec
 
 object TextLayout:
 
-  private def cumulativeSum(xs: Iterable[Int]): Iterator[Int] =
-    if (xs.isEmpty) Iterator.empty
-    else xs.tail.iterator.scanLeft(xs.head)(_ + _)
-
   private def cumulativeSum[A](xs: Iterable[A])(f: A => Int): Iterator[(A, Int)] =
-    xs.iterator.zip(cumulativeSum(xs.map(f)))
+    if (xs.isEmpty) Iterator.empty
+    else xs.iterator.zip(xs.tail.iterator.map(f).scanLeft(f(xs.head))(_ + _))
 
   private def getNextLine(str: String, lineSize: Int, charWidth: Char => Int): (String, String) =
     def textSize(str: String): Int = str.foldLeft(0)(_ + charWidth(_))
