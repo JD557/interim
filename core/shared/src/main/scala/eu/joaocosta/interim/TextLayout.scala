@@ -28,8 +28,8 @@ object TextLayout:
           val spaceCharWidth                  = charWidth(' ')
           val (selectedWords, remainingWords) =
             cumulativeSum(words)(spaceCharWidth + textSize(_)).span(_._2 <= lineSize)
-          val lineStr      = selectedWords.map(_._1).mkString("")
-          val remainderStr = remainingWords.map(_._1).mkString("")
+          val lineStr      = selectedWords.map(_._1).mkString(" ")
+          val remainderStr = remainingWords.map(_._1).mkString(" ")
           (lineStr, remainderStr ++ remainingLines)
 
   private def alignH(
